@@ -12,6 +12,9 @@ import (
 	"testing"
 	"time"
 
+	"github.com/google/uuid"
+	openapi_types "github.com/oapi-codegen/runtime/types"
+
 	"github.com/qbranchio/mdmsdk/api"
 )
 
@@ -69,7 +72,36 @@ func (t *scripted) RoundTrip(r *http.Request) (*http.Response, error) {
 
 // calls runs a scenario's operation. Every operation in methods.yaml that a
 // scenario uses needs an entry.
+// bodyOf decodes a scenario's body argument into the operation's request type.
+func bodyOf[T any](args map[string]any) T {
+	var v T
+	raw, _ := json.Marshal(args["body"])
+	_ = json.Unmarshal(raw, &v)
+	return v
+}
+
+func str(args map[string]any, k string) string { s, _ := args[k].(string); return s }
+
+func uid(args map[string]any, k string) openapi_types.UUID {
+	return openapi_types.UUID(uuid.MustParse(str(args, k)))
+}
+
 var calls = map[string]func(ctx context.Context, c *Client, args map[string]any) (any, error){
+	"createTenant": func(ctx context.Context, c *Client, a map[string]any) (any, error) {
+		return c.Tenants.Create(ctx, bodyOf[api.CreateTenantJSONRequestBody](a))
+	},
+	"updateTenant": func(ctx context.Context, c *Client, a map[string]any) (any, error) {
+		return c.Tenants.Update(ctx, str(a, "tenant"), bodyOf[api.UpdateTenantJSONRequestBody](a))
+	},
+	"createMember": func(ctx context.Context, c *Client, a map[string]any) (any, error) {
+		return c.Members.Create(ctx, str(a, "tenant"), bodyOf[api.CreateMemberJSONRequestBody](a))
+	},
+	"createGroup": func(ctx context.Context, c *Client, a map[string]any) (any, error) {
+		return c.Groups.Create(ctx, str(a, "tenant"), bodyOf[api.CreateGroupJSONRequestBody](a))
+	},
+	"deleteDevice": func(ctx context.Context, c *Client, a map[string]any) (any, error) {
+		return nil, c.Devices.Delete(ctx, str(a, "tenant"), uid(a, "id"))
+	},
 	"getMe": func(ctx context.Context, c *Client, _ map[string]any) (any, error) { return c.Me.Get(ctx) },
 	"getCatalog": func(ctx context.Context, c *Client, args map[string]any) (any, error) {
 		p := &api.GetCatalogParams{}
@@ -161,8 +193,28 @@ func toFloat(v any) float64 {
 	return -1
 }
 
+// jsonEqual compares decoded values, with a null field and an absent one
+// equal: the generated models write nil pointers as null.
 func jsonEqual(a, b any) bool {
-	x, _ := json.Marshal(a)
-	y, _ := json.Marshal(b)
+	x, _ := json.Marshal(dropNulls(a))
+	y, _ := json.Marshal(dropNulls(b))
 	return bytes.Equal(x, y)
+}
+
+func dropNulls(v any) any {
+	switch t := v.(type) {
+	case map[string]any:
+		out := map[string]any{}
+		for k, e := range t {
+			if e != nil {
+				out[k] = dropNulls(e)
+			}
+		}
+		return out
+	case []any:
+		for i := range t {
+			t[i] = dropNulls(t[i])
+		}
+	}
+	return v
 }

@@ -128,6 +128,14 @@ func (d doer) Do(req *http.Request) (*http.Response, error) {
 			retry = retryable(r.Method, op, resp.StatusCode, code)
 			wait = retryAfter(resp, c.retry.maxRetryAfter)
 		}
+		// A retried DELETE that answers 404: an earlier attempt deleted it.
+		if err == nil && attempt > 1 && r.Method == http.MethodDelete && resp.StatusCode == http.StatusNotFound {
+			_ = resp.Body.Close()
+			resp.StatusCode, resp.Status = http.StatusNoContent, "204 No Content"
+			resp.Body, resp.ContentLength = http.NoBody, 0
+			resp.Header = http.Header{}
+			return resp, nil
+		}
 		if !retry || attempt >= c.retry.attempts {
 			return resp, err
 		}

@@ -1,0 +1,9 @@
+name: a 409 other than idempotency_in_flight is final
+call: {operation: createGroup, args: {tenant: t1, body: {name: Minors, priority: 1}}}
+responses:
+  - status: 409
+    headers: {Content-Type: application/problem+json}
+    body: {type: about:blank, title: Conflict, status: 409, code: conflict, detail: The priority is taken.}
+expect:
+  attempts: 1
+  error: {kind: Conflict, code: conflict, status: 409}

@@ -1,0 +1,93 @@
+---
+title: Receiving webhooks
+description: Register an endpoint, verify each delivery with the Standard Webhooks library, and follow the receiver rules.
+---
+
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+
+[Webhooks](/mdmsdk/concepts/webhooks/) explains what is sent. This page is what a receiver must do.
+
+## Register an endpoint
+
+An account client with the `account:webhooks` scope adds the endpoint. The response carries the secret, shown only here.
+
+```sh
+curl https://enroll.dev/api/v1/account/webhooks \
+  -H "Authorization: Bearer $ACCOUNT_CLIENT_TOKEN" \
+  -H "Content-Type: application/json" \
+  -H "Idempotency-Key: hooks-prod-1" \
+  -d '{ "url": "https://app.example.com/mdm/webhooks", "events": ["device.enrolled", "command.completed"] }'
+```
+
+```json
+{ "id": "0193...", "url": "https://app.example.com/mdm/webhooks", "events": ["device.enrolled", "command.completed"], "enabled": true, "secret": "whsec_..." }
+```
+
+## Verify a delivery
+
+Verify with the official Standard Webhooks library, over the raw request bytes, with the endpoint's secret. The library checks the signature and the timestamp.
+
+<Tabs syncKey="lang">
+  <TabItem label="Go">
+    ```go
+    import standardwebhooks "github.com/standard-webhooks/standard-webhooks/libraries/go"
+
+    wh, err := standardwebhooks.NewWebhook(os.Getenv("MDM_WEBHOOK_SECRET"))
+    if err != nil {
+    	log.Fatal(err)
+    }
+
+    http.HandleFunc("POST /mdm/webhooks", func(w http.ResponseWriter, r *http.Request) {
+    	body, err := io.ReadAll(http.MaxBytesReader(w, r.Body, 1<<20))
+    	if err != nil {
+    		http.Error(w, "unreadable body", http.StatusBadRequest)
+    		return
+    	}
+    	if err := wh.Verify(body, r.Header); err != nil {
+    		http.Error(w, "bad signature", http.StatusUnauthorized)
+    		return
+    	}
+    	// Store by webhook-id, answer, and process afterwards.
+    	enqueue(r.Header.Get("webhook-id"), body)
+    	w.WriteHeader(http.StatusNoContent)
+    })
+    ```
+  </TabItem>
+  <TabItem label="Python">
+    ```python
+    import os
+
+    from standardwebhooks.webhooks import Webhook, WebhookVerificationError
+
+    wh = Webhook(os.environ["MDM_WEBHOOK_SECRET"])
+
+
+    def receive(body: bytes, headers: dict[str, str]) -> int:
+        """Returns the status to answer with. Pass the raw body, not parsed JSON."""
+        try:
+            wh.verify(body, headers)
+        except WebhookVerificationError:
+            return 401
+        # Store by webhook-id, answer, and process afterwards.
+        enqueue(headers["webhook-id"], body)
+        return 204
+    ```
+  </TabItem>
+</Tabs>
+
+## Receiver rules
+
+1. **Answer 2xx within 10 seconds, and process after.** A slower answer counts as a failure and is retried.
+2. **Dedupe on `webhook-id`.** A delivery can arrive more than once. The id is the same each time.
+3. **Answer 410 only to stop.** A 410 disables the endpoint.
+4. **Deliveries are ordered per endpoint.** A failing delivery blocks the ones behind it until it succeeds or runs out of attempts.
+5. **Re-enable with `enabled: true`.** Updating a disabled endpoint with `"enabled": true` resumes its pending deliveries.
+6. **At most 20 endpoints** per account.
+
+## Rotate the secret
+
+Rotating issues a new secret. For 24 hours every delivery carries two signatures, one per secret, and either one verifies. Deploy the new secret within that window.
+
+## Inspect deliveries
+
+An endpoint lists its 50 latest deliveries, newest first, each with its status (`pending`, `delivered`, `failed`), the number of attempts, and the last answer.

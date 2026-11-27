@@ -1,0 +1,114 @@
+---
+title: Errors
+description: Every failed call returns one error type. Branch on its code and quote its instance.
+---
+
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+
+The API answers a failure with an RFC 9457 problem. The SDKs turn every failed call into one error type.
+
+## Fields
+
+| Field | Meaning |
+|---|---|
+| `status` | The HTTP status. |
+| `code` | Names the problem. Branch on this. |
+| `title`, `detail` | Text for a person. Do not match on it. |
+| `instance` | `urn:request:<id>`, the request's id. |
+| `errors` | The invalid fields of a 422, each with `field` and `detail`. `Fields` in Go, `fields` in Python. |
+| body | The raw response body. `Body` in Go, `body` in Python. |
+
+## Branch on code
+
+<Tabs syncKey="lang">
+  <TabItem label="Go">
+    ```go
+    _, err := client.Devices.Get(ctx, "ext:crm-42", deviceID)
+    var apiErr *mdmsdk.Error
+    if errors.As(err, &apiErr) {
+    	switch apiErr.Code {
+    	case "not_found":
+    		return nil
+    	case "licence_exceeded", "licence_expired":
+    		return fmt.Errorf("licence: %s (%s)", apiErr.Detail, apiErr.Instance)
+    	case "validation_failed":
+    		for _, f := range apiErr.Fields {
+    			fmt.Println(f.Field, f.Detail)
+    		}
+    	}
+    }
+    ```
+
+    When the kind is enough, use a sentinel: `errors.Is(err, mdmsdk.ErrNotFound)`.
+  </TabItem>
+  <TabItem label="Python">
+    ```python
+    try:
+        client.devices.get("ext:crm-42", device_id)
+    except mdmsdk.Error as err:
+        if err.code == "not_found":
+            return None
+        if err.code in ("licence_exceeded", "licence_expired"):
+            raise RuntimeError(f"licence: {err.detail} ({err.instance})") from err
+        if err.code == "validation_failed":
+            for f in err.fields:
+                print(f.field, f.detail)
+        raise
+    ```
+
+    When the kind is enough, catch its class: `except mdmsdk.errors.NotFound`.
+  </TabItem>
+</Tabs>
+
+## Quote instance
+
+Every error message ends with the `instance`. Log it, and include it when you report a problem: it identifies the request.
+
+```
+mdm: 404 not_found: No such device. (urn:request:6f1c2a9e)
+```
+
+## Kinds
+
+The kind follows the status.
+
+| Kind | Status | Go | Python |
+|---|---|---|---|
+| BadRequest | 400 | `ErrBadRequest` | `errors.BadRequest` |
+| Unauthorized | 401 | `ErrUnauthorized` | `errors.Unauthorized` |
+| Forbidden | 403 | `ErrForbidden` | `errors.Forbidden` |
+| NotFound | 404 | `ErrNotFound` | `errors.NotFound` |
+| Conflict | 409 | `ErrConflict` | `errors.Conflict` |
+| Validation | 422 | `ErrValidation` | `errors.Validation` |
+| RateLimited | 429 | `ErrRateLimited` | `errors.RateLimited` |
+| Unavailable | 503 | `ErrUnavailable` | `errors.Unavailable` |
+| Server | other 5xx | `ErrServer` | `errors.Server` |
+| Unexpected | anything else | `ErrUnexpected` | `errors.Unexpected` |
+
+A response that is not a problem, such as a proxy's page during a deploy, gives the kind for its status with an empty `code`.
+
+## Codes
+
+| Status | Code | Meaning | Retried |
+|---|---|---|---|
+| 400 | `bad_request` | The body could not be decoded. | no |
+| 400 | `invalid_parameter` | A path or query parameter is malformed. | no |
+| 400 | `invalid_cursor` | A page cursor is not for this request. | no |
+| 401 | `unauthorized` | The token is missing, wrong, or expired. | no |
+| 403 | `insufficient_scope` | An account client lacks the scope. | no |
+| 403 | `insufficient_permission` | A delegated token lacks the permission. | no |
+| 403 | `not_delegable` | The operation is not open to delegated tokens. | no |
+| 403 | `needs_all` | The operation needs a token that reaches the whole tenant. | no |
+| 404 | `not_found` | Absent, removed, or outside the caller's reach. | no |
+| 409 | `conflict` | A unique value is taken, or the device's state does not allow it. | no |
+| 409 | `idempotency_in_flight` | The same `Idempotency-Key` is still running. | yes |
+| 409 | `tenant_deleting` | The tenant is being deleted. | no |
+| 409 | `licence_exceeded` | A device, tenant, or people limit is reached. | no |
+| 409 | `licence_expired` | The tenant's licence has ended. | no |
+| 422 | `validation_failed` | The body fails validation. `errors` names the fields. | no |
+| 422 | `idempotency_key_reused` | The key was used with another request. | no |
+| 429 | `rate_limited` | Over the rate limit. Wait `Retry-After`. | yes |
+| 503 | `auth0_unavailable` | The identity provider could not be reached. | yes |
+| 503 | `admin_app_unavailable` | Not configured on the server. | no |
+
+A tenant, member, group, or device outside the caller's reach answers 404, never 403.

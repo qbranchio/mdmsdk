@@ -4,6 +4,8 @@ from __future__ import annotations
 
 import asyncio
 import json
+from datetime import datetime
+import uuid
 from pathlib import Path
 from typing import Any
 
@@ -17,7 +19,41 @@ from mdmsdk.models import GetCatalogLevel
 SCENARIOS = sorted((Path(__file__).resolve().parents[2] / "scenarios").glob("*.yaml"))
 
 
+def _norm(v: Any) -> Any:
+    """Compare decoded values: datetimes by instant, a null field equal to an absent one."""
+    if isinstance(v, dict):
+        return {k: _norm(x) for k, x in v.items() if x is not None}
+    if isinstance(v, list):
+        return [_norm(x) for x in v]
+    if isinstance(v, str) and len(v) >= 20 and v[4] == "-" and v[10] == "T":
+        try:
+            return datetime.fromisoformat(v)
+        except ValueError:
+            return v
+    return v
+
+
+def _run(coro_or_value: Any, use_async: bool) -> Any:
+    return asyncio.run(coro_or_value) if use_async else coro_or_value
+
+
 def _calls(client: mdmsdk.Client, op: str, args: dict[str, Any], use_async: bool) -> Any:
+    m = mdmsdk.models
+    if op == "createTenant":
+        body = m.TenantRequest.from_dict(args["body"])
+        return _run(client.tenants.create_async(body) if use_async else client.tenants.create(body), use_async)
+    if op == "updateTenant":
+        body = m.TenantUpdate.from_dict(args["body"])
+        return _run(client.tenants.update_async(args["tenant"], body) if use_async else client.tenants.update(args["tenant"], body), use_async)
+    if op == "createMember":
+        body = m.MemberRequest.from_dict(args["body"])
+        return _run(client.members.create_async(args["tenant"], body) if use_async else client.members.create(args["tenant"], body), use_async)
+    if op == "createGroup":
+        body = m.GroupRequest.from_dict(args["body"])
+        return _run(client.groups.create_async(args["tenant"], body) if use_async else client.groups.create(args["tenant"], body), use_async)
+    if op == "deleteDevice":
+        did = uuid.UUID(args["id"])
+        return _run(client.devices.delete_async(args["tenant"], did) if use_async else client.devices.delete(args["tenant"], did), use_async)
     if op == "getMe":
         return asyncio.run(client.me.get_async()) if use_async else client.me.get()
     if op == "getCatalog":
@@ -58,7 +94,7 @@ def test_scenario(path: Path, use_async: bool) -> None:
             assert e.instance == want["instance"]
     else:
         got = _calls(client, call["operation"], call.get("args") or {}, use_async)
-        assert got.to_dict() == expect["result"]
+        assert _norm(None if got is None else got.to_dict()) == _norm(expect["result"])
     assert len(requests) == expect["attempts"]
     if expect.get("waited_at_least_seconds"):
         assert sum(waited) >= expect["waited_at_least_seconds"]

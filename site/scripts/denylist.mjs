@@ -8,18 +8,19 @@ import { fileURLToPath } from 'node:url';
 
 const dist = resolve(dirname(fileURLToPath(import.meta.url)), '../dist');
 
-// Matched without regard to case, except where `exact` is set: "device
-// management API" is ordinary prose, the capitalized product name is not.
+// Matching is exact and case-sensitive: "device management API" is ordinary
+// prose, and bundled libraries carry strings such as "Internal/" that are
+// not ours.
 const denied = [
-  { term: 'docs/specs' },
-  { term: 'jarrodb' },
-  { term: 'nanomdm' },
-  { term: 'x-go-' },
-  { term: '.mdm.test' },
-  { term: 'Management API', exact: true },
-  { term: 'internal/' },
-  { term: '10.77.' },
-  { term: '127.0.0.41' },
+  'docs/specs',
+  'jarrodb',
+  'nanomdm',
+  'x-go-',
+  '.mdm.test',
+  'Management API',
+  'internal/',
+  '10.77.',
+  '127.0.0.41',
 ];
 
 /** @param {string} dir @returns {Promise<string[]>} */
@@ -59,11 +60,8 @@ for (const file of files) {
   // latin1 maps each byte to one character, so offsets are byte offsets and
   // binary files are searched too.
   const text = (await readFile(file)).toString('latin1');
-  const lower = text.toLowerCase();
-  for (const { term, exact } of denied) {
-    const haystack = exact ? text : lower;
-    const needle = exact ? term : term.toLowerCase();
-    for (let at = haystack.indexOf(needle); at !== -1; at = haystack.indexOf(needle, at + 1)) {
+  for (const term of denied) {
+    for (let at = text.indexOf(term); at !== -1; at = text.indexOf(term, at + 1)) {
       hits.push({ file: relative(dist, file), term, at, context: excerpt(text, at, term.length) });
     }
   }

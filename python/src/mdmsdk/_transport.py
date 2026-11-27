@@ -63,6 +63,13 @@ def problem_code(resp: httpx2.Response) -> str:
     return str(cast(dict[str, Any], body).get("code", "")) if isinstance(body, dict) else ""
 
 
+def deleted_on_retry(method: str, attempt: int, resp: httpx2.Response) -> httpx2.Response:
+    """A retried DELETE that answers 404: an earlier attempt deleted it."""
+    if method == "DELETE" and attempt > 1 and resp.status_code == 404:
+        return httpx2.Response(204)
+    return resp
+
+
 def retry_after(resp: httpx2.Response | None, limit: float) -> float | None:
     if resp is None:
         return None
@@ -88,9 +95,10 @@ class RetryTransport(httpx2.BaseTransport):
             key = secrets.token_hex(16)
         body = request.read()
         p = self.policy
-        step = {"n": 0}
+        step = {"n": 0, "attempt": 0}
 
         def send() -> tuple[httpx2.Response | None, Exception | None]:
+            step["attempt"] += 1
             r = httpx2.Request(request.method, request.url, headers=request.headers, content=body)
             r.headers["Authorization"] = f"Bearer {self.token()}"
             r.headers["User-Agent"] = self.user_agent
@@ -101,7 +109,7 @@ class RetryTransport(httpx2.BaseTransport):
             try:
                 resp = self._inner.handle_request(r)
                 resp.read()
-                return resp, None
+                return deleted_on_retry(request.method, step["attempt"], resp), None
             except httpx2.TransportError as exc:
                 return None, exc
 
@@ -167,9 +175,10 @@ class AsyncRetryTransport(httpx2.AsyncBaseTransport):
             key = secrets.token_hex(16)
         body = await request.aread()
         p = self._sync.policy
-        step = {"n": 0}
+        step = {"n": 0, "attempt": 0}
 
         async def send() -> tuple[httpx2.Response | None, Exception | None]:
+            step["attempt"] += 1
             r = httpx2.Request(request.method, request.url, headers=request.headers, content=body)
             r.headers["Authorization"] = f"Bearer {self._sync.token()}"
             r.headers["User-Agent"] = self._sync.user_agent
@@ -180,7 +189,7 @@ class AsyncRetryTransport(httpx2.AsyncBaseTransport):
             try:
                 resp = await self._inner.handle_async_request(r)
                 await resp.aread()
-                return resp, None
+                return deleted_on_retry(request.method, step["attempt"], resp), None
             except httpx2.TransportError as exc:
                 return None, exc
 
