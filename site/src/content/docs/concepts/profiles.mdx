@@ -41,7 +41,9 @@ An assignment gives one profile to one target for the listed levels.
 <Tabs syncKey="lang">
   <TabItem label="Go">
     ```go
-    profile, err := client.Profiles.Create(ctx, "ext:crm-42", api.ProfileRequest{
+    tenant := "ext:crm-42"
+
+    profile, err := client.Profiles.Create(ctx, tenant, api.ProfileRequest{
     	Name:  "Minors",
     	Items: []api.PolicyItem{{Id: "restriction:allowCamera", Value: false}},
     })
@@ -49,7 +51,7 @@ An assignment gives one profile to one target for the listed levels.
     	return err
     }
 
-    _, err = client.Assignments.Create(ctx, "ext:crm-42", profile.Id, api.AssignmentRequest{
+    _, err = client.Assignments.Create(ctx, tenant, profile.Id, api.AssignmentRequest{
     	Target:   api.AssignmentRequestTargetMember,
     	TargetId: new("ext:user-7"),
     	Levels:   []api.AssignmentRequestLevels{api.AssignmentRequestLevelsSupervised},
@@ -68,7 +70,10 @@ An assignment gives one profile to one target for the listed levels.
 
     profile = client.profiles.create(
         "ext:crm-42",
-        ProfileRequest(name="Minors", items=[PolicyItem(id="restriction:allowCamera", value=False)]),
+        ProfileRequest(
+            name="Minors",
+            items=[PolicyItem(id="restriction:allowCamera", value=False)],
+        ),
     )
 
     client.assignments.create(

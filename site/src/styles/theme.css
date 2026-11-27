@@ -74,6 +74,32 @@ h4 {
   letter-spacing: -0.011em;
 }
 
+/* The site name is ink; the accent is for links and the current page. */
+.site-title {
+  color: var(--sl-color-white);
+  font-size: var(--sl-text-lg);
+  font-weight: 600;
+}
+
+/* A restrained home page: the hero is a title, a paragraph, and two links. */
+.hero {
+  padding-block: 2.5rem 1rem;
+}
+.hero h1 {
+  font-size: 2.5rem;
+  letter-spacing: -0.02em;
+}
+.hero .tagline {
+  font-size: var(--sl-text-lg);
+  color: var(--sl-color-gray-2);
+  max-width: 38rem;
+}
+.sl-link-button {
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  font-size: var(--sl-text-base);
+}
+
 /* The current page: a wash and a weight, not a filled accent block. */
 .sidebar-content a[aria-current='page'],
 .sidebar-content a[aria-current='page']:hover,
@@ -82,20 +108,18 @@ h4 {
   color: var(--sl-color-white);
 }
 
-/* Tables carry the retry rules, error kinds, and scopes: dates, counts, and
-   status codes line up, and the header sits on the sunk surface. */
+/* Tables carry the retry rules, error kinds, and scopes: figures line up,
+   and the header is a label over a rule, not a filled band. */
 .sl-markdown-content table {
   font-variant-numeric: tabular-nums;
   font-size: var(--sl-text-sm);
 }
-.sl-markdown-content th {
-  background-color: var(--sl-color-gray-6);
+.sl-markdown-content th:not(:where(.not-content *)) {
   font-weight: 600;
+  color: var(--sl-color-white);
+  border-bottom: 1px solid var(--sl-color-gray-4);
 }
-:root[data-theme='light'] .sl-markdown-content th {
-  background-color: var(--sl-color-gray-6);
-}
-.sl-markdown-content :is(th, td):not(:where(.not-content *)) {
+.sl-markdown-content td:not(:where(.not-content *)) {
   border-bottom-color: var(--sl-color-hairline-light);
 }
 
@@ -104,17 +128,28 @@ h4 {
  * site tokens, so a theme switch needs no second render. The diagram's own
  * styles are scoped by id, which is why each rule is !important.
  */
-pre.mermaid {
+html[data-theme] pre.mermaid,
+html[data-theme] pre.mermaid[data-processed],
+html[data-theme] pre.mermaid:not([data-processed]) {
   background: transparent;
+  animation: none;
   border: 0;
+  border-radius: 0;
   padding: 0;
   margin-block: 1.5rem;
-  text-align: center;
   overflow-x: auto;
+}
+/* Hold the source text back until the diagram replaces it. Starlight's theme
+   script sets data-theme, so without JavaScript the source stays readable. */
+html[data-theme] pre.mermaid:not([data-processed]) {
+  color: transparent;
 }
 pre.mermaid svg {
   max-width: 100%;
   height: auto;
+}
+pre.mermaid svg * {
+  filter: none !important;
 }
 pre.mermaid :is(.node, .actor) :is(rect, polygon, circle, ellipse, path),
 pre.mermaid :is(rect.actor, rect.note) {

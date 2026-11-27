@@ -26,7 +26,9 @@ stateDiagram-v2
 <Tabs syncKey="lang">
   <TabItem label="Go">
     ```go
-    created, err := client.Devices.Create(ctx, "ext:crm-42", api.CreateDeviceRequest{
+    tenant := "ext:crm-42"
+
+    created, err := client.Devices.Create(ctx, tenant, api.CreateDeviceRequest{
     	Name:   "Ella's iPhone",
     	Member: new("ext:user-7"),
     })
@@ -34,7 +36,7 @@ stateDiagram-v2
     	return err
     }
 
-    link, err := client.Devices.CreateEnrollmentLink(ctx, "ext:crm-42", created.Device.Id)
+    link, err := client.Devices.CreateEnrollmentLink(ctx, tenant, created.Device.Id)
     if err != nil {
     	return err
     }
@@ -45,9 +47,14 @@ stateDiagram-v2
     ```python
     from mdmsdk.models import CreateDeviceRequest
 
-    created = client.devices.create("ext:crm-42", CreateDeviceRequest(name="Ella's iPhone", member="ext:user-7"))
+    tenant = "ext:crm-42"
 
-    link = client.devices.create_enrollment_link("ext:crm-42", created.device.id)
+    created = client.devices.create(
+        tenant,
+        CreateDeviceRequest(name="Ella's iPhone", member="ext:user-7"),
+    )
+
+    link = client.devices.create_enrollment_link(tenant, created.device.id)
     print(link.url, link.expires_at)
     ```
   </TabItem>

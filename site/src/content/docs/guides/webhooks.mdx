@@ -16,11 +16,20 @@ curl https://enroll.dev/api/v1/account/webhooks \
   -H "Authorization: Bearer $ACCOUNT_CLIENT_TOKEN" \
   -H "Content-Type: application/json" \
   -H "Idempotency-Key: hooks-prod-1" \
-  -d '{ "url": "https://app.example.com/mdm/webhooks", "events": ["device.enrolled", "command.completed"] }'
+  -d '{
+    "url": "https://app.example.com/mdm/webhooks",
+    "events": ["device.enrolled", "command.completed"]
+  }'
 ```
 
 ```json
-{ "id": "0193...", "url": "https://app.example.com/mdm/webhooks", "events": ["device.enrolled", "command.completed"], "enabled": true, "secret": "whsec_..." }
+{
+  "id": "0193...",
+  "url": "https://app.example.com/mdm/webhooks",
+  "events": ["device.enrolled", "command.completed"],
+  "enabled": true,
+  "secret": "whsec_..."
+}
 ```
 
 ## Verify a delivery

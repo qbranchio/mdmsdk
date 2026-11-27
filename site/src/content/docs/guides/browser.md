@@ -62,7 +62,9 @@ export async function call<T>(path: string, init: RequestInit = {}): Promise<T> 
   });
   if (!res.ok) {
     const problem: Problem = await res.json();
-    throw new Error(`${problem.code ?? res.status}: ${problem.detail ?? problem.title} (${problem.instance ?? ''})`);
+    // Branch on problem.code; quote problem.instance when reporting.
+    const what = problem.detail ?? problem.title;
+    throw new Error(`${problem.code ?? res.status}: ${what} (${problem.instance})`);
   }
   return res.json();
 }

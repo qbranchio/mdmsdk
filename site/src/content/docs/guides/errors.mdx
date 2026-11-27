@@ -43,17 +43,18 @@ The API answers a failure with an RFC 9457 problem. The SDKs turn every failed c
   </TabItem>
   <TabItem label="Python">
     ```python
-    try:
-        client.devices.get("ext:crm-42", device_id)
-    except mdmsdk.Error as err:
-        if err.code == "not_found":
-            return None
-        if err.code in ("licence_exceeded", "licence_expired"):
-            raise RuntimeError(f"licence: {err.detail} ({err.instance})") from err
-        if err.code == "validation_failed":
-            for f in err.fields:
-                print(f.field, f.detail)
-        raise
+    def find_device(device_id):
+        try:
+            return client.devices.get("ext:crm-42", device_id)
+        except mdmsdk.Error as err:
+            if err.code == "not_found":
+                return None
+            if err.code in ("licence_exceeded", "licence_expired"):
+                raise RuntimeError(f"licence: {err.detail} ({err.instance})") from err
+            if err.code == "validation_failed":
+                for f in err.fields:
+                    print(f.field, f.detail)
+            raise
     ```
 
     When the kind is enough, catch its class: `except mdmsdk.errors.NotFound`.

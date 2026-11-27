@@ -1,0 +1,50 @@
+name: pages
+
+# Builds the docs site and deploys it to GitHub Pages on every push to main.
+# The repository's Pages source must be set to "GitHub Actions" before the
+# first run; this workflow does not enable Pages itself.
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+# One deployment at a time; a run in progress finishes before the next starts.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: site
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: site/package-lock.json
+      - run: npm ci
+      # Includes the denylist: a build that carries a denied string never deploys.
+      - run: npm run build
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: site/dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-24.04
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v5

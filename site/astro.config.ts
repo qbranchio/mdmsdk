@@ -38,6 +38,8 @@ export default defineConfig({
         themes: ['github-dark-default', 'github-light-default'],
         useStarlightUiThemeColors: true,
         styleOverrides: { borderRadius: '6px', frames: { shadowColor: 'transparent' } },
+        // Shell blocks are one command to copy: no window chrome around them.
+        defaultProps: { overridesByLang: { 'sh,bash,shell': { frame: 'none' } } },
       },
       sidebar: [
         { label: 'Quickstart', slug: 'quickstart' },
@@ -81,6 +83,8 @@ export default defineConfig({
         starlightLlmsTxt({
           projectName: 'mdmsdk',
           description,
+          // The home page terminal is for people; agents get the pages.
+          customSelectors: { all: ['#terminal'] },
           details: [
             'The API is REST under `https://enroll.dev/api/v1`. Callers are account clients (OAuth client credentials) and delegated tokens the API issues for one tenant.',
             'Errors are RFC 9457 problems: branch on `code`, never on `status` or `title`, and quote `instance` when reporting one.',

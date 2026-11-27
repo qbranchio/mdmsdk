@@ -123,7 +123,7 @@ Every failed call returns one error type. Branch on its `code`, and include `ins
     var apiErr *mdmsdk.Error
     switch {
     case errors.As(err, &apiErr) && apiErr.Code == "insufficient_scope":
-    	log.Fatalf("the client lacks a scope: %s (%s)", apiErr.Detail, apiErr.Instance)
+    	log.Fatalf("missing scope: %s (%s)", apiErr.Detail, apiErr.Instance)
     case err != nil:
     	log.Fatal(err)
     }
@@ -135,7 +135,7 @@ Every failed call returns one error type. Branch on its `code`, and include `ins
         me = client.me.get()
     except mdmsdk.errors.Forbidden as err:
         if err.code == "insufficient_scope":
-            raise SystemExit(f"the client lacks a scope: {err.detail} ({err.instance})") from err
+            raise SystemExit(f"missing scope: {err.detail} ({err.instance})") from err
         raise
     ```
   </TabItem>

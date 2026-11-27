@@ -50,7 +50,9 @@ The generated key covers retries inside one call. To make a write safe across pr
   <TabItem label="Go">
     ```go
     ctx = mdmsdk.WithIdempotencyKey(ctx, "order-42-device")
-    created, err := client.Devices.Create(ctx, "ext:crm-42", api.CreateDeviceRequest{Name: "Ella's iPhone"})
+    created, err := client.Devices.Create(ctx, "ext:crm-42", api.CreateDeviceRequest{
+    	Name: "Ella's iPhone",
+    })
     ```
   </TabItem>
   <TabItem label="Python">
