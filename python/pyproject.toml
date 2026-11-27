@@ -1,6 +1,6 @@
 [project]
 name = "mdmsdk"
-version = "0.0.0"
+version = "0.1.0"
 description = "Python client for the mdm API: tenants, devices, profiles, and commands for Apple devices."
 readme = "README.md"
 license = "MIT"

@@ -1,6 +1,6 @@
 """Python client for the mdm API. See the repository's AGENTS.md and skills/mdmsdk."""
 
-__version__ = "0.0.0"
+__version__ = "0.1.0"
 
 from . import errors, models
 from ._transport import RetryPolicy
