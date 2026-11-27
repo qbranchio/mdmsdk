@@ -1,6 +1,8 @@
 """ Contains all the data models used in inputs/outputs """
 
+from .account import Account
 from .account_ref import AccountRef
+from .ade_public_key import ADEPublicKey
 from .assignment import Assignment
 from .assignment_levels_item import AssignmentLevelsItem
 from .assignment_request import AssignmentRequest
@@ -21,6 +23,10 @@ from .catalog_range import CatalogRange
 from .catalog_response import CatalogResponse
 from .command import Command
 from .command_accepted import CommandAccepted
+from .command_completed_data import CommandCompletedData
+from .command_completed_data_status import CommandCompletedDataStatus
+from .command_completed_event import CommandCompletedEvent
+from .command_completed_event_type import CommandCompletedEventType
 from .command_error_type_0_item import CommandErrorType0Item
 from .command_request import CommandRequest
 from .command_request_type import CommandRequestType
@@ -32,7 +38,13 @@ from .declaration_state import DeclarationState
 from .device import Device
 from .device_ddm import DeviceDDM
 from .device_ddm_stage import DeviceDDMStage
+from .device_enrolled_data import DeviceEnrolledData
+from .device_enrolled_event import DeviceEnrolledEvent
+from .device_enrolled_event_type import DeviceEnrolledEventType
 from .device_member_request import DeviceMemberRequest
+from .device_os_behind_data import DeviceOSBehindData
+from .device_os_behind_event import DeviceOSBehindEvent
+from .device_os_behind_event_type import DeviceOSBehindEventType
 from .device_policy import DevicePolicy
 from .device_policy_applied_level_type_1 import DevicePolicyAppliedLevelType1
 from .device_policy_applied_level_type_2_type_1 import DevicePolicyAppliedLevelType2Type1
@@ -42,7 +54,14 @@ from .device_policy_install_level_type_1 import DevicePolicyInstallLevelType1
 from .device_policy_install_level_type_2_type_1 import DevicePolicyInstallLevelType2Type1
 from .device_policy_install_level_type_3_type_1 import DevicePolicyInstallLevelType3Type1
 from .device_policy_status import DevicePolicyStatus
+from .device_policy_status_data import DevicePolicyStatusData
+from .device_policy_status_data_status import DevicePolicyStatusDataStatus
+from .device_policy_status_event import DevicePolicyStatusEvent
+from .device_policy_status_event_type import DevicePolicyStatusEventType
 from .device_status import DeviceStatus
+from .device_unenrolled_data import DeviceUnenrolledData
+from .device_unenrolled_event import DeviceUnenrolledEvent
+from .device_unenrolled_event_type import DeviceUnenrolledEventType
 from .effective_item import EffectiveItem
 from .effective_policy import EffectivePolicy
 from .effective_policy_status import EffectivePolicyStatus
@@ -53,6 +72,12 @@ from .get_catalog_level import GetCatalogLevel
 from .group import Group
 from .group_request import GroupRequest
 from .group_update import GroupUpdate
+from .holder import Holder
+from .holder_ade import HolderADE
+from .holder_push import HolderPush
+from .holder_request import HolderRequest
+from .holder_update import HolderUpdate
+from .holder_vpp import HolderVPP
 from .item_status import ItemStatus
 from .item_status_reason_type_1 import ItemStatusReasonType1
 from .item_status_reason_type_2_type_1 import ItemStatusReasonType2Type1
@@ -71,15 +96,40 @@ from .policy_item_payload import PolicyItemPayload
 from .problem import Problem
 from .profile import Profile
 from .profile_request import ProfileRequest
+from .push_certificate_expiring_data import PushCertificateExpiringData
+from .push_certificate_expiring_event import PushCertificateExpiringEvent
+from .push_certificate_expiring_event_type import PushCertificateExpiringEventType
+from .push_certificate_request import PushCertificateRequest
+from .push_certificate_upload import PushCertificateUpload
 from .source import Source
 from .source_layer import SourceLayer
 from .tenant import Tenant
+from .tenant_deleted_data import TenantDeletedData
+from .tenant_deleted_event import TenantDeletedEvent
+from .tenant_deleted_event_type import TenantDeletedEventType
+from .tenant_deleting_data import TenantDeletingData
+from .tenant_deleting_event import TenantDeletingEvent
+from .tenant_deleting_event_type import TenantDeletingEventType
 from .tenant_request import TenantRequest
 from .tenant_role import TenantRole
 from .tenant_update import TenantUpdate
+from .token_request import TokenRequest
+from .token_request_permissions_item import TokenRequestPermissionsItem
+from .token_response import TokenResponse
+from .token_response_token_type import TokenResponseTokenType
+from .token_upload import TokenUpload
+from .webhook_delivery import WebhookDelivery
+from .webhook_delivery_status import WebhookDeliveryStatus
+from .webhook_endpoint import WebhookEndpoint
+from .webhook_request import WebhookRequest
+from .webhook_request_events_item import WebhookRequestEventsItem
+from .webhook_update import WebhookUpdate
+from .webhook_update_events_item import WebhookUpdateEventsItem
 
 __all__ = (
+    "Account",
     "AccountRef",
+    "ADEPublicKey",
     "Assignment",
     "AssignmentLevelsItem",
     "AssignmentRequest",
@@ -100,6 +150,10 @@ __all__ = (
     "CatalogResponse",
     "Command",
     "CommandAccepted",
+    "CommandCompletedData",
+    "CommandCompletedDataStatus",
+    "CommandCompletedEvent",
+    "CommandCompletedEventType",
     "CommandErrorType0Item",
     "CommandRequest",
     "CommandRequestType",
@@ -111,7 +165,13 @@ __all__ = (
     "Device",
     "DeviceDDM",
     "DeviceDDMStage",
+    "DeviceEnrolledData",
+    "DeviceEnrolledEvent",
+    "DeviceEnrolledEventType",
     "DeviceMemberRequest",
+    "DeviceOSBehindData",
+    "DeviceOSBehindEvent",
+    "DeviceOSBehindEventType",
     "DevicePolicy",
     "DevicePolicyAppliedLevelType1",
     "DevicePolicyAppliedLevelType2Type1",
@@ -121,7 +181,14 @@ __all__ = (
     "DevicePolicyInstallLevelType2Type1",
     "DevicePolicyInstallLevelType3Type1",
     "DevicePolicyStatus",
+    "DevicePolicyStatusData",
+    "DevicePolicyStatusDataStatus",
+    "DevicePolicyStatusEvent",
+    "DevicePolicyStatusEventType",
     "DeviceStatus",
+    "DeviceUnenrolledData",
+    "DeviceUnenrolledEvent",
+    "DeviceUnenrolledEventType",
     "EffectiveItem",
     "EffectivePolicy",
     "EffectivePolicyStatus",
@@ -132,6 +199,12 @@ __all__ = (
     "Group",
     "GroupRequest",
     "GroupUpdate",
+    "Holder",
+    "HolderADE",
+    "HolderPush",
+    "HolderRequest",
+    "HolderUpdate",
+    "HolderVPP",
     "ItemStatus",
     "ItemStatusReasonType1",
     "ItemStatusReasonType2Type1",
@@ -150,10 +223,33 @@ __all__ = (
     "Problem",
     "Profile",
     "ProfileRequest",
+    "PushCertificateExpiringData",
+    "PushCertificateExpiringEvent",
+    "PushCertificateExpiringEventType",
+    "PushCertificateRequest",
+    "PushCertificateUpload",
     "Source",
     "SourceLayer",
     "Tenant",
+    "TenantDeletedData",
+    "TenantDeletedEvent",
+    "TenantDeletedEventType",
+    "TenantDeletingData",
+    "TenantDeletingEvent",
+    "TenantDeletingEventType",
     "TenantRequest",
     "TenantRole",
     "TenantUpdate",
+    "TokenRequest",
+    "TokenRequestPermissionsItem",
+    "TokenResponse",
+    "TokenResponseTokenType",
+    "TokenUpload",
+    "WebhookDelivery",
+    "WebhookDeliveryStatus",
+    "WebhookEndpoint",
+    "WebhookRequest",
+    "WebhookRequestEventsItem",
+    "WebhookUpdate",
+    "WebhookUpdateEventsItem",
 )

@@ -13,6 +13,21 @@ from ._gen.types import UNSET, Unset
 from ._transport import OpInfo
 
 
+class AccountService:
+    """The account resource."""
+
+    def __init__(self, client: Any) -> None:
+        self._c = client
+
+    def get(self) -> Account:
+        """The caller's account (getAccount)."""
+        return call(self._c, "._gen.api.account.get_account", OpInfo("getAccount", idempotent=False, retry_transport=False), {})
+
+    async def get_async(self) -> Account:
+        """The caller's account (getAccount), async."""
+        return await call_async(self._c, "._gen.api.account.get_account", OpInfo("getAccount", idempotent=False, retry_transport=False), {})
+
+
 class AssignmentsService:
     """The assignments resource."""
 
@@ -253,6 +268,94 @@ class GroupsService:
         return await call_async(self._c, "._gen.api.members.update_group", OpInfo("updateGroup", idempotent=False, retry_transport=False), {'tenant': tenant, 'group': group, 'body': body})
 
 
+class HoldersService:
+    """The holders resource."""
+
+    def __init__(self, client: Any) -> None:
+        self._c = client
+
+    def create(self, body: HolderRequest) -> Holder:
+        """Add a credential holder (createHolder)."""
+        return call(self._c, "._gen.api.credentials.create_holder", OpInfo("createHolder", idempotent=True, retry_transport=False), {'body': body})
+
+    async def create_async(self, body: HolderRequest) -> Holder:
+        """Add a credential holder (createHolder), async."""
+        return await call_async(self._c, "._gen.api.credentials.create_holder", OpInfo("createHolder", idempotent=True, retry_transport=False), {'body': body})
+
+    def delete(self, holder: uuid.UUID) -> None:
+        """Delete a credential holder (deleteHolder)."""
+        return call(self._c, "._gen.api.credentials.delete_holder", OpInfo("deleteHolder", idempotent=False, retry_transport=False), {'holder': holder})
+
+    async def delete_async(self, holder: uuid.UUID) -> None:
+        """Delete a credential holder (deleteHolder), async."""
+        return await call_async(self._c, "._gen.api.credentials.delete_holder", OpInfo("deleteHolder", idempotent=False, retry_transport=False), {'holder': holder})
+
+    def get_ade_public_key(self, holder: uuid.UUID) -> ADEPublicKey:
+        """The holder's public key for Apple Business Manager (getADEPublicKey)."""
+        return call(self._c, "._gen.api.credentials.get_ade_public_key", OpInfo("getADEPublicKey", idempotent=False, retry_transport=False), {'holder': holder})
+
+    async def get_ade_public_key_async(self, holder: uuid.UUID) -> ADEPublicKey:
+        """The holder's public key for Apple Business Manager (getADEPublicKey), async."""
+        return await call_async(self._c, "._gen.api.credentials.get_ade_public_key", OpInfo("getADEPublicKey", idempotent=False, retry_transport=False), {'holder': holder})
+
+    def get(self, holder: uuid.UUID) -> Holder:
+        """Get a credential holder (getHolder)."""
+        return call(self._c, "._gen.api.credentials.get_holder", OpInfo("getHolder", idempotent=False, retry_transport=False), {'holder': holder})
+
+    async def get_async(self, holder: uuid.UUID) -> Holder:
+        """Get a credential holder (getHolder), async."""
+        return await call_async(self._c, "._gen.api.credentials.get_holder", OpInfo("getHolder", idempotent=False, retry_transport=False), {'holder': holder})
+
+    def list(self) -> Iterator[Holder]:
+        """List the account's credential holders (listHolders)."""
+        yield from call(self._c, "._gen.api.credentials.list_holders", OpInfo("listHolders", idempotent=False, retry_transport=False), {})
+
+    async def list_async(self) -> AsyncIterator[Holder]:
+        """List the account's credential holders (listHolders), async."""
+        for item in await call_async(self._c, "._gen.api.credentials.list_holders", OpInfo("listHolders", idempotent=False, retry_transport=False), {}):
+            yield item
+
+    def request_push_certificate(self, holder: uuid.UUID) -> PushCertificateRequest:
+        """Request a push certificate (requestPushCertificate)."""
+        return call(self._c, "._gen.api.credentials.request_push_certificate", OpInfo("requestPushCertificate", idempotent=True, retry_transport=False), {'holder': holder})
+
+    async def request_push_certificate_async(self, holder: uuid.UUID) -> PushCertificateRequest:
+        """Request a push certificate (requestPushCertificate), async."""
+        return await call_async(self._c, "._gen.api.credentials.request_push_certificate", OpInfo("requestPushCertificate", idempotent=True, retry_transport=False), {'holder': holder})
+
+    def update(self, holder: uuid.UUID, body: HolderUpdate) -> Holder:
+        """Rename a credential holder (updateHolder)."""
+        return call(self._c, "._gen.api.credentials.update_holder", OpInfo("updateHolder", idempotent=False, retry_transport=False), {'holder': holder, 'body': body})
+
+    async def update_async(self, holder: uuid.UUID, body: HolderUpdate) -> Holder:
+        """Rename a credential holder (updateHolder), async."""
+        return await call_async(self._c, "._gen.api.credentials.update_holder", OpInfo("updateHolder", idempotent=False, retry_transport=False), {'holder': holder, 'body': body})
+
+    def upload_ade_token(self, holder: uuid.UUID, body: TokenUpload) -> Holder:
+        """Upload the holder's Automated Device Enrollment server token (uploadADEToken)."""
+        return call(self._c, "._gen.api.credentials.upload_ade_token", OpInfo("uploadADEToken", idempotent=False, retry_transport=False), {'holder': holder, 'body': body})
+
+    async def upload_ade_token_async(self, holder: uuid.UUID, body: TokenUpload) -> Holder:
+        """Upload the holder's Automated Device Enrollment server token (uploadADEToken), async."""
+        return await call_async(self._c, "._gen.api.credentials.upload_ade_token", OpInfo("uploadADEToken", idempotent=False, retry_transport=False), {'holder': holder, 'body': body})
+
+    def upload_push_certificate(self, holder: uuid.UUID, body: PushCertificateUpload) -> Holder:
+        """Upload the holder's push certificate (uploadPushCertificate)."""
+        return call(self._c, "._gen.api.credentials.upload_push_certificate", OpInfo("uploadPushCertificate", idempotent=False, retry_transport=False), {'holder': holder, 'body': body})
+
+    async def upload_push_certificate_async(self, holder: uuid.UUID, body: PushCertificateUpload) -> Holder:
+        """Upload the holder's push certificate (uploadPushCertificate), async."""
+        return await call_async(self._c, "._gen.api.credentials.upload_push_certificate", OpInfo("uploadPushCertificate", idempotent=False, retry_transport=False), {'holder': holder, 'body': body})
+
+    def upload_vpp_token(self, holder: uuid.UUID, body: TokenUpload) -> Holder:
+        """Upload the holder's Apps and Books content token (uploadVPPToken)."""
+        return call(self._c, "._gen.api.credentials.upload_vpp_token", OpInfo("uploadVPPToken", idempotent=False, retry_transport=False), {'holder': holder, 'body': body})
+
+    async def upload_vpp_token_async(self, holder: uuid.UUID, body: TokenUpload) -> Holder:
+        """Upload the holder's Apps and Books content token (uploadVPPToken), async."""
+        return await call_async(self._c, "._gen.api.credentials.upload_vpp_token", OpInfo("uploadVPPToken", idempotent=False, retry_transport=False), {'holder': holder, 'body': body})
+
+
 class MeService:
     """The me resource."""
 
@@ -443,15 +546,99 @@ class TenantsService:
         return await call_async(self._c, "._gen.api.tenants.update_tenant", OpInfo("updateTenant", idempotent=False, retry_transport=False), {'tenant': tenant, 'body': body})
 
 
+class TokensService:
+    """The tokens resource."""
+
+    def __init__(self, client: Any) -> None:
+        self._c = client
+
+    def create(self, body: TokenRequest) -> TokenResponse:
+        """Issue a delegated token for one of the account's users (createToken)."""
+        return call(self._c, "._gen.api.tokens.create_token", OpInfo("createToken", idempotent=False, retry_transport=True), {'body': body})
+
+    async def create_async(self, body: TokenRequest) -> TokenResponse:
+        """Issue a delegated token for one of the account's users (createToken), async."""
+        return await call_async(self._c, "._gen.api.tokens.create_token", OpInfo("createToken", idempotent=False, retry_transport=True), {'body': body})
+
+
+class WebhooksService:
+    """The webhooks resource."""
+
+    def __init__(self, client: Any) -> None:
+        self._c = client
+
+    def create(self, body: WebhookRequest) -> WebhookEndpoint:
+        """Add a webhook endpoint (createWebhook)."""
+        return call(self._c, "._gen.api.webhooks.create_webhook", OpInfo("createWebhook", idempotent=True, retry_transport=False), {'body': body})
+
+    async def create_async(self, body: WebhookRequest) -> WebhookEndpoint:
+        """Add a webhook endpoint (createWebhook), async."""
+        return await call_async(self._c, "._gen.api.webhooks.create_webhook", OpInfo("createWebhook", idempotent=True, retry_transport=False), {'body': body})
+
+    def delete(self, webhook: uuid.UUID) -> None:
+        """Delete a webhook endpoint and its deliveries (deleteWebhook)."""
+        return call(self._c, "._gen.api.webhooks.delete_webhook", OpInfo("deleteWebhook", idempotent=False, retry_transport=False), {'webhook': webhook})
+
+    async def delete_async(self, webhook: uuid.UUID) -> None:
+        """Delete a webhook endpoint and its deliveries (deleteWebhook), async."""
+        return await call_async(self._c, "._gen.api.webhooks.delete_webhook", OpInfo("deleteWebhook", idempotent=False, retry_transport=False), {'webhook': webhook})
+
+    def get(self, webhook: uuid.UUID) -> WebhookEndpoint:
+        """Get a webhook endpoint (getWebhook)."""
+        return call(self._c, "._gen.api.webhooks.get_webhook", OpInfo("getWebhook", idempotent=False, retry_transport=False), {'webhook': webhook})
+
+    async def get_async(self, webhook: uuid.UUID) -> WebhookEndpoint:
+        """Get a webhook endpoint (getWebhook), async."""
+        return await call_async(self._c, "._gen.api.webhooks.get_webhook", OpInfo("getWebhook", idempotent=False, retry_transport=False), {'webhook': webhook})
+
+    def list_deliveries(self, webhook: uuid.UUID) -> Iterator[WebhookDelivery]:
+        """An endpoint's latest deliveries (listWebhookDeliveries)."""
+        yield from call(self._c, "._gen.api.webhooks.list_webhook_deliveries", OpInfo("listWebhookDeliveries", idempotent=False, retry_transport=False), {'webhook': webhook})
+
+    async def list_deliveries_async(self, webhook: uuid.UUID) -> AsyncIterator[WebhookDelivery]:
+        """An endpoint's latest deliveries (listWebhookDeliveries), async."""
+        for item in await call_async(self._c, "._gen.api.webhooks.list_webhook_deliveries", OpInfo("listWebhookDeliveries", idempotent=False, retry_transport=False), {'webhook': webhook}):
+            yield item
+
+    def list(self) -> Iterator[WebhookEndpoint]:
+        """List the account's webhook endpoints (listWebhooks)."""
+        yield from call(self._c, "._gen.api.webhooks.list_webhooks", OpInfo("listWebhooks", idempotent=False, retry_transport=False), {})
+
+    async def list_async(self) -> AsyncIterator[WebhookEndpoint]:
+        """List the account's webhook endpoints (listWebhooks), async."""
+        for item in await call_async(self._c, "._gen.api.webhooks.list_webhooks", OpInfo("listWebhooks", idempotent=False, retry_transport=False), {}):
+            yield item
+
+    def rotate_secret(self, webhook: uuid.UUID) -> WebhookEndpoint:
+        """Rotate a webhook endpoint's secret (rotateWebhookSecret)."""
+        return call(self._c, "._gen.api.webhooks.rotate_webhook_secret", OpInfo("rotateWebhookSecret", idempotent=True, retry_transport=False), {'webhook': webhook})
+
+    async def rotate_secret_async(self, webhook: uuid.UUID) -> WebhookEndpoint:
+        """Rotate a webhook endpoint's secret (rotateWebhookSecret), async."""
+        return await call_async(self._c, "._gen.api.webhooks.rotate_webhook_secret", OpInfo("rotateWebhookSecret", idempotent=True, retry_transport=False), {'webhook': webhook})
+
+    def update(self, webhook: uuid.UUID, body: WebhookUpdate) -> WebhookEndpoint:
+        """Change a webhook endpoint (updateWebhook)."""
+        return call(self._c, "._gen.api.webhooks.update_webhook", OpInfo("updateWebhook", idempotent=False, retry_transport=False), {'webhook': webhook, 'body': body})
+
+    async def update_async(self, webhook: uuid.UUID, body: WebhookUpdate) -> WebhookEndpoint:
+        """Change a webhook endpoint (updateWebhook), async."""
+        return await call_async(self._c, "._gen.api.webhooks.update_webhook", OpInfo("updateWebhook", idempotent=False, retry_transport=False), {'webhook': webhook, 'body': body})
+
+
 SERVICES = {
+    "account": AccountService,
     "assignments": AssignmentsService,
     "catalog": CatalogService,
     "commands": CommandsService,
     "devices": DevicesService,
     "groups": GroupsService,
+    "holders": HoldersService,
     "me": MeService,
     "members": MembersService,
     "profiles": ProfilesService,
     "settings": SettingsService,
     "tenants": TenantsService,
+    "tokens": TokensService,
+    "webhooks": WebhooksService,
 }

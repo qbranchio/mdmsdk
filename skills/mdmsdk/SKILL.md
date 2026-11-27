@@ -39,6 +39,14 @@ Resources are fields (Go) or attributes (Python) of the client; methods mirror `
 
 Runnable examples: `examples/go`, `examples/python`, `examples/curl`. Copy from them.
 
+## Delegated tokens
+
+Your backend calls `tokens.create` after its own checks, for one tenant and one of: `members`, `groups`, or `all`, with the permissions the user needs (each one the client itself holds). The token lasts `ttl` seconds, at most 900, and is never refreshed: issue another. Build a client from it (Go `mdmsdk.WithToken`, Python `token=`). Examples: `examples/go/delegated`, `examples/python/delegated.py`.
+
+## Webhooks
+
+Verify the raw body before parsing: Go `webhooks.New(secret)` then `Verify` or `Handler`; Python `mdmsdk.webhooks.Verifier(secret).event(body, headers)`. During a secret rotation pass both secrets. Answer 2xx within 10 s and work after; deduplicate on `webhook-id`; 410 disables the endpoint; deliveries per endpoint are ordered, so a failing one holds the rest. Examples: `examples/go/webhooks`, `examples/python/webhooks.py`.
+
 ## Errors
 
 Every non-success answer is one error type: Go `*mdmsdk.Error` (`errors.As`, or `errors.Is(err, mdmsdk.ErrNotFound)`), Python `mdmsdk.Error` subclasses (`mdmsdk.errors.NotFound`, ...).

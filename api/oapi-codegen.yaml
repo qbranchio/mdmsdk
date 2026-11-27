@@ -4,4 +4,4 @@ generate:
   models: true
   client: true
 output-options:
-  skip-prune: false
+  skip-prune: true

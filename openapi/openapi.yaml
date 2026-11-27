@@ -1,5 +1,39 @@
 components:
   schemas:
+    ADEPublicKey:
+      properties:
+        certificate:
+          description: PEM.
+          type: string
+      required:
+        - certificate
+      type: object
+    Account:
+      properties:
+        clients:
+          description: Its Auth0 API client ids.
+          items:
+            type: string
+          type: array
+        contact_email:
+          type: string
+        id:
+          format: uuid
+          type: string
+        name:
+          type: string
+        origins:
+          description: Browser origins its users call the API from with delegated tokens.
+          items:
+            type: string
+          type: array
+      required:
+        - id
+        - name
+        - contact_email
+        - clients
+        - origins
+      type: object
     AccountRef:
       properties:
         id:
@@ -303,6 +337,63 @@ components:
       required:
         - command_uuid
       type: object
+    CommandCompletedData:
+      properties:
+        command_uuid:
+          format: uuid
+          type: string
+        device_id:
+          format: uuid
+          type: string
+        member_id:
+          description: The member who owns the device; null when it is the tenant's.
+          format: uuid
+          type:
+            - "null"
+            - string
+        request_type:
+          description: The command's type (DeviceLock, DeviceInformation, and the commands mdm sends itself).
+          type: string
+        status:
+          enum:
+            - acknowledged
+            - error
+            - command_format_error
+          type: string
+        tenant_external_id:
+          description: The account's own id for the tenant; null when it has none.
+          type:
+            - "null"
+            - string
+        tenant_id:
+          format: uuid
+          type: string
+      required:
+        - tenant_id
+        - tenant_external_id
+        - device_id
+        - member_id
+        - command_uuid
+        - request_type
+        - status
+      type: object
+    CommandCompletedEvent:
+      properties:
+        data:
+          $ref: '#/components/schemas/CommandCompletedData'
+        timestamp:
+          description: When the event happened.
+          format: date-time
+          type: string
+        type:
+          enum:
+            - command.completed
+          type: string
+      required:
+        - type
+        - timestamp
+        - data
+      type: object
     CommandRequest:
       properties:
         message:
@@ -479,6 +570,48 @@ components:
         - stage
         - declarations
       type: object
+    DeviceEnrolledData:
+      properties:
+        device_id:
+          format: uuid
+          type: string
+        member_id:
+          description: The member who owns the device; null when it is the tenant's.
+          format: uuid
+          type:
+            - "null"
+            - string
+        tenant_external_id:
+          description: The account's own id for the tenant; null when it has none.
+          type:
+            - "null"
+            - string
+        tenant_id:
+          format: uuid
+          type: string
+      required:
+        - tenant_id
+        - tenant_external_id
+        - device_id
+        - member_id
+      type: object
+    DeviceEnrolledEvent:
+      properties:
+        data:
+          $ref: '#/components/schemas/DeviceEnrolledData'
+        timestamp:
+          description: When the event happened.
+          format: date-time
+          type: string
+        type:
+          enum:
+            - device.enrolled
+          type: string
+      required:
+        - type
+        - timestamp
+        - data
+      type: object
     DeviceMemberRequest:
       properties:
         member:
@@ -488,6 +621,64 @@ components:
           type: string
       required:
         - member
+      type: object
+    DeviceOSBehindData:
+      properties:
+        device_id:
+          format: uuid
+          type: string
+        latest_version:
+          description: The newest iOS Apple publishes for its model; null when unknown.
+          type:
+            - "null"
+            - string
+        member_id:
+          description: The member who owns the device; null when it is the tenant's.
+          format: uuid
+          type:
+            - "null"
+            - string
+        minimum_version:
+          description: The tenant's minimum iOS version; null when it sets none.
+          type:
+            - "null"
+            - string
+        os_version:
+          description: The iOS version the device runs.
+          type: string
+        tenant_external_id:
+          description: The account's own id for the tenant; null when it has none.
+          type:
+            - "null"
+            - string
+        tenant_id:
+          format: uuid
+          type: string
+      required:
+        - tenant_id
+        - tenant_external_id
+        - device_id
+        - member_id
+        - os_version
+        - latest_version
+        - minimum_version
+      type: object
+    DeviceOSBehindEvent:
+      properties:
+        data:
+          $ref: '#/components/schemas/DeviceOSBehindData'
+        timestamp:
+          description: When the event happened.
+          format: date-time
+          type: string
+        type:
+          enum:
+            - device.os_behind
+          type: string
+      required:
+        - type
+        - timestamp
+        - data
       type: object
     DevicePolicy:
       description: 'The deployment of the device''s effective policy. Its items are read with profiles:read: GET .../effective-policy (with provenance) and GET .../settings (the device''s own).'
@@ -550,6 +741,103 @@ components:
       type:
         - object
         - "null"
+    DevicePolicyStatusData:
+      properties:
+        device_id:
+          format: uuid
+          type: string
+        member_id:
+          description: The member who owns the device; null when it is the tenant's.
+          format: uuid
+          type:
+            - "null"
+            - string
+        revision:
+          description: The effective policy's revision.
+          format: int64
+          type: integer
+        status:
+          description: 'applied: the device reported the revision active. failed: it reported a declaration invalid. removed: the policy is gone from the device.'
+          enum:
+            - applied
+            - failed
+            - removed
+          type: string
+        tenant_external_id:
+          description: The account's own id for the tenant; null when it has none.
+          type:
+            - "null"
+            - string
+        tenant_id:
+          format: uuid
+          type: string
+      required:
+        - tenant_id
+        - tenant_external_id
+        - device_id
+        - member_id
+        - revision
+        - status
+      type: object
+    DevicePolicyStatusEvent:
+      properties:
+        data:
+          $ref: '#/components/schemas/DevicePolicyStatusData'
+        timestamp:
+          description: When the event happened.
+          format: date-time
+          type: string
+        type:
+          enum:
+            - device.policy_status
+          type: string
+      required:
+        - type
+        - timestamp
+        - data
+      type: object
+    DeviceUnenrolledData:
+      properties:
+        device_id:
+          format: uuid
+          type: string
+        member_id:
+          description: The member who owns the device; null when it is the tenant's.
+          format: uuid
+          type:
+            - "null"
+            - string
+        tenant_external_id:
+          description: The account's own id for the tenant; null when it has none.
+          type:
+            - "null"
+            - string
+        tenant_id:
+          format: uuid
+          type: string
+      required:
+        - tenant_id
+        - tenant_external_id
+        - device_id
+        - member_id
+      type: object
+    DeviceUnenrolledEvent:
+      properties:
+        data:
+          $ref: '#/components/schemas/DeviceUnenrolledData'
+        timestamp:
+          description: When the event happened.
+          format: date-time
+          type: string
+        type:
+          enum:
+            - device.unenrolled
+          type: string
+      required:
+        - type
+        - timestamp
+        - data
+      type: object
     EffectiveItem:
       properties:
         conflicts:
@@ -685,6 +973,105 @@ components:
           maximum: 10000
           minimum: 0
           type: integer
+      type: object
+    Holder:
+      properties:
+        ade:
+          $ref: '#/components/schemas/HolderADE'
+        created_at:
+          format: date-time
+          type: string
+        id:
+          format: uuid
+          type: string
+        is_default:
+          type: boolean
+        legal_name:
+          type: string
+        name:
+          type: string
+        push:
+          $ref: '#/components/schemas/HolderPush'
+        updated_at:
+          format: date-time
+          type: string
+        vpp:
+          $ref: '#/components/schemas/HolderVPP'
+      required:
+        - id
+        - name
+        - legal_name
+        - is_default
+        - push
+        - ade
+        - vpp
+        - created_at
+        - updated_at
+      type: object
+    HolderADE:
+      properties:
+        public_key_issued:
+          type: boolean
+        token:
+          type: boolean
+        token_expires:
+          format: date-time
+          type: string
+      required:
+        - public_key_issued
+        - token
+      type: object
+    HolderPush:
+      properties:
+        not_after:
+          format: date-time
+          type: string
+        request_pending:
+          description: A request awaits the certificate Apple issues for it.
+          type: boolean
+        topic:
+          type: string
+      required:
+        - request_pending
+      type: object
+    HolderRequest:
+      properties:
+        legal_name:
+          description: The legal entity that accepts Apple's agreements.
+          maxLength: 200
+          minLength: 1
+          type: string
+        name:
+          maxLength: 200
+          minLength: 1
+          type: string
+      required:
+        - name
+        - legal_name
+      type: object
+    HolderUpdate:
+      minProperties: 1
+      properties:
+        legal_name:
+          maxLength: 200
+          minLength: 1
+          type: string
+        name:
+          maxLength: 200
+          minLength: 1
+          type: string
+      type: object
+    HolderVPP:
+      properties:
+        expires:
+          format: date-time
+          type: string
+        org_name:
+          type: string
+        token:
+          type: boolean
+      required:
+        - token
       type: object
     ItemStatus:
       properties:
@@ -947,6 +1334,67 @@ components:
         - name
         - items
       type: object
+    PushCertificateExpiringData:
+      properties:
+        days_left:
+          description: Whole days until it expires.
+          minimum: 0
+          type: integer
+        holder_id:
+          description: The credential holder whose push certificate is expiring.
+          format: uuid
+          type: string
+        not_after:
+          description: When the certificate expires.
+          format: date-time
+          type: string
+        topic:
+          description: The certificate's push topic.
+          type: string
+      required:
+        - holder_id
+        - topic
+        - not_after
+        - days_left
+      type: object
+    PushCertificateExpiringEvent:
+      properties:
+        data:
+          $ref: '#/components/schemas/PushCertificateExpiringData'
+        timestamp:
+          description: When the event happened.
+          format: date-time
+          type: string
+        type:
+          enum:
+            - push_certificate.expiring
+          type: string
+      required:
+        - type
+        - timestamp
+        - data
+      type: object
+    PushCertificateRequest:
+      properties:
+        request:
+          description: The signed request, base64, as Apple's portal takes it (save it as a .plist file).
+          type: string
+      required:
+        - request
+      type: object
+    PushCertificateUpload:
+      properties:
+        certificate:
+          description: The certificate, PEM.
+          maxLength: 65536
+          type: string
+        key:
+          description: Its private key, PEM, for a certificate the holder obtained itself. Omit for one Apple issued for the holder's request.
+          maxLength: 65536
+          type: string
+      required:
+        - certificate
+      type: object
     Source:
       properties:
         group_id:
@@ -1011,6 +1459,68 @@ components:
         - name
         - created_at
       type: object
+    TenantDeletedData:
+      properties:
+        tenant_external_id:
+          description: The account's own id for the tenant; null when it has none.
+          type:
+            - "null"
+            - string
+        tenant_id:
+          format: uuid
+          type: string
+      required:
+        - tenant_id
+        - tenant_external_id
+      type: object
+    TenantDeletedEvent:
+      properties:
+        data:
+          $ref: '#/components/schemas/TenantDeletedData'
+        timestamp:
+          description: When the event happened.
+          format: date-time
+          type: string
+        type:
+          enum:
+            - tenant.deleted
+          type: string
+      required:
+        - type
+        - timestamp
+        - data
+      type: object
+    TenantDeletingData:
+      properties:
+        tenant_external_id:
+          description: The account's own id for the tenant; null when it has none.
+          type:
+            - "null"
+            - string
+        tenant_id:
+          format: uuid
+          type: string
+      required:
+        - tenant_id
+        - tenant_external_id
+      type: object
+    TenantDeletingEvent:
+      properties:
+        data:
+          $ref: '#/components/schemas/TenantDeletingData'
+        timestamp:
+          description: When the event happened.
+          format: date-time
+          type: string
+        type:
+          enum:
+            - tenant.deleting
+          type: string
+      required:
+        - type
+        - timestamp
+        - data
+      type: object
     TenantRequest:
       properties:
         external_id:
@@ -1046,6 +1556,220 @@ components:
           minLength: 1
           type: string
       type: object
+    TokenRequest:
+      properties:
+        all:
+          type: boolean
+        groups:
+          items:
+            format: uuid
+            type: string
+          maxItems: 100
+          type: array
+        members:
+          description: Member ids or `ext:` references. Exactly one of members, groups, and all.
+          items:
+            type: string
+          maxItems: 100
+          type: array
+        permissions:
+          items:
+            enum:
+              - devices:read
+              - devices:write
+              - profiles:read
+              - profiles:write
+              - commands:write
+              - members:read
+            type: string
+          minItems: 1
+          type: array
+        subject:
+          description: The account's id for its user; recorded, never interpreted.
+          maxLength: 255
+          minLength: 1
+          type: string
+        tenant:
+          description: The tenant id, or `ext:` and the account's external id for it.
+          maxLength: 260
+          minLength: 1
+          type: string
+        ttl:
+          description: Seconds; 900 when absent.
+          maximum: 900
+          minimum: 60
+          type: integer
+      required:
+        - tenant
+        - subject
+        - permissions
+      type: object
+    TokenResponse:
+      properties:
+        access_token:
+          type: string
+        expires_in:
+          type: integer
+        token_type:
+          enum:
+            - Bearer
+          type: string
+      required:
+        - access_token
+        - token_type
+        - expires_in
+      type: object
+    TokenUpload:
+      properties:
+        token:
+          maxLength: 1048576
+          type: string
+      required:
+        - token
+      type: object
+    WebhookDelivery:
+      properties:
+        attempts:
+          type: integer
+        created_at:
+          format: date-time
+          type: string
+        event_id:
+          description: The webhook-id header.
+          format: uuid
+          type: string
+        finished_at:
+          format: date-time
+          type: string
+        id:
+          format: uuid
+          type: string
+        last_error:
+          type: string
+        last_status:
+          type: integer
+        next_attempt_at:
+          format: date-time
+          type: string
+        status:
+          enum:
+            - pending
+            - delivered
+            - failed
+          type: string
+        type:
+          type: string
+      required:
+        - id
+        - event_id
+        - type
+        - status
+        - attempts
+        - next_attempt_at
+        - created_at
+      type: object
+    WebhookEndpoint:
+      properties:
+        created_at:
+          format: date-time
+          type: string
+        disabled_reason:
+          type: string
+        enabled:
+          type: boolean
+        events:
+          description: Empty takes every event.
+          items:
+            type: string
+          type: array
+        id:
+          format: uuid
+          type: string
+        previous_secret_until:
+          description: Until when deliveries are also signed with the previous secret.
+          format: date-time
+          type: string
+        secret:
+          description: The signing secret (whsec_...). Only on create and rotate.
+          type: string
+        updated_at:
+          format: date-time
+          type: string
+        url:
+          type: string
+      required:
+        - id
+        - url
+        - events
+        - enabled
+        - created_at
+        - updated_at
+      type: object
+    WebhookEvent:
+      description: 'The body of a webhook delivery: one event, told apart by type.'
+      discriminator:
+        mapping:
+          command.completed: '#/components/schemas/CommandCompletedEvent'
+          device.enrolled: '#/components/schemas/DeviceEnrolledEvent'
+          device.os_behind: '#/components/schemas/DeviceOSBehindEvent'
+          device.policy_status: '#/components/schemas/DevicePolicyStatusEvent'
+          device.unenrolled: '#/components/schemas/DeviceUnenrolledEvent'
+          push_certificate.expiring: '#/components/schemas/PushCertificateExpiringEvent'
+          tenant.deleted: '#/components/schemas/TenantDeletedEvent'
+          tenant.deleting: '#/components/schemas/TenantDeletingEvent'
+        propertyName: type
+      oneOf:
+        - $ref: '#/components/schemas/DeviceEnrolledEvent'
+        - $ref: '#/components/schemas/DeviceUnenrolledEvent'
+        - $ref: '#/components/schemas/DevicePolicyStatusEvent'
+        - $ref: '#/components/schemas/DeviceOSBehindEvent'
+        - $ref: '#/components/schemas/CommandCompletedEvent'
+        - $ref: '#/components/schemas/PushCertificateExpiringEvent'
+        - $ref: '#/components/schemas/TenantDeletingEvent'
+        - $ref: '#/components/schemas/TenantDeletedEvent'
+    WebhookRequest:
+      properties:
+        events:
+          items:
+            enum:
+              - device.enrolled
+              - device.unenrolled
+              - device.policy_status
+              - device.os_behind
+              - command.completed
+              - push_certificate.expiring
+              - tenant.deleting
+              - tenant.deleted
+            type: string
+          type: array
+        url:
+          maxLength: 2048
+          type: string
+      required:
+        - url
+      type: object
+    WebhookUpdate:
+      minProperties: 1
+      properties:
+        enabled:
+          type: boolean
+        events:
+          items:
+            enum:
+              - device.enrolled
+              - device.unenrolled
+              - device.policy_status
+              - device.os_behind
+              - command.completed
+              - push_certificate.expiring
+              - tenant.deleting
+              - tenant.deleted
+            type: string
+          type: array
+        url:
+          maxLength: 2048
+          type: string
+      type: object
   securitySchemes:
     bearerAuth:
       description: A delegated token from POST /api/v1/tokens, or an admin app sign-in.
@@ -1064,6 +1788,1264 @@ info:
   version: "1"
 openapi: 3.1.0
 paths:
+  /api/v1/account:
+    get:
+      description: Its name, contact, API clients, and registered browser origins. Account clients, and console owners and admins.
+      operationId: getAccount
+      parameters:
+        - description: 'For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.'
+          in: header
+          name: Mdm-Actor
+          schema:
+            maxLength: 255
+            type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Account'
+          description: The account.
+        "401":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The bearer token is missing or wrong.
+        "403":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller reaches the resource but its scopes or role do not allow the operation.
+        "429":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller is over its rate limit.
+          headers:
+            Retry-After:
+              description: Seconds to wait.
+              schema:
+                type: integer
+              style: simple
+      security:
+        - clientCredentials: []
+        - bearerAuth: []
+      summary: The caller's account
+      tags:
+        - account
+  /api/v1/account/holders:
+    get:
+      description: Account clients with account:credentials. A credential holder is the legal entity that holds Apple credentials (the push certificate, the Automated Device Enrollment token, the Apps and Books token). Every account has a default holder; a tenant uses it unless it names another.
+      operationId: listHolders
+      parameters:
+        - description: 'For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.'
+          in: header
+          name: Mdm-Actor
+          schema:
+            maxLength: 255
+            type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/Holder'
+                type: array
+          description: The holders, the default first.
+        "401":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The bearer token is missing or wrong.
+        "403":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller reaches the resource but its scopes or role do not allow the operation.
+        "429":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller is over its rate limit.
+          headers:
+            Retry-After:
+              description: Seconds to wait.
+              schema:
+                type: integer
+              style: simple
+      security:
+        - clientCredentials: []
+        - bearerAuth: []
+      summary: List the account's credential holders
+      tags:
+        - credentials
+    post:
+      description: Another legal entity the account serves, such as a managed service provider's customer.
+      operationId: createHolder
+      parameters:
+        - description: 'Makes a retry safe (IETF draft): the first response is stored for 24 hours and replayed, with Idempotent-Replayed, for a retry by the same caller with the same key, method, path, and body. The same key with another request answers 422; a retry while the first runs answers 409.'
+          in: header
+          name: Idempotency-Key
+          schema:
+            maxLength: 255
+            minLength: 1
+            type: string
+        - description: 'For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.'
+          in: header
+          name: Mdm-Actor
+          schema:
+            maxLength: 255
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HolderRequest'
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Holder'
+          description: The holder.
+        "400":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The request could not be decoded or a parameter is malformed.
+        "401":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The bearer token is missing or wrong.
+        "403":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller reaches the resource but its scopes or role do not allow the operation.
+        "409":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: 'A unique value is taken (an external id, a group priority), the device is not in a state that allows this operation, a request with the same Idempotency-Key is still in progress, the tenant is being deleted (tenant_deleting), or a licence refuses the write (licence_exceeded: a device, tenant, or people limit; licence_expired: the tenant''s licence has ended).'
+        "422":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The body is well formed but fails validation.
+        "429":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller is over its rate limit.
+          headers:
+            Retry-After:
+              description: Seconds to wait.
+              schema:
+                type: integer
+              style: simple
+      security:
+        - clientCredentials: []
+        - bearerAuth: []
+      summary: Add a credential holder
+      tags:
+        - credentials
+  /api/v1/account/holders/{holder}:
+    delete:
+      description: Not the default holder, nor one a tenant uses (409).
+      operationId: deleteHolder
+      parameters:
+        - in: path
+          name: holder
+          required: true
+          schema:
+            format: uuid
+            type: string
+        - description: 'For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.'
+          in: header
+          name: Mdm-Actor
+          schema:
+            maxLength: 255
+            type: string
+      responses:
+        "204":
+          description: Deleted.
+        "400":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The request could not be decoded or a parameter is malformed.
+        "401":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The bearer token is missing or wrong.
+        "403":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller reaches the resource but its scopes or role do not allow the operation.
+        "404":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The tenant, member, group, or device does not exist, was removed, or is outside the caller's reach.
+        "409":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: 'A unique value is taken (an external id, a group priority), the device is not in a state that allows this operation, a request with the same Idempotency-Key is still in progress, the tenant is being deleted (tenant_deleting), or a licence refuses the write (licence_exceeded: a device, tenant, or people limit; licence_expired: the tenant''s licence has ended).'
+        "429":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller is over its rate limit.
+          headers:
+            Retry-After:
+              description: Seconds to wait.
+              schema:
+                type: integer
+              style: simple
+      security:
+        - clientCredentials: []
+        - bearerAuth: []
+      summary: Delete a credential holder
+      tags:
+        - credentials
+    get:
+      operationId: getHolder
+      parameters:
+        - in: path
+          name: holder
+          required: true
+          schema:
+            format: uuid
+            type: string
+        - description: 'For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.'
+          in: header
+          name: Mdm-Actor
+          schema:
+            maxLength: 255
+            type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Holder'
+          description: The holder.
+        "400":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The request could not be decoded or a parameter is malformed.
+        "401":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The bearer token is missing or wrong.
+        "403":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller reaches the resource but its scopes or role do not allow the operation.
+        "404":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The tenant, member, group, or device does not exist, was removed, or is outside the caller's reach.
+        "429":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller is over its rate limit.
+          headers:
+            Retry-After:
+              description: Seconds to wait.
+              schema:
+                type: integer
+              style: simple
+      security:
+        - clientCredentials: []
+        - bearerAuth: []
+      summary: Get a credential holder
+      tags:
+        - credentials
+    patch:
+      operationId: updateHolder
+      parameters:
+        - in: path
+          name: holder
+          required: true
+          schema:
+            format: uuid
+            type: string
+        - description: 'For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.'
+          in: header
+          name: Mdm-Actor
+          schema:
+            maxLength: 255
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HolderUpdate'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Holder'
+          description: The holder.
+        "400":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The request could not be decoded or a parameter is malformed.
+        "401":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The bearer token is missing or wrong.
+        "403":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller reaches the resource but its scopes or role do not allow the operation.
+        "404":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The tenant, member, group, or device does not exist, was removed, or is outside the caller's reach.
+        "422":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The body is well formed but fails validation.
+        "429":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller is over its rate limit.
+          headers:
+            Retry-After:
+              description: Seconds to wait.
+              schema:
+                type: integer
+              style: simple
+      security:
+        - clientCredentials: []
+        - bearerAuth: []
+      summary: Rename a credential holder
+      tags:
+        - credentials
+  /api/v1/account/holders/{holder}/ade/public-key:
+    get:
+      description: The certificate to give Apple Business Manager when adding mdm as a device management service; made on first request. mdm keeps its private key to decrypt the server token.
+      operationId: getADEPublicKey
+      parameters:
+        - in: path
+          name: holder
+          required: true
+          schema:
+            format: uuid
+            type: string
+        - description: 'For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.'
+          in: header
+          name: Mdm-Actor
+          schema:
+            maxLength: 255
+            type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ADEPublicKey'
+          description: The public key certificate.
+        "400":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The request could not be decoded or a parameter is malformed.
+        "401":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The bearer token is missing or wrong.
+        "403":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller reaches the resource but its scopes or role do not allow the operation.
+        "404":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The tenant, member, group, or device does not exist, was removed, or is outside the caller's reach.
+        "429":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller is over its rate limit.
+          headers:
+            Retry-After:
+              description: Seconds to wait.
+              schema:
+                type: integer
+              style: simple
+      security:
+        - clientCredentials: []
+        - bearerAuth: []
+      summary: The holder's public key for Apple Business Manager
+      tags:
+        - credentials
+  /api/v1/account/holders/{holder}/ade/token:
+    put:
+      description: The .p7m Apple Business Manager offers for the device management service, base64. mdm decrypts and checks it. Renew it yearly the same way. Device assignment comes later.
+      operationId: uploadADEToken
+      parameters:
+        - in: path
+          name: holder
+          required: true
+          schema:
+            format: uuid
+            type: string
+        - description: 'For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.'
+          in: header
+          name: Mdm-Actor
+          schema:
+            maxLength: 255
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenUpload'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Holder'
+          description: The holder.
+        "400":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The request could not be decoded or a parameter is malformed.
+        "401":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The bearer token is missing or wrong.
+        "403":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller reaches the resource but its scopes or role do not allow the operation.
+        "404":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The tenant, member, group, or device does not exist, was removed, or is outside the caller's reach.
+        "422":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The body is well formed but fails validation.
+        "429":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller is over its rate limit.
+          headers:
+            Retry-After:
+              description: Seconds to wait.
+              schema:
+                type: integer
+              style: simple
+      security:
+        - clientCredentials: []
+        - bearerAuth: []
+      summary: Upload the holder's Automated Device Enrollment server token
+      tags:
+        - credentials
+  /api/v1/account/holders/{holder}/push-certificate:
+    put:
+      description: 'The certificate Apple issued for the holder''s request, or one the holder obtained itself with its key. It must pair with the key, be unexpired, and name a com.apple.mgmt topic no other holder has. A certificate for a different topic is refused while devices are enrolled on the current one (they would all need enrolling again): renew the existing certificate in Apple''s portal. The certificate then goes to the push service; devices are sent commands once it is there.'
+      operationId: uploadPushCertificate
+      parameters:
+        - in: path
+          name: holder
+          required: true
+          schema:
+            format: uuid
+            type: string
+        - description: 'For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.'
+          in: header
+          name: Mdm-Actor
+          schema:
+            maxLength: 255
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PushCertificateUpload'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Holder'
+          description: The holder.
+        "400":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The request could not be decoded or a parameter is malformed.
+        "401":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The bearer token is missing or wrong.
+        "403":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller reaches the resource but its scopes or role do not allow the operation.
+        "404":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The tenant, member, group, or device does not exist, was removed, or is outside the caller's reach.
+        "409":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: 'A unique value is taken (an external id, a group priority), the device is not in a state that allows this operation, a request with the same Idempotency-Key is still in progress, the tenant is being deleted (tenant_deleting), or a licence refuses the write (licence_exceeded: a device, tenant, or people limit; licence_expired: the tenant''s licence has ended).'
+        "422":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The body is well formed but fails validation.
+        "429":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller is over its rate limit.
+          headers:
+            Retry-After:
+              description: Seconds to wait.
+              schema:
+                type: integer
+              style: simple
+      security:
+        - clientCredentials: []
+        - bearerAuth: []
+      summary: Upload the holder's push certificate
+      tags:
+        - credentials
+  /api/v1/account/holders/{holder}/push-certificate/request:
+    post:
+      description: 'mdm makes a key (kept, never returned) and returns the request, signed with mdm''s vendor certificate, to upload at Apple''s Push Certificates Portal (identity.apple.com) signed in with the organization''s Apple Account: Create for a first certificate, Renew on the existing one to renew. Then upload the certificate Apple issues with PUT .../push-certificate. 409 until mdm has its vendor certificate: upload a certificate with its key instead.'
+      operationId: requestPushCertificate
+      parameters:
+        - in: path
+          name: holder
+          required: true
+          schema:
+            format: uuid
+            type: string
+        - description: 'Makes a retry safe (IETF draft): the first response is stored for 24 hours and replayed, with Idempotent-Replayed, for a retry by the same caller with the same key, method, path, and body. The same key with another request answers 422; a retry while the first runs answers 409.'
+          in: header
+          name: Idempotency-Key
+          schema:
+            maxLength: 255
+            minLength: 1
+            type: string
+        - description: 'For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.'
+          in: header
+          name: Mdm-Actor
+          schema:
+            maxLength: 255
+            type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PushCertificateRequest'
+          description: The request.
+        "400":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The request could not be decoded or a parameter is malformed.
+        "401":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The bearer token is missing or wrong.
+        "403":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller reaches the resource but its scopes or role do not allow the operation.
+        "404":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The tenant, member, group, or device does not exist, was removed, or is outside the caller's reach.
+        "409":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: 'A unique value is taken (an external id, a group priority), the device is not in a state that allows this operation, a request with the same Idempotency-Key is still in progress, the tenant is being deleted (tenant_deleting), or a licence refuses the write (licence_exceeded: a device, tenant, or people limit; licence_expired: the tenant''s licence has ended).'
+        "422":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The body is well formed but fails validation.
+        "429":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller is over its rate limit.
+          headers:
+            Retry-After:
+              description: Seconds to wait.
+              schema:
+                type: integer
+              style: simple
+      security:
+        - clientCredentials: []
+        - bearerAuth: []
+      summary: Request a push certificate
+      tags:
+        - credentials
+  /api/v1/account/holders/{holder}/vpp/token:
+    put:
+      description: The .vpptoken file's content. Using one token in a second MDM moves its licences away from the first. Renew it yearly; it also ends when the downloading account's password changes. Licence assignment comes later.
+      operationId: uploadVPPToken
+      parameters:
+        - in: path
+          name: holder
+          required: true
+          schema:
+            format: uuid
+            type: string
+        - description: 'For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.'
+          in: header
+          name: Mdm-Actor
+          schema:
+            maxLength: 255
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenUpload'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Holder'
+          description: The holder.
+        "400":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The request could not be decoded or a parameter is malformed.
+        "401":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The bearer token is missing or wrong.
+        "403":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller reaches the resource but its scopes or role do not allow the operation.
+        "404":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The tenant, member, group, or device does not exist, was removed, or is outside the caller's reach.
+        "422":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The body is well formed but fails validation.
+        "429":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller is over its rate limit.
+          headers:
+            Retry-After:
+              description: Seconds to wait.
+              schema:
+                type: integer
+              style: simple
+      security:
+        - clientCredentials: []
+        - bearerAuth: []
+      summary: Upload the holder's Apps and Books content token
+      tags:
+        - credentials
+  /api/v1/account/webhooks:
+    get:
+      description: Account clients with account:webhooks. Secrets are never listed.
+      operationId: listWebhooks
+      parameters:
+        - description: 'For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.'
+          in: header
+          name: Mdm-Actor
+          schema:
+            maxLength: 255
+            type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/WebhookEndpoint'
+                type: array
+          description: The endpoints.
+        "401":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The bearer token is missing or wrong.
+        "403":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller reaches the resource but its scopes or role do not allow the operation.
+        "429":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller is over its rate limit.
+          headers:
+            Retry-After:
+              description: Seconds to wait.
+              schema:
+                type: integer
+              style: simple
+      security:
+        - clientCredentials: []
+        - bearerAuth: []
+      summary: List the account's webhook endpoints
+      tags:
+        - webhooks
+    post:
+      description: An https URL that receives the account's events, signed per Standard Webhooks 1.0 (webhook-id, webhook-timestamp, webhook-signature v1 HMAC-SHA256 over id.timestamp.body) with the secret in this response, shown only here. events limits the subscription; empty takes every event. Deliveries go one at a time per endpoint, in order, retried at 5 s, 5 m, 30 m, 2 h, 5 h, 10 h, 14 h, 20 h, and 24 h; after the last, or on 410, the endpoint is disabled. Receivers dedupe on webhook-id. The address must resolve to a public IP; redirects are not followed.
+      operationId: createWebhook
+      parameters:
+        - description: 'Makes a retry safe (IETF draft): the first response is stored for 24 hours and replayed, with Idempotent-Replayed, for a retry by the same caller with the same key, method, path, and body. The same key with another request answers 422; a retry while the first runs answers 409.'
+          in: header
+          name: Idempotency-Key
+          schema:
+            maxLength: 255
+            minLength: 1
+            type: string
+        - description: 'For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.'
+          in: header
+          name: Mdm-Actor
+          schema:
+            maxLength: 255
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WebhookRequest'
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookEndpoint'
+          description: The endpoint with its secret.
+        "400":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The request could not be decoded or a parameter is malformed.
+        "401":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The bearer token is missing or wrong.
+        "403":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller reaches the resource but its scopes or role do not allow the operation.
+        "409":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: 'A unique value is taken (an external id, a group priority), the device is not in a state that allows this operation, a request with the same Idempotency-Key is still in progress, the tenant is being deleted (tenant_deleting), or a licence refuses the write (licence_exceeded: a device, tenant, or people limit; licence_expired: the tenant''s licence has ended).'
+        "422":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The body is well formed but fails validation.
+        "429":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller is over its rate limit.
+          headers:
+            Retry-After:
+              description: Seconds to wait.
+              schema:
+                type: integer
+              style: simple
+      security:
+        - clientCredentials: []
+        - bearerAuth: []
+      summary: Add a webhook endpoint
+      tags:
+        - webhooks
+  /api/v1/account/webhooks/{webhook}:
+    delete:
+      operationId: deleteWebhook
+      parameters:
+        - in: path
+          name: webhook
+          required: true
+          schema:
+            format: uuid
+            type: string
+        - description: 'For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.'
+          in: header
+          name: Mdm-Actor
+          schema:
+            maxLength: 255
+            type: string
+      responses:
+        "204":
+          description: Deleted.
+        "400":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The request could not be decoded or a parameter is malformed.
+        "401":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The bearer token is missing or wrong.
+        "403":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller reaches the resource but its scopes or role do not allow the operation.
+        "404":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The tenant, member, group, or device does not exist, was removed, or is outside the caller's reach.
+        "429":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller is over its rate limit.
+          headers:
+            Retry-After:
+              description: Seconds to wait.
+              schema:
+                type: integer
+              style: simple
+      security:
+        - clientCredentials: []
+        - bearerAuth: []
+      summary: Delete a webhook endpoint and its deliveries
+      tags:
+        - webhooks
+    get:
+      operationId: getWebhook
+      parameters:
+        - in: path
+          name: webhook
+          required: true
+          schema:
+            format: uuid
+            type: string
+        - description: 'For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.'
+          in: header
+          name: Mdm-Actor
+          schema:
+            maxLength: 255
+            type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookEndpoint'
+          description: The endpoint.
+        "400":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The request could not be decoded or a parameter is malformed.
+        "401":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The bearer token is missing or wrong.
+        "403":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller reaches the resource but its scopes or role do not allow the operation.
+        "404":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The tenant, member, group, or device does not exist, was removed, or is outside the caller's reach.
+        "429":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller is over its rate limit.
+          headers:
+            Retry-After:
+              description: Seconds to wait.
+              schema:
+                type: integer
+              style: simple
+      security:
+        - clientCredentials: []
+        - bearerAuth: []
+      summary: Get a webhook endpoint
+      tags:
+        - webhooks
+    patch:
+      description: Enabling a disabled endpoint resumes its pending deliveries.
+      operationId: updateWebhook
+      parameters:
+        - in: path
+          name: webhook
+          required: true
+          schema:
+            format: uuid
+            type: string
+        - description: 'For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.'
+          in: header
+          name: Mdm-Actor
+          schema:
+            maxLength: 255
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WebhookUpdate'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookEndpoint'
+          description: The endpoint.
+        "400":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The request could not be decoded or a parameter is malformed.
+        "401":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The bearer token is missing or wrong.
+        "403":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller reaches the resource but its scopes or role do not allow the operation.
+        "404":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The tenant, member, group, or device does not exist, was removed, or is outside the caller's reach.
+        "422":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The body is well formed but fails validation.
+        "429":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller is over its rate limit.
+          headers:
+            Retry-After:
+              description: Seconds to wait.
+              schema:
+                type: integer
+              style: simple
+      security:
+        - clientCredentials: []
+        - bearerAuth: []
+      summary: Change a webhook endpoint
+      tags:
+        - webhooks
+  /api/v1/account/webhooks/{webhook}/deliveries:
+    get:
+      description: The 50 latest, newest first.
+      operationId: listWebhookDeliveries
+      parameters:
+        - in: path
+          name: webhook
+          required: true
+          schema:
+            format: uuid
+            type: string
+        - description: 'For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.'
+          in: header
+          name: Mdm-Actor
+          schema:
+            maxLength: 255
+            type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/WebhookDelivery'
+                type: array
+          description: The deliveries.
+        "400":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The request could not be decoded or a parameter is malformed.
+        "401":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The bearer token is missing or wrong.
+        "403":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller reaches the resource but its scopes or role do not allow the operation.
+        "404":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The tenant, member, group, or device does not exist, was removed, or is outside the caller's reach.
+        "429":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller is over its rate limit.
+          headers:
+            Retry-After:
+              description: Seconds to wait.
+              schema:
+                type: integer
+              style: simple
+      security:
+        - clientCredentials: []
+        - bearerAuth: []
+      summary: An endpoint's latest deliveries
+      tags:
+        - webhooks
+  /api/v1/account/webhooks/{webhook}/rotate-secret:
+    post:
+      description: Issues a new secret, shown only here. For 24 hours every delivery carries signatures with both the new and the previous secret.
+      operationId: rotateWebhookSecret
+      parameters:
+        - in: path
+          name: webhook
+          required: true
+          schema:
+            format: uuid
+            type: string
+        - description: 'Makes a retry safe (IETF draft): the first response is stored for 24 hours and replayed, with Idempotent-Replayed, for a retry by the same caller with the same key, method, path, and body. The same key with another request answers 422; a retry while the first runs answers 409.'
+          in: header
+          name: Idempotency-Key
+          schema:
+            maxLength: 255
+            minLength: 1
+            type: string
+        - description: 'For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.'
+          in: header
+          name: Mdm-Actor
+          schema:
+            maxLength: 255
+            type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WebhookEndpoint'
+          description: The endpoint with its new secret.
+        "400":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The request could not be decoded or a parameter is malformed.
+        "401":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The bearer token is missing or wrong.
+        "403":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller reaches the resource but its scopes or role do not allow the operation.
+        "404":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The tenant, member, group, or device does not exist, was removed, or is outside the caller's reach.
+        "409":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: 'A unique value is taken (an external id, a group priority), the device is not in a state that allows this operation, a request with the same Idempotency-Key is still in progress, the tenant is being deleted (tenant_deleting), or a licence refuses the write (licence_exceeded: a device, tenant, or people limit; licence_expired: the tenant''s licence has ended).'
+        "422":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The body is well formed but fails validation.
+        "429":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller is over its rate limit.
+          headers:
+            Retry-After:
+              description: Seconds to wait.
+              schema:
+                type: integer
+              style: simple
+      security:
+        - clientCredentials: []
+        - bearerAuth: []
+      summary: Rotate a webhook endpoint's secret
+      tags:
+        - webhooks
   /api/v1/catalog:
     get:
       description: Every setting mdm can manage, from Apple's device-management schema (Release-v27.2). With level, only entries that level can take; with os too, only those that iOS version has. Keys carry their own level and version limits.
@@ -4543,5 +6525,383 @@ paths:
       summary: Remove an assignment
       tags:
         - profiles
+  /api/v1/tokens:
+    post:
+      description: 'Account clients with tokens:issue. The account''s backend asks for a token for one of its users after applying its own rules; the user then calls the API directly with it. The token reaches one tenant of the account and, within it, the listed members (and their devices), the current members of the listed groups, or all of it, with the listed permissions (each one the client itself holds). It lasts ttl seconds, at most 900, and is never refreshed: ask again. Signed ES256 with mdm''s keys (GET /api/.well-known/jwks.json).'
+      operationId: createToken
+      parameters:
+        - description: 'For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.'
+          in: header
+          name: Mdm-Actor
+          schema:
+            maxLength: 255
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenRequest'
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenResponse'
+          description: The token.
+        "400":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The request could not be decoded or a parameter is malformed.
+        "401":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The bearer token is missing or wrong.
+        "403":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller reaches the resource but its scopes or role do not allow the operation.
+        "422":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The body is well formed but fails validation.
+        "429":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller is over its rate limit.
+          headers:
+            Retry-After:
+              description: Seconds to wait.
+              schema:
+                type: integer
+              style: simple
+      security:
+        - clientCredentials: []
+      summary: Issue a delegated token for one of the account's users
+      tags:
+        - tokens
 servers:
   - url: https://enroll.dev
+webhooks:
+  command.completed:
+    post:
+      description: The device acknowledged a command or reported an error. GET /api/v1/tenants/{tenant}/devices/{id}/commands/{command} returns its result. Sent as a POST to each of the account's enabled endpoints that takes the event, signed per Standard Webhooks 1.0.
+      operationId: onCommandCompleted
+      parameters:
+        - description: The event's id, the same on every attempt. Dedupe on it.
+          in: header
+          name: webhook-id
+          required: true
+          schema:
+            format: uuid
+            type: string
+        - description: When this attempt was sent, in seconds since the Unix epoch.
+          in: header
+          name: webhook-timestamp
+          required: true
+          schema:
+            format: int64
+            type: integer
+        - description: 'One v1 signature per secret, space separated: HMAC-SHA256 over id.timestamp.body, base64. Two for 24 hours after a rotation, the new secret''s and the previous one''s.'
+          in: header
+          name: webhook-signature
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CommandCompletedEvent'
+        required: true
+      responses:
+        "204":
+          description: 'Received: any 2xx status. Any other status, or no answer in 10 seconds, is retried on the endpoint''s schedule; a Retry-After on 429, 502, or 504 is honoured, up to 24 hours.'
+        "410":
+          description: 'The endpoint is gone: it is disabled and gets nothing more.'
+      summary: A command got its final answer
+      tags:
+        - events
+  device.enrolled:
+    post:
+      description: The device completed enrollment and is managed. Sent as a POST to each of the account's enabled endpoints that takes the event, signed per Standard Webhooks 1.0.
+      operationId: onDeviceEnrolled
+      parameters:
+        - description: The event's id, the same on every attempt. Dedupe on it.
+          in: header
+          name: webhook-id
+          required: true
+          schema:
+            format: uuid
+            type: string
+        - description: When this attempt was sent, in seconds since the Unix epoch.
+          in: header
+          name: webhook-timestamp
+          required: true
+          schema:
+            format: int64
+            type: integer
+        - description: 'One v1 signature per secret, space separated: HMAC-SHA256 over id.timestamp.body, base64. Two for 24 hours after a rotation, the new secret''s and the previous one''s.'
+          in: header
+          name: webhook-signature
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeviceEnrolledEvent'
+        required: true
+      responses:
+        "204":
+          description: 'Received: any 2xx status. Any other status, or no answer in 10 seconds, is retried on the endpoint''s schedule; a Retry-After on 429, 502, or 504 is honoured, up to 24 hours.'
+        "410":
+          description: 'The endpoint is gone: it is disabled and gets nothing more.'
+      summary: A device enrolled
+      tags:
+        - events
+  device.os_behind:
+    post:
+      description: The device is below its tenant's minimum iOS version, or below the newest release for its model when the tenant sets none. Sent once for each version it falls behind. Sent as a POST to each of the account's enabled endpoints that takes the event, signed per Standard Webhooks 1.0.
+      operationId: onDeviceOsBehind
+      parameters:
+        - description: The event's id, the same on every attempt. Dedupe on it.
+          in: header
+          name: webhook-id
+          required: true
+          schema:
+            format: uuid
+            type: string
+        - description: When this attempt was sent, in seconds since the Unix epoch.
+          in: header
+          name: webhook-timestamp
+          required: true
+          schema:
+            format: int64
+            type: integer
+        - description: 'One v1 signature per secret, space separated: HMAC-SHA256 over id.timestamp.body, base64. Two for 24 hours after a rotation, the new secret''s and the previous one''s.'
+          in: header
+          name: webhook-signature
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeviceOSBehindEvent'
+        required: true
+      responses:
+        "204":
+          description: 'Received: any 2xx status. Any other status, or no answer in 10 seconds, is retried on the endpoint''s schedule; a Retry-After on 429, 502, or 504 is honoured, up to 24 hours.'
+        "410":
+          description: 'The endpoint is gone: it is disabled and gets nothing more.'
+      summary: A device is behind on iOS
+      tags:
+        - events
+  device.policy_status:
+    post:
+      description: The device's effective policy was applied, failed, or was removed from the device. Sent as a POST to each of the account's enabled endpoints that takes the event, signed per Standard Webhooks 1.0.
+      operationId: onDevicePolicyStatus
+      parameters:
+        - description: The event's id, the same on every attempt. Dedupe on it.
+          in: header
+          name: webhook-id
+          required: true
+          schema:
+            format: uuid
+            type: string
+        - description: When this attempt was sent, in seconds since the Unix epoch.
+          in: header
+          name: webhook-timestamp
+          required: true
+          schema:
+            format: int64
+            type: integer
+        - description: 'One v1 signature per secret, space separated: HMAC-SHA256 over id.timestamp.body, base64. Two for 24 hours after a rotation, the new secret''s and the previous one''s.'
+          in: header
+          name: webhook-signature
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DevicePolicyStatusEvent'
+        required: true
+      responses:
+        "204":
+          description: 'Received: any 2xx status. Any other status, or no answer in 10 seconds, is retried on the endpoint''s schedule; a Retry-After on 429, 502, or 504 is honoured, up to 24 hours.'
+        "410":
+          description: 'The endpoint is gone: it is disabled and gets nothing more.'
+      summary: A device's policy status changed
+      tags:
+        - events
+  device.unenrolled:
+    post:
+      description: 'The device checked out: its enrollment profile was removed. Sent as a POST to each of the account''s enabled endpoints that takes the event, signed per Standard Webhooks 1.0.'
+      operationId: onDeviceUnenrolled
+      parameters:
+        - description: The event's id, the same on every attempt. Dedupe on it.
+          in: header
+          name: webhook-id
+          required: true
+          schema:
+            format: uuid
+            type: string
+        - description: When this attempt was sent, in seconds since the Unix epoch.
+          in: header
+          name: webhook-timestamp
+          required: true
+          schema:
+            format: int64
+            type: integer
+        - description: 'One v1 signature per secret, space separated: HMAC-SHA256 over id.timestamp.body, base64. Two for 24 hours after a rotation, the new secret''s and the previous one''s.'
+          in: header
+          name: webhook-signature
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeviceUnenrolledEvent'
+        required: true
+      responses:
+        "204":
+          description: 'Received: any 2xx status. Any other status, or no answer in 10 seconds, is retried on the endpoint''s schedule; a Retry-After on 429, 502, or 504 is honoured, up to 24 hours.'
+        "410":
+          description: 'The endpoint is gone: it is disabled and gets nothing more.'
+      summary: A device unenrolled
+      tags:
+        - events
+  push_certificate.expiring:
+    post:
+      description: A credential holder's push certificate expires in 30, 14, or 3 days; sent once for each. The event is about the account, so its data names no tenant. Sent as a POST to each of the account's enabled endpoints that takes the event, signed per Standard Webhooks 1.0.
+      operationId: onPushCertificateExpiring
+      parameters:
+        - description: The event's id, the same on every attempt. Dedupe on it.
+          in: header
+          name: webhook-id
+          required: true
+          schema:
+            format: uuid
+            type: string
+        - description: When this attempt was sent, in seconds since the Unix epoch.
+          in: header
+          name: webhook-timestamp
+          required: true
+          schema:
+            format: int64
+            type: integer
+        - description: 'One v1 signature per secret, space separated: HMAC-SHA256 over id.timestamp.body, base64. Two for 24 hours after a rotation, the new secret''s and the previous one''s.'
+          in: header
+          name: webhook-signature
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PushCertificateExpiringEvent'
+        required: true
+      responses:
+        "204":
+          description: 'Received: any 2xx status. Any other status, or no answer in 10 seconds, is retried on the endpoint''s schedule; a Retry-After on 429, 502, or 504 is honoured, up to 24 hours.'
+        "410":
+          description: 'The endpoint is gone: it is disabled and gets nothing more.'
+      summary: A push certificate is expiring
+      tags:
+        - events
+  tenant.deleted:
+    post:
+      description: The tenant and everything in it are gone. Sent as a POST to each of the account's enabled endpoints that takes the event, signed per Standard Webhooks 1.0.
+      operationId: onTenantDeleted
+      parameters:
+        - description: The event's id, the same on every attempt. Dedupe on it.
+          in: header
+          name: webhook-id
+          required: true
+          schema:
+            format: uuid
+            type: string
+        - description: When this attempt was sent, in seconds since the Unix epoch.
+          in: header
+          name: webhook-timestamp
+          required: true
+          schema:
+            format: int64
+            type: integer
+        - description: 'One v1 signature per secret, space separated: HMAC-SHA256 over id.timestamp.body, base64. Two for 24 hours after a rotation, the new secret''s and the previous one''s.'
+          in: header
+          name: webhook-signature
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TenantDeletedEvent'
+        required: true
+      responses:
+        "204":
+          description: 'Received: any 2xx status. Any other status, or no answer in 10 seconds, is retried on the endpoint''s schedule; a Retry-After on 429, 502, or 504 is honoured, up to 24 hours.'
+        "410":
+          description: 'The endpoint is gone: it is disabled and gets nothing more.'
+      summary: A tenant was deleted
+      tags:
+        - events
+  tenant.deleting:
+    post:
+      description: Writes to the tenant answer 409 from now on, and its devices are asked to remove their enrollment profiles. Sent as a POST to each of the account's enabled endpoints that takes the event, signed per Standard Webhooks 1.0.
+      operationId: onTenantDeleting
+      parameters:
+        - description: The event's id, the same on every attempt. Dedupe on it.
+          in: header
+          name: webhook-id
+          required: true
+          schema:
+            format: uuid
+            type: string
+        - description: When this attempt was sent, in seconds since the Unix epoch.
+          in: header
+          name: webhook-timestamp
+          required: true
+          schema:
+            format: int64
+            type: integer
+        - description: 'One v1 signature per secret, space separated: HMAC-SHA256 over id.timestamp.body, base64. Two for 24 hours after a rotation, the new secret''s and the previous one''s.'
+          in: header
+          name: webhook-signature
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TenantDeletingEvent'
+        required: true
+      responses:
+        "204":
+          description: 'Received: any 2xx status. Any other status, or no answer in 10 seconds, is retried on the endpoint''s schedule; a Retry-After on 429, 502, or 504 is honoured, up to 24 hours.'
+        "410":
+          description: 'The endpoint is gone: it is disabled and gets nothing more.'
+      summary: A tenant's deletion started
+      tags:
+        - events

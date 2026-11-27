@@ -54,3 +54,26 @@ deleteAssignment: {service: assignments, method: delete}
 createCommand: {service: commands, method: send}
 listCommands: {service: commands, method: list}
 getCommand: {service: commands, method: get}
+
+createToken: {service: tokens, method: create}
+
+getAccount: {service: account, method: get}
+
+listWebhooks: {service: webhooks, method: list}
+createWebhook: {service: webhooks, method: create}
+getWebhook: {service: webhooks, method: get}
+updateWebhook: {service: webhooks, method: update}
+deleteWebhook: {service: webhooks, method: delete}
+rotateWebhookSecret: {service: webhooks, method: rotateSecret}
+listWebhookDeliveries: {service: webhooks, method: listDeliveries}
+
+listHolders: {service: holders, method: list}
+createHolder: {service: holders, method: create}
+getHolder: {service: holders, method: get}
+updateHolder: {service: holders, method: update}
+deleteHolder: {service: holders, method: delete}
+requestPushCertificate: {service: holders, method: requestPushCertificate}
+uploadPushCertificate: {service: holders, method: uploadPushCertificate}
+getADEPublicKey: {service: holders, method: getADEPublicKey}
+uploadADEToken: {service: holders, method: uploadADEToken}
+uploadVPPToken: {service: holders, method: uploadVPPToken}

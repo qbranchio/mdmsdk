@@ -6,6 +6,8 @@ package api
 import (
 	"bytes"
 	"context"
+	"encoding/json"
+	"errors"
 	"io"
 	"net/http"
 	"net/url"
@@ -255,31 +257,67 @@ func (e CatalogKeyType) Valid() bool {
 
 // Defines values for CommandStatus.
 const (
-	Acknowledged       CommandStatus = "acknowledged"
-	Cancelled          CommandStatus = "cancelled"
-	CommandFormatError CommandStatus = "command_format_error"
-	Error              CommandStatus = "error"
-	Notnow             CommandStatus = "notnow"
-	Outbox             CommandStatus = "outbox"
-	Queued             CommandStatus = "queued"
+	CommandStatusAcknowledged       CommandStatus = "acknowledged"
+	CommandStatusCancelled          CommandStatus = "cancelled"
+	CommandStatusCommandFormatError CommandStatus = "command_format_error"
+	CommandStatusError              CommandStatus = "error"
+	CommandStatusNotnow             CommandStatus = "notnow"
+	CommandStatusOutbox             CommandStatus = "outbox"
+	CommandStatusQueued             CommandStatus = "queued"
 )
 
 // Valid indicates whether the value is a known member of the CommandStatus enum.
 func (e CommandStatus) Valid() bool {
 	switch e {
-	case Acknowledged:
+	case CommandStatusAcknowledged:
 		return true
-	case Cancelled:
+	case CommandStatusCancelled:
 		return true
-	case CommandFormatError:
+	case CommandStatusCommandFormatError:
 		return true
-	case Error:
+	case CommandStatusError:
 		return true
-	case Notnow:
+	case CommandStatusNotnow:
 		return true
-	case Outbox:
+	case CommandStatusOutbox:
 		return true
-	case Queued:
+	case CommandStatusQueued:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for CommandCompletedDataStatus.
+const (
+	CommandCompletedDataStatusAcknowledged       CommandCompletedDataStatus = "acknowledged"
+	CommandCompletedDataStatusCommandFormatError CommandCompletedDataStatus = "command_format_error"
+	CommandCompletedDataStatusError              CommandCompletedDataStatus = "error"
+)
+
+// Valid indicates whether the value is a known member of the CommandCompletedDataStatus enum.
+func (e CommandCompletedDataStatus) Valid() bool {
+	switch e {
+	case CommandCompletedDataStatusAcknowledged:
+		return true
+	case CommandCompletedDataStatusCommandFormatError:
+		return true
+	case CommandCompletedDataStatusError:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for CommandCompletedEventType.
+const (
+	CommandCompletedEventTypeCommandCompleted CommandCompletedEventType = "command.completed"
+)
+
+// Valid indicates whether the value is a known member of the CommandCompletedEventType enum.
+func (e CommandCompletedEventType) Valid() bool {
+	switch e {
+	case CommandCompletedEventTypeCommandCompleted:
 		return true
 	default:
 		return false
@@ -352,6 +390,36 @@ func (e DeviceDDMStage) Valid() bool {
 	}
 }
 
+// Defines values for DeviceEnrolledEventType.
+const (
+	DeviceEnrolledEventTypeDeviceEnrolled DeviceEnrolledEventType = "device.enrolled"
+)
+
+// Valid indicates whether the value is a known member of the DeviceEnrolledEventType enum.
+func (e DeviceEnrolledEventType) Valid() bool {
+	switch e {
+	case DeviceEnrolledEventTypeDeviceEnrolled:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for DeviceOSBehindEventType.
+const (
+	DeviceOSBehindEventTypeDeviceOsBehind DeviceOSBehindEventType = "device.os_behind"
+)
+
+// Valid indicates whether the value is a known member of the DeviceOSBehindEventType enum.
+func (e DeviceOSBehindEventType) Valid() bool {
+	switch e {
+	case DeviceOSBehindEventTypeDeviceOsBehind:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for DevicePolicyAppliedLevel.
 const (
 	DevicePolicyAppliedLevelLessThannil  DevicePolicyAppliedLevel = "<nil>"
@@ -412,6 +480,57 @@ func (e DevicePolicyStatus) Valid() bool {
 	case DevicePolicyStatusPending:
 		return true
 	case DevicePolicyStatusRemoving:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for DevicePolicyStatusDataStatus.
+const (
+	DevicePolicyStatusDataStatusApplied DevicePolicyStatusDataStatus = "applied"
+	DevicePolicyStatusDataStatusFailed  DevicePolicyStatusDataStatus = "failed"
+	DevicePolicyStatusDataStatusRemoved DevicePolicyStatusDataStatus = "removed"
+)
+
+// Valid indicates whether the value is a known member of the DevicePolicyStatusDataStatus enum.
+func (e DevicePolicyStatusDataStatus) Valid() bool {
+	switch e {
+	case DevicePolicyStatusDataStatusApplied:
+		return true
+	case DevicePolicyStatusDataStatusFailed:
+		return true
+	case DevicePolicyStatusDataStatusRemoved:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for DevicePolicyStatusEventType.
+const (
+	DevicePolicyStatusEventTypeDevicePolicyStatus DevicePolicyStatusEventType = "device.policy_status"
+)
+
+// Valid indicates whether the value is a known member of the DevicePolicyStatusEventType enum.
+func (e DevicePolicyStatusEventType) Valid() bool {
+	switch e {
+	case DevicePolicyStatusEventTypeDevicePolicyStatus:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for DeviceUnenrolledEventType.
+const (
+	DeviceUnenrolledEventTypeDeviceUnenrolled DeviceUnenrolledEventType = "device.unenrolled"
+)
+
+// Valid indicates whether the value is a known member of the DeviceUnenrolledEventType enum.
+func (e DeviceUnenrolledEventType) Valid() bool {
+	switch e {
+	case DeviceUnenrolledEventTypeDeviceUnenrolled:
 		return true
 	default:
 		return false
@@ -541,6 +660,21 @@ func (e MeRole) Valid() bool {
 	}
 }
 
+// Defines values for PushCertificateExpiringEventType.
+const (
+	PushCertificateExpiringEventTypePushCertificateExpiring PushCertificateExpiringEventType = "push_certificate.expiring"
+)
+
+// Valid indicates whether the value is a known member of the PushCertificateExpiringEventType enum.
+func (e PushCertificateExpiringEventType) Valid() bool {
+	switch e {
+	case PushCertificateExpiringEventTypePushCertificateExpiring:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for SourceLayer.
 const (
 	SourceLayerDevice   SourceLayer = "device"
@@ -589,6 +723,174 @@ func (e TenantRole) Valid() bool {
 	}
 }
 
+// Defines values for TenantDeletedEventType.
+const (
+	TenantDeletedEventTypeTenantDeleted TenantDeletedEventType = "tenant.deleted"
+)
+
+// Valid indicates whether the value is a known member of the TenantDeletedEventType enum.
+func (e TenantDeletedEventType) Valid() bool {
+	switch e {
+	case TenantDeletedEventTypeTenantDeleted:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for TenantDeletingEventType.
+const (
+	TenantDeletingEventTypeTenantDeleting TenantDeletingEventType = "tenant.deleting"
+)
+
+// Valid indicates whether the value is a known member of the TenantDeletingEventType enum.
+func (e TenantDeletingEventType) Valid() bool {
+	switch e {
+	case TenantDeletingEventTypeTenantDeleting:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for TokenRequestPermissions.
+const (
+	CommandsWrite TokenRequestPermissions = "commands:write"
+	DevicesRead   TokenRequestPermissions = "devices:read"
+	DevicesWrite  TokenRequestPermissions = "devices:write"
+	MembersRead   TokenRequestPermissions = "members:read"
+	ProfilesRead  TokenRequestPermissions = "profiles:read"
+	ProfilesWrite TokenRequestPermissions = "profiles:write"
+)
+
+// Valid indicates whether the value is a known member of the TokenRequestPermissions enum.
+func (e TokenRequestPermissions) Valid() bool {
+	switch e {
+	case CommandsWrite:
+		return true
+	case DevicesRead:
+		return true
+	case DevicesWrite:
+		return true
+	case MembersRead:
+		return true
+	case ProfilesRead:
+		return true
+	case ProfilesWrite:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for TokenResponseTokenType.
+const (
+	Bearer TokenResponseTokenType = "Bearer"
+)
+
+// Valid indicates whether the value is a known member of the TokenResponseTokenType enum.
+func (e TokenResponseTokenType) Valid() bool {
+	switch e {
+	case Bearer:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for WebhookDeliveryStatus.
+const (
+	WebhookDeliveryStatusDelivered WebhookDeliveryStatus = "delivered"
+	WebhookDeliveryStatusFailed    WebhookDeliveryStatus = "failed"
+	WebhookDeliveryStatusPending   WebhookDeliveryStatus = "pending"
+)
+
+// Valid indicates whether the value is a known member of the WebhookDeliveryStatus enum.
+func (e WebhookDeliveryStatus) Valid() bool {
+	switch e {
+	case WebhookDeliveryStatusDelivered:
+		return true
+	case WebhookDeliveryStatusFailed:
+		return true
+	case WebhookDeliveryStatusPending:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for WebhookRequestEvents.
+const (
+	WebhookRequestEventsCommandCompleted        WebhookRequestEvents = "command.completed"
+	WebhookRequestEventsDeviceEnrolled          WebhookRequestEvents = "device.enrolled"
+	WebhookRequestEventsDeviceOsBehind          WebhookRequestEvents = "device.os_behind"
+	WebhookRequestEventsDevicePolicyStatus      WebhookRequestEvents = "device.policy_status"
+	WebhookRequestEventsDeviceUnenrolled        WebhookRequestEvents = "device.unenrolled"
+	WebhookRequestEventsPushCertificateExpiring WebhookRequestEvents = "push_certificate.expiring"
+	WebhookRequestEventsTenantDeleted           WebhookRequestEvents = "tenant.deleted"
+	WebhookRequestEventsTenantDeleting          WebhookRequestEvents = "tenant.deleting"
+)
+
+// Valid indicates whether the value is a known member of the WebhookRequestEvents enum.
+func (e WebhookRequestEvents) Valid() bool {
+	switch e {
+	case WebhookRequestEventsCommandCompleted:
+		return true
+	case WebhookRequestEventsDeviceEnrolled:
+		return true
+	case WebhookRequestEventsDeviceOsBehind:
+		return true
+	case WebhookRequestEventsDevicePolicyStatus:
+		return true
+	case WebhookRequestEventsDeviceUnenrolled:
+		return true
+	case WebhookRequestEventsPushCertificateExpiring:
+		return true
+	case WebhookRequestEventsTenantDeleted:
+		return true
+	case WebhookRequestEventsTenantDeleting:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for WebhookUpdateEvents.
+const (
+	WebhookUpdateEventsCommandCompleted        WebhookUpdateEvents = "command.completed"
+	WebhookUpdateEventsDeviceEnrolled          WebhookUpdateEvents = "device.enrolled"
+	WebhookUpdateEventsDeviceOsBehind          WebhookUpdateEvents = "device.os_behind"
+	WebhookUpdateEventsDevicePolicyStatus      WebhookUpdateEvents = "device.policy_status"
+	WebhookUpdateEventsDeviceUnenrolled        WebhookUpdateEvents = "device.unenrolled"
+	WebhookUpdateEventsPushCertificateExpiring WebhookUpdateEvents = "push_certificate.expiring"
+	WebhookUpdateEventsTenantDeleted           WebhookUpdateEvents = "tenant.deleted"
+	WebhookUpdateEventsTenantDeleting          WebhookUpdateEvents = "tenant.deleting"
+)
+
+// Valid indicates whether the value is a known member of the WebhookUpdateEvents enum.
+func (e WebhookUpdateEvents) Valid() bool {
+	switch e {
+	case WebhookUpdateEventsCommandCompleted:
+		return true
+	case WebhookUpdateEventsDeviceEnrolled:
+		return true
+	case WebhookUpdateEventsDeviceOsBehind:
+		return true
+	case WebhookUpdateEventsDevicePolicyStatus:
+		return true
+	case WebhookUpdateEventsDeviceUnenrolled:
+		return true
+	case WebhookUpdateEventsPushCertificateExpiring:
+		return true
+	case WebhookUpdateEventsTenantDeleted:
+		return true
+	case WebhookUpdateEventsTenantDeleting:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for GetCatalogParamsLevel.
 const (
 	GetCatalogParamsLevelSupervised   GetCatalogParamsLevel = "supervised"
@@ -605,6 +907,24 @@ func (e GetCatalogParamsLevel) Valid() bool {
 	default:
 		return false
 	}
+}
+
+// ADEPublicKey defines model for ADEPublicKey.
+type ADEPublicKey struct {
+	// Certificate PEM.
+	Certificate string `json:"certificate"`
+}
+
+// Account defines model for Account.
+type Account struct {
+	// Clients Its Auth0 API client ids.
+	Clients      []string           `json:"clients"`
+	ContactEmail string             `json:"contact_email"`
+	Id           openapi_types.UUID `json:"id"`
+	Name         string             `json:"name"`
+
+	// Origins Browser origins its users call the API from with delegated tokens.
+	Origins []string `json:"origins"`
 }
 
 // AccountRef defines model for AccountRef.
@@ -760,6 +1080,38 @@ type CommandAccepted struct {
 	CommandUuid openapi_types.UUID `json:"command_uuid"`
 }
 
+// CommandCompletedData defines model for CommandCompletedData.
+type CommandCompletedData struct {
+	CommandUuid openapi_types.UUID `json:"command_uuid"`
+	DeviceId    openapi_types.UUID `json:"device_id"`
+
+	// MemberId The member who owns the device; null when it is the tenant's.
+	MemberId *openapi_types.UUID `json:"member_id"`
+
+	// RequestType The command's type (DeviceLock, DeviceInformation, and the commands mdm sends itself).
+	RequestType string                     `json:"request_type"`
+	Status      CommandCompletedDataStatus `json:"status"`
+
+	// TenantExternalId The account's own id for the tenant; null when it has none.
+	TenantExternalId *string            `json:"tenant_external_id"`
+	TenantId         openapi_types.UUID `json:"tenant_id"`
+}
+
+// CommandCompletedDataStatus defines model for CommandCompletedData.Status.
+type CommandCompletedDataStatus string
+
+// CommandCompletedEvent defines model for CommandCompletedEvent.
+type CommandCompletedEvent struct {
+	Data CommandCompletedData `json:"data"`
+
+	// Timestamp When the event happened.
+	Timestamp time.Time                 `json:"timestamp"`
+	Type      CommandCompletedEventType `json:"type"`
+}
+
+// CommandCompletedEventType defines model for CommandCompletedEvent.Type.
+type CommandCompletedEventType string
+
 // CommandRequest defines model for CommandRequest.
 type CommandRequest struct {
 	// Message DeviceLock only.
@@ -851,11 +1203,68 @@ type DeviceDDM struct {
 // DeviceDDMStage defines model for DeviceDDM.Stage.
 type DeviceDDMStage string
 
+// DeviceEnrolledData defines model for DeviceEnrolledData.
+type DeviceEnrolledData struct {
+	DeviceId openapi_types.UUID `json:"device_id"`
+
+	// MemberId The member who owns the device; null when it is the tenant's.
+	MemberId *openapi_types.UUID `json:"member_id"`
+
+	// TenantExternalId The account's own id for the tenant; null when it has none.
+	TenantExternalId *string            `json:"tenant_external_id"`
+	TenantId         openapi_types.UUID `json:"tenant_id"`
+}
+
+// DeviceEnrolledEvent defines model for DeviceEnrolledEvent.
+type DeviceEnrolledEvent struct {
+	Data DeviceEnrolledData `json:"data"`
+
+	// Timestamp When the event happened.
+	Timestamp time.Time               `json:"timestamp"`
+	Type      DeviceEnrolledEventType `json:"type"`
+}
+
+// DeviceEnrolledEventType defines model for DeviceEnrolledEvent.Type.
+type DeviceEnrolledEventType string
+
 // DeviceMemberRequest defines model for DeviceMemberRequest.
 type DeviceMemberRequest struct {
 	// Member The member id, or `ext:` and the account's id for the member.
 	Member string `json:"member"`
 }
+
+// DeviceOSBehindData defines model for DeviceOSBehindData.
+type DeviceOSBehindData struct {
+	DeviceId openapi_types.UUID `json:"device_id"`
+
+	// LatestVersion The newest iOS Apple publishes for its model; null when unknown.
+	LatestVersion *string `json:"latest_version"`
+
+	// MemberId The member who owns the device; null when it is the tenant's.
+	MemberId *openapi_types.UUID `json:"member_id"`
+
+	// MinimumVersion The tenant's minimum iOS version; null when it sets none.
+	MinimumVersion *string `json:"minimum_version"`
+
+	// OsVersion The iOS version the device runs.
+	OsVersion string `json:"os_version"`
+
+	// TenantExternalId The account's own id for the tenant; null when it has none.
+	TenantExternalId *string            `json:"tenant_external_id"`
+	TenantId         openapi_types.UUID `json:"tenant_id"`
+}
+
+// DeviceOSBehindEvent defines model for DeviceOSBehindEvent.
+type DeviceOSBehindEvent struct {
+	Data DeviceOSBehindData `json:"data"`
+
+	// Timestamp When the event happened.
+	Timestamp time.Time               `json:"timestamp"`
+	Type      DeviceOSBehindEventType `json:"type"`
+}
+
+// DeviceOSBehindEventType defines model for DeviceOSBehindEvent.Type.
+type DeviceOSBehindEventType string
 
 // DevicePolicy The deployment of the device's effective policy. Its items are read with profiles:read: GET .../effective-policy (with provenance) and GET .../settings (the device's own).
 type DevicePolicy struct {
@@ -887,6 +1296,63 @@ type DevicePolicyInstallLevel string
 
 // DevicePolicyStatus defines model for DevicePolicy.Status.
 type DevicePolicyStatus string
+
+// DevicePolicyStatusData defines model for DevicePolicyStatusData.
+type DevicePolicyStatusData struct {
+	DeviceId openapi_types.UUID `json:"device_id"`
+
+	// MemberId The member who owns the device; null when it is the tenant's.
+	MemberId *openapi_types.UUID `json:"member_id"`
+
+	// Revision The effective policy's revision.
+	Revision int64 `json:"revision"`
+
+	// Status applied: the device reported the revision active. failed: it reported a declaration invalid. removed: the policy is gone from the device.
+	Status DevicePolicyStatusDataStatus `json:"status"`
+
+	// TenantExternalId The account's own id for the tenant; null when it has none.
+	TenantExternalId *string            `json:"tenant_external_id"`
+	TenantId         openapi_types.UUID `json:"tenant_id"`
+}
+
+// DevicePolicyStatusDataStatus applied: the device reported the revision active. failed: it reported a declaration invalid. removed: the policy is gone from the device.
+type DevicePolicyStatusDataStatus string
+
+// DevicePolicyStatusEvent defines model for DevicePolicyStatusEvent.
+type DevicePolicyStatusEvent struct {
+	Data DevicePolicyStatusData `json:"data"`
+
+	// Timestamp When the event happened.
+	Timestamp time.Time                   `json:"timestamp"`
+	Type      DevicePolicyStatusEventType `json:"type"`
+}
+
+// DevicePolicyStatusEventType defines model for DevicePolicyStatusEvent.Type.
+type DevicePolicyStatusEventType string
+
+// DeviceUnenrolledData defines model for DeviceUnenrolledData.
+type DeviceUnenrolledData struct {
+	DeviceId openapi_types.UUID `json:"device_id"`
+
+	// MemberId The member who owns the device; null when it is the tenant's.
+	MemberId *openapi_types.UUID `json:"member_id"`
+
+	// TenantExternalId The account's own id for the tenant; null when it has none.
+	TenantExternalId *string            `json:"tenant_external_id"`
+	TenantId         openapi_types.UUID `json:"tenant_id"`
+}
+
+// DeviceUnenrolledEvent defines model for DeviceUnenrolledEvent.
+type DeviceUnenrolledEvent struct {
+	Data DeviceUnenrolledData `json:"data"`
+
+	// Timestamp When the event happened.
+	Timestamp time.Time                 `json:"timestamp"`
+	Type      DeviceUnenrolledEventType `json:"type"`
+}
+
+// DeviceUnenrolledEventType defines model for DeviceUnenrolledEvent.Type.
+type DeviceUnenrolledEventType string
 
 // EffectiveItem defines model for EffectiveItem.
 type EffectiveItem struct {
@@ -961,6 +1427,55 @@ type GroupRequest struct {
 type GroupUpdate struct {
 	Name     *string `json:"name,omitempty"`
 	Priority *int    `json:"priority,omitempty"`
+}
+
+// Holder defines model for Holder.
+type Holder struct {
+	Ade       HolderADE          `json:"ade"`
+	CreatedAt time.Time          `json:"created_at"`
+	Id        openapi_types.UUID `json:"id"`
+	IsDefault bool               `json:"is_default"`
+	LegalName string             `json:"legal_name"`
+	Name      string             `json:"name"`
+	Push      HolderPush         `json:"push"`
+	UpdatedAt time.Time          `json:"updated_at"`
+	Vpp       HolderVPP          `json:"vpp"`
+}
+
+// HolderADE defines model for HolderADE.
+type HolderADE struct {
+	PublicKeyIssued bool       `json:"public_key_issued"`
+	Token           bool       `json:"token"`
+	TokenExpires    *time.Time `json:"token_expires,omitempty"`
+}
+
+// HolderPush defines model for HolderPush.
+type HolderPush struct {
+	NotAfter *time.Time `json:"not_after,omitempty"`
+
+	// RequestPending A request awaits the certificate Apple issues for it.
+	RequestPending bool    `json:"request_pending"`
+	Topic          *string `json:"topic,omitempty"`
+}
+
+// HolderRequest defines model for HolderRequest.
+type HolderRequest struct {
+	// LegalName The legal entity that accepts Apple's agreements.
+	LegalName string `json:"legal_name"`
+	Name      string `json:"name"`
+}
+
+// HolderUpdate defines model for HolderUpdate.
+type HolderUpdate struct {
+	LegalName *string `json:"legal_name,omitempty"`
+	Name      *string `json:"name,omitempty"`
+}
+
+// HolderVPP defines model for HolderVPP.
+type HolderVPP struct {
+	Expires *time.Time `json:"expires,omitempty"`
+	OrgName *string    `json:"org_name,omitempty"`
+	Token   bool       `json:"token"`
 }
 
 // ItemStatus defines model for ItemStatus.
@@ -1100,6 +1615,48 @@ type ProfileRequest struct {
 	Name  string       `json:"name"`
 }
 
+// PushCertificateExpiringData defines model for PushCertificateExpiringData.
+type PushCertificateExpiringData struct {
+	// DaysLeft Whole days until it expires.
+	DaysLeft int `json:"days_left"`
+
+	// HolderId The credential holder whose push certificate is expiring.
+	HolderId openapi_types.UUID `json:"holder_id"`
+
+	// NotAfter When the certificate expires.
+	NotAfter time.Time `json:"not_after"`
+
+	// Topic The certificate's push topic.
+	Topic string `json:"topic"`
+}
+
+// PushCertificateExpiringEvent defines model for PushCertificateExpiringEvent.
+type PushCertificateExpiringEvent struct {
+	Data PushCertificateExpiringData `json:"data"`
+
+	// Timestamp When the event happened.
+	Timestamp time.Time                        `json:"timestamp"`
+	Type      PushCertificateExpiringEventType `json:"type"`
+}
+
+// PushCertificateExpiringEventType defines model for PushCertificateExpiringEvent.Type.
+type PushCertificateExpiringEventType string
+
+// PushCertificateRequest defines model for PushCertificateRequest.
+type PushCertificateRequest struct {
+	// Request The signed request, base64, as Apple's portal takes it (save it as a .plist file).
+	Request string `json:"request"`
+}
+
+// PushCertificateUpload defines model for PushCertificateUpload.
+type PushCertificateUpload struct {
+	// Certificate The certificate, PEM.
+	Certificate string `json:"certificate"`
+
+	// Key Its private key, PEM, for a certificate the holder obtained itself. Omit for one Apple issued for the holder's request.
+	Key *string `json:"key,omitempty"`
+}
+
 // Source defines model for Source.
 type Source struct {
 	// GroupId The group the profile reached the device through, for the group layer.
@@ -1137,6 +1694,44 @@ type Tenant struct {
 // TenantRole The caller's role, for an admin app token only.
 type TenantRole string
 
+// TenantDeletedData defines model for TenantDeletedData.
+type TenantDeletedData struct {
+	// TenantExternalId The account's own id for the tenant; null when it has none.
+	TenantExternalId *string            `json:"tenant_external_id"`
+	TenantId         openapi_types.UUID `json:"tenant_id"`
+}
+
+// TenantDeletedEvent defines model for TenantDeletedEvent.
+type TenantDeletedEvent struct {
+	Data TenantDeletedData `json:"data"`
+
+	// Timestamp When the event happened.
+	Timestamp time.Time              `json:"timestamp"`
+	Type      TenantDeletedEventType `json:"type"`
+}
+
+// TenantDeletedEventType defines model for TenantDeletedEvent.Type.
+type TenantDeletedEventType string
+
+// TenantDeletingData defines model for TenantDeletingData.
+type TenantDeletingData struct {
+	// TenantExternalId The account's own id for the tenant; null when it has none.
+	TenantExternalId *string            `json:"tenant_external_id"`
+	TenantId         openapi_types.UUID `json:"tenant_id"`
+}
+
+// TenantDeletingEvent defines model for TenantDeletingEvent.
+type TenantDeletingEvent struct {
+	Data TenantDeletingData `json:"data"`
+
+	// Timestamp When the event happened.
+	Timestamp time.Time               `json:"timestamp"`
+	Type      TenantDeletingEventType `json:"type"`
+}
+
+// TenantDeletingEventType defines model for TenantDeletingEvent.Type.
+type TenantDeletingEventType string
+
 // TenantRequest defines model for TenantRequest.
 type TenantRequest struct {
 	// ExternalId The account's own id for the tenant: letters, digits, and the characters . _ ~ @ : -
@@ -1155,6 +1750,225 @@ type TenantUpdate struct {
 	// MinOs The iOS version its devices must reach (26.2); empty clears it. Without it a device is behind when Apple has a newer release for its model.
 	MinOs *string `json:"min_os,omitempty"`
 	Name  *string `json:"name,omitempty"`
+}
+
+// TokenRequest defines model for TokenRequest.
+type TokenRequest struct {
+	All    *bool                 `json:"all,omitempty"`
+	Groups *[]openapi_types.UUID `json:"groups,omitempty"`
+
+	// Members Member ids or `ext:` references. Exactly one of members, groups, and all.
+	Members     *[]string                 `json:"members,omitempty"`
+	Permissions []TokenRequestPermissions `json:"permissions"`
+
+	// Subject The account's id for its user; recorded, never interpreted.
+	Subject string `json:"subject"`
+
+	// Tenant The tenant id, or `ext:` and the account's external id for it.
+	Tenant string `json:"tenant"`
+
+	// Ttl Seconds; 900 when absent.
+	Ttl *int `json:"ttl,omitempty"`
+}
+
+// TokenRequestPermissions defines model for TokenRequest.Permissions.
+type TokenRequestPermissions string
+
+// TokenResponse defines model for TokenResponse.
+type TokenResponse struct {
+	AccessToken string                 `json:"access_token"`
+	ExpiresIn   int                    `json:"expires_in"`
+	TokenType   TokenResponseTokenType `json:"token_type"`
+}
+
+// TokenResponseTokenType defines model for TokenResponse.TokenType.
+type TokenResponseTokenType string
+
+// TokenUpload defines model for TokenUpload.
+type TokenUpload struct {
+	Token string `json:"token"`
+}
+
+// WebhookDelivery defines model for WebhookDelivery.
+type WebhookDelivery struct {
+	Attempts  int       `json:"attempts"`
+	CreatedAt time.Time `json:"created_at"`
+
+	// EventId The webhook-id header.
+	EventId       openapi_types.UUID    `json:"event_id"`
+	FinishedAt    *time.Time            `json:"finished_at,omitempty"`
+	Id            openapi_types.UUID    `json:"id"`
+	LastError     *string               `json:"last_error,omitempty"`
+	LastStatus    *int                  `json:"last_status,omitempty"`
+	NextAttemptAt time.Time             `json:"next_attempt_at"`
+	Status        WebhookDeliveryStatus `json:"status"`
+	Type          string                `json:"type"`
+}
+
+// WebhookDeliveryStatus defines model for WebhookDelivery.Status.
+type WebhookDeliveryStatus string
+
+// WebhookEndpoint defines model for WebhookEndpoint.
+type WebhookEndpoint struct {
+	CreatedAt      time.Time `json:"created_at"`
+	DisabledReason *string   `json:"disabled_reason,omitempty"`
+	Enabled        bool      `json:"enabled"`
+
+	// Events Empty takes every event.
+	Events []string           `json:"events"`
+	Id     openapi_types.UUID `json:"id"`
+
+	// PreviousSecretUntil Until when deliveries are also signed with the previous secret.
+	PreviousSecretUntil *time.Time `json:"previous_secret_until,omitempty"`
+
+	// Secret The signing secret (whsec_...). Only on create and rotate.
+	Secret    *string   `json:"secret,omitempty"`
+	UpdatedAt time.Time `json:"updated_at"`
+	Url       string    `json:"url"`
+}
+
+// WebhookEvent The body of a webhook delivery: one event, told apart by type.
+type WebhookEvent struct {
+	union json.RawMessage
+}
+
+// WebhookRequest defines model for WebhookRequest.
+type WebhookRequest struct {
+	Events *[]WebhookRequestEvents `json:"events,omitempty"`
+	Url    string                  `json:"url"`
+}
+
+// WebhookRequestEvents defines model for WebhookRequest.Events.
+type WebhookRequestEvents string
+
+// WebhookUpdate defines model for WebhookUpdate.
+type WebhookUpdate struct {
+	Enabled *bool                  `json:"enabled,omitempty"`
+	Events  *[]WebhookUpdateEvents `json:"events,omitempty"`
+	Url     *string                `json:"url,omitempty"`
+}
+
+// WebhookUpdateEvents defines model for WebhookUpdate.Events.
+type WebhookUpdateEvents string
+
+// GetAccountParams defines parameters for GetAccount.
+type GetAccountParams struct {
+	// MdmActor For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.
+	MdmActor *string `json:"Mdm-Actor,omitempty"`
+}
+
+// ListHoldersParams defines parameters for ListHolders.
+type ListHoldersParams struct {
+	// MdmActor For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.
+	MdmActor *string `json:"Mdm-Actor,omitempty"`
+}
+
+// CreateHolderParams defines parameters for CreateHolder.
+type CreateHolderParams struct {
+	// IdempotencyKey Makes a retry safe (IETF draft): the first response is stored for 24 hours and replayed, with Idempotent-Replayed, for a retry by the same caller with the same key, method, path, and body. The same key with another request answers 422; a retry while the first runs answers 409.
+	IdempotencyKey *string `json:"Idempotency-Key,omitempty"`
+
+	// MdmActor For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.
+	MdmActor *string `json:"Mdm-Actor,omitempty"`
+}
+
+// DeleteHolderParams defines parameters for DeleteHolder.
+type DeleteHolderParams struct {
+	// MdmActor For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.
+	MdmActor *string `json:"Mdm-Actor,omitempty"`
+}
+
+// GetHolderParams defines parameters for GetHolder.
+type GetHolderParams struct {
+	// MdmActor For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.
+	MdmActor *string `json:"Mdm-Actor,omitempty"`
+}
+
+// UpdateHolderParams defines parameters for UpdateHolder.
+type UpdateHolderParams struct {
+	// MdmActor For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.
+	MdmActor *string `json:"Mdm-Actor,omitempty"`
+}
+
+// GetADEPublicKeyParams defines parameters for GetADEPublicKey.
+type GetADEPublicKeyParams struct {
+	// MdmActor For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.
+	MdmActor *string `json:"Mdm-Actor,omitempty"`
+}
+
+// UploadADETokenParams defines parameters for UploadADEToken.
+type UploadADETokenParams struct {
+	// MdmActor For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.
+	MdmActor *string `json:"Mdm-Actor,omitempty"`
+}
+
+// UploadPushCertificateParams defines parameters for UploadPushCertificate.
+type UploadPushCertificateParams struct {
+	// MdmActor For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.
+	MdmActor *string `json:"Mdm-Actor,omitempty"`
+}
+
+// RequestPushCertificateParams defines parameters for RequestPushCertificate.
+type RequestPushCertificateParams struct {
+	// IdempotencyKey Makes a retry safe (IETF draft): the first response is stored for 24 hours and replayed, with Idempotent-Replayed, for a retry by the same caller with the same key, method, path, and body. The same key with another request answers 422; a retry while the first runs answers 409.
+	IdempotencyKey *string `json:"Idempotency-Key,omitempty"`
+
+	// MdmActor For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.
+	MdmActor *string `json:"Mdm-Actor,omitempty"`
+}
+
+// UploadVPPTokenParams defines parameters for UploadVPPToken.
+type UploadVPPTokenParams struct {
+	// MdmActor For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.
+	MdmActor *string `json:"Mdm-Actor,omitempty"`
+}
+
+// ListWebhooksParams defines parameters for ListWebhooks.
+type ListWebhooksParams struct {
+	// MdmActor For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.
+	MdmActor *string `json:"Mdm-Actor,omitempty"`
+}
+
+// CreateWebhookParams defines parameters for CreateWebhook.
+type CreateWebhookParams struct {
+	// IdempotencyKey Makes a retry safe (IETF draft): the first response is stored for 24 hours and replayed, with Idempotent-Replayed, for a retry by the same caller with the same key, method, path, and body. The same key with another request answers 422; a retry while the first runs answers 409.
+	IdempotencyKey *string `json:"Idempotency-Key,omitempty"`
+
+	// MdmActor For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.
+	MdmActor *string `json:"Mdm-Actor,omitempty"`
+}
+
+// DeleteWebhookParams defines parameters for DeleteWebhook.
+type DeleteWebhookParams struct {
+	// MdmActor For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.
+	MdmActor *string `json:"Mdm-Actor,omitempty"`
+}
+
+// GetWebhookParams defines parameters for GetWebhook.
+type GetWebhookParams struct {
+	// MdmActor For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.
+	MdmActor *string `json:"Mdm-Actor,omitempty"`
+}
+
+// UpdateWebhookParams defines parameters for UpdateWebhook.
+type UpdateWebhookParams struct {
+	// MdmActor For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.
+	MdmActor *string `json:"Mdm-Actor,omitempty"`
+}
+
+// ListWebhookDeliveriesParams defines parameters for ListWebhookDeliveries.
+type ListWebhookDeliveriesParams struct {
+	// MdmActor For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.
+	MdmActor *string `json:"Mdm-Actor,omitempty"`
+}
+
+// RotateWebhookSecretParams defines parameters for RotateWebhookSecret.
+type RotateWebhookSecretParams struct {
+	// IdempotencyKey Makes a retry safe (IETF draft): the first response is stored for 24 hours and replayed, with Idempotent-Replayed, for a retry by the same caller with the same key, method, path, and body. The same key with another request answers 422; a retry while the first runs answers 409.
+	IdempotencyKey *string `json:"Idempotency-Key,omitempty"`
+
+	// MdmActor For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.
+	MdmActor *string `json:"Mdm-Actor,omitempty"`
 }
 
 // GetCatalogParams defines parameters for GetCatalog.
@@ -1457,6 +2271,129 @@ type DeleteAssignmentParams struct {
 	MdmActor *string `json:"Mdm-Actor,omitempty"`
 }
 
+// CreateTokenParams defines parameters for CreateToken.
+type CreateTokenParams struct {
+	// MdmActor For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.
+	MdmActor *string `json:"Mdm-Actor,omitempty"`
+}
+
+// OnCommandCompletedParams defines parameters for OnCommandCompleted.
+type OnCommandCompletedParams struct {
+	// WebhookId The event's id, the same on every attempt. Dedupe on it.
+	WebhookId openapi_types.UUID `json:"webhook-id"`
+
+	// WebhookTimestamp When this attempt was sent, in seconds since the Unix epoch.
+	WebhookTimestamp int64 `json:"webhook-timestamp"`
+
+	// WebhookSignature One v1 signature per secret, space separated: HMAC-SHA256 over id.timestamp.body, base64. Two for 24 hours after a rotation, the new secret's and the previous one's.
+	WebhookSignature string `json:"webhook-signature"`
+}
+
+// OnDeviceEnrolledParams defines parameters for OnDeviceEnrolled.
+type OnDeviceEnrolledParams struct {
+	// WebhookId The event's id, the same on every attempt. Dedupe on it.
+	WebhookId openapi_types.UUID `json:"webhook-id"`
+
+	// WebhookTimestamp When this attempt was sent, in seconds since the Unix epoch.
+	WebhookTimestamp int64 `json:"webhook-timestamp"`
+
+	// WebhookSignature One v1 signature per secret, space separated: HMAC-SHA256 over id.timestamp.body, base64. Two for 24 hours after a rotation, the new secret's and the previous one's.
+	WebhookSignature string `json:"webhook-signature"`
+}
+
+// OnDeviceOsBehindParams defines parameters for OnDeviceOsBehind.
+type OnDeviceOsBehindParams struct {
+	// WebhookId The event's id, the same on every attempt. Dedupe on it.
+	WebhookId openapi_types.UUID `json:"webhook-id"`
+
+	// WebhookTimestamp When this attempt was sent, in seconds since the Unix epoch.
+	WebhookTimestamp int64 `json:"webhook-timestamp"`
+
+	// WebhookSignature One v1 signature per secret, space separated: HMAC-SHA256 over id.timestamp.body, base64. Two for 24 hours after a rotation, the new secret's and the previous one's.
+	WebhookSignature string `json:"webhook-signature"`
+}
+
+// OnDevicePolicyStatusParams defines parameters for OnDevicePolicyStatus.
+type OnDevicePolicyStatusParams struct {
+	// WebhookId The event's id, the same on every attempt. Dedupe on it.
+	WebhookId openapi_types.UUID `json:"webhook-id"`
+
+	// WebhookTimestamp When this attempt was sent, in seconds since the Unix epoch.
+	WebhookTimestamp int64 `json:"webhook-timestamp"`
+
+	// WebhookSignature One v1 signature per secret, space separated: HMAC-SHA256 over id.timestamp.body, base64. Two for 24 hours after a rotation, the new secret's and the previous one's.
+	WebhookSignature string `json:"webhook-signature"`
+}
+
+// OnDeviceUnenrolledParams defines parameters for OnDeviceUnenrolled.
+type OnDeviceUnenrolledParams struct {
+	// WebhookId The event's id, the same on every attempt. Dedupe on it.
+	WebhookId openapi_types.UUID `json:"webhook-id"`
+
+	// WebhookTimestamp When this attempt was sent, in seconds since the Unix epoch.
+	WebhookTimestamp int64 `json:"webhook-timestamp"`
+
+	// WebhookSignature One v1 signature per secret, space separated: HMAC-SHA256 over id.timestamp.body, base64. Two for 24 hours after a rotation, the new secret's and the previous one's.
+	WebhookSignature string `json:"webhook-signature"`
+}
+
+// OnPushCertificateExpiringParams defines parameters for OnPushCertificateExpiring.
+type OnPushCertificateExpiringParams struct {
+	// WebhookId The event's id, the same on every attempt. Dedupe on it.
+	WebhookId openapi_types.UUID `json:"webhook-id"`
+
+	// WebhookTimestamp When this attempt was sent, in seconds since the Unix epoch.
+	WebhookTimestamp int64 `json:"webhook-timestamp"`
+
+	// WebhookSignature One v1 signature per secret, space separated: HMAC-SHA256 over id.timestamp.body, base64. Two for 24 hours after a rotation, the new secret's and the previous one's.
+	WebhookSignature string `json:"webhook-signature"`
+}
+
+// OnTenantDeletedParams defines parameters for OnTenantDeleted.
+type OnTenantDeletedParams struct {
+	// WebhookId The event's id, the same on every attempt. Dedupe on it.
+	WebhookId openapi_types.UUID `json:"webhook-id"`
+
+	// WebhookTimestamp When this attempt was sent, in seconds since the Unix epoch.
+	WebhookTimestamp int64 `json:"webhook-timestamp"`
+
+	// WebhookSignature One v1 signature per secret, space separated: HMAC-SHA256 over id.timestamp.body, base64. Two for 24 hours after a rotation, the new secret's and the previous one's.
+	WebhookSignature string `json:"webhook-signature"`
+}
+
+// OnTenantDeletingParams defines parameters for OnTenantDeleting.
+type OnTenantDeletingParams struct {
+	// WebhookId The event's id, the same on every attempt. Dedupe on it.
+	WebhookId openapi_types.UUID `json:"webhook-id"`
+
+	// WebhookTimestamp When this attempt was sent, in seconds since the Unix epoch.
+	WebhookTimestamp int64 `json:"webhook-timestamp"`
+
+	// WebhookSignature One v1 signature per secret, space separated: HMAC-SHA256 over id.timestamp.body, base64. Two for 24 hours after a rotation, the new secret's and the previous one's.
+	WebhookSignature string `json:"webhook-signature"`
+}
+
+// CreateHolderJSONRequestBody defines body for CreateHolder for application/json ContentType.
+type CreateHolderJSONRequestBody = HolderRequest
+
+// UpdateHolderJSONRequestBody defines body for UpdateHolder for application/json ContentType.
+type UpdateHolderJSONRequestBody = HolderUpdate
+
+// UploadADETokenJSONRequestBody defines body for UploadADEToken for application/json ContentType.
+type UploadADETokenJSONRequestBody = TokenUpload
+
+// UploadPushCertificateJSONRequestBody defines body for UploadPushCertificate for application/json ContentType.
+type UploadPushCertificateJSONRequestBody = PushCertificateUpload
+
+// UploadVPPTokenJSONRequestBody defines body for UploadVPPToken for application/json ContentType.
+type UploadVPPTokenJSONRequestBody = TokenUpload
+
+// CreateWebhookJSONRequestBody defines body for CreateWebhook for application/json ContentType.
+type CreateWebhookJSONRequestBody = WebhookRequest
+
+// UpdateWebhookJSONRequestBody defines body for UpdateWebhook for application/json ContentType.
+type UpdateWebhookJSONRequestBody = WebhookUpdate
+
 // CreateTenantJSONRequestBody defines body for CreateTenant for application/json ContentType.
 type CreateTenantJSONRequestBody = TenantRequest
 
@@ -1495,6 +2432,350 @@ type UpdateProfileJSONRequestBody = ProfileRequest
 
 // CreateAssignmentJSONRequestBody defines body for CreateAssignment for application/json ContentType.
 type CreateAssignmentJSONRequestBody = AssignmentRequest
+
+// CreateTokenJSONRequestBody defines body for CreateToken for application/json ContentType.
+type CreateTokenJSONRequestBody = TokenRequest
+
+// OnCommandCompletedJSONRequestBody defines body for OnCommandCompleted for application/json ContentType.
+type OnCommandCompletedJSONRequestBody = CommandCompletedEvent
+
+// OnDeviceEnrolledJSONRequestBody defines body for OnDeviceEnrolled for application/json ContentType.
+type OnDeviceEnrolledJSONRequestBody = DeviceEnrolledEvent
+
+// OnDeviceOsBehindJSONRequestBody defines body for OnDeviceOsBehind for application/json ContentType.
+type OnDeviceOsBehindJSONRequestBody = DeviceOSBehindEvent
+
+// OnDevicePolicyStatusJSONRequestBody defines body for OnDevicePolicyStatus for application/json ContentType.
+type OnDevicePolicyStatusJSONRequestBody = DevicePolicyStatusEvent
+
+// OnDeviceUnenrolledJSONRequestBody defines body for OnDeviceUnenrolled for application/json ContentType.
+type OnDeviceUnenrolledJSONRequestBody = DeviceUnenrolledEvent
+
+// OnPushCertificateExpiringJSONRequestBody defines body for OnPushCertificateExpiring for application/json ContentType.
+type OnPushCertificateExpiringJSONRequestBody = PushCertificateExpiringEvent
+
+// OnTenantDeletedJSONRequestBody defines body for OnTenantDeleted for application/json ContentType.
+type OnTenantDeletedJSONRequestBody = TenantDeletedEvent
+
+// OnTenantDeletingJSONRequestBody defines body for OnTenantDeleting for application/json ContentType.
+type OnTenantDeletingJSONRequestBody = TenantDeletingEvent
+
+// AsDeviceEnrolledEvent returns the union data inside the WebhookEvent as a DeviceEnrolledEvent
+func (t WebhookEvent) AsDeviceEnrolledEvent() (DeviceEnrolledEvent, error) {
+	var body DeviceEnrolledEvent
+	err := runtime.JSONUnmarshal(t.union, &body)
+	return body, err
+}
+
+// FromDeviceEnrolledEvent overwrites any union data inside the WebhookEvent as the provided DeviceEnrolledEvent
+func (t *WebhookEvent) FromDeviceEnrolledEvent(v DeviceEnrolledEvent) error {
+	b, err := runtime.JSONMarshal(v)
+	if err != nil {
+		return err
+	}
+	b, err = runtime.JSONMerge(b, []byte(`{"type":"device.enrolled"}`))
+	t.union = b
+	return err
+}
+
+// MergeDeviceEnrolledEvent performs a merge with any union data inside the WebhookEvent, using the provided DeviceEnrolledEvent
+func (t *WebhookEvent) MergeDeviceEnrolledEvent(v DeviceEnrolledEvent) error {
+	b, err := runtime.JSONMarshal(v)
+	if err != nil {
+		return err
+	}
+	b, err = runtime.JSONMerge(b, []byte(`{"type":"device.enrolled"}`))
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+// AsDeviceUnenrolledEvent returns the union data inside the WebhookEvent as a DeviceUnenrolledEvent
+func (t WebhookEvent) AsDeviceUnenrolledEvent() (DeviceUnenrolledEvent, error) {
+	var body DeviceUnenrolledEvent
+	err := runtime.JSONUnmarshal(t.union, &body)
+	return body, err
+}
+
+// FromDeviceUnenrolledEvent overwrites any union data inside the WebhookEvent as the provided DeviceUnenrolledEvent
+func (t *WebhookEvent) FromDeviceUnenrolledEvent(v DeviceUnenrolledEvent) error {
+	b, err := runtime.JSONMarshal(v)
+	if err != nil {
+		return err
+	}
+	b, err = runtime.JSONMerge(b, []byte(`{"type":"device.unenrolled"}`))
+	t.union = b
+	return err
+}
+
+// MergeDeviceUnenrolledEvent performs a merge with any union data inside the WebhookEvent, using the provided DeviceUnenrolledEvent
+func (t *WebhookEvent) MergeDeviceUnenrolledEvent(v DeviceUnenrolledEvent) error {
+	b, err := runtime.JSONMarshal(v)
+	if err != nil {
+		return err
+	}
+	b, err = runtime.JSONMerge(b, []byte(`{"type":"device.unenrolled"}`))
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+// AsDevicePolicyStatusEvent returns the union data inside the WebhookEvent as a DevicePolicyStatusEvent
+func (t WebhookEvent) AsDevicePolicyStatusEvent() (DevicePolicyStatusEvent, error) {
+	var body DevicePolicyStatusEvent
+	err := runtime.JSONUnmarshal(t.union, &body)
+	return body, err
+}
+
+// FromDevicePolicyStatusEvent overwrites any union data inside the WebhookEvent as the provided DevicePolicyStatusEvent
+func (t *WebhookEvent) FromDevicePolicyStatusEvent(v DevicePolicyStatusEvent) error {
+	b, err := runtime.JSONMarshal(v)
+	if err != nil {
+		return err
+	}
+	b, err = runtime.JSONMerge(b, []byte(`{"type":"device.policy_status"}`))
+	t.union = b
+	return err
+}
+
+// MergeDevicePolicyStatusEvent performs a merge with any union data inside the WebhookEvent, using the provided DevicePolicyStatusEvent
+func (t *WebhookEvent) MergeDevicePolicyStatusEvent(v DevicePolicyStatusEvent) error {
+	b, err := runtime.JSONMarshal(v)
+	if err != nil {
+		return err
+	}
+	b, err = runtime.JSONMerge(b, []byte(`{"type":"device.policy_status"}`))
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+// AsDeviceOSBehindEvent returns the union data inside the WebhookEvent as a DeviceOSBehindEvent
+func (t WebhookEvent) AsDeviceOSBehindEvent() (DeviceOSBehindEvent, error) {
+	var body DeviceOSBehindEvent
+	err := runtime.JSONUnmarshal(t.union, &body)
+	return body, err
+}
+
+// FromDeviceOSBehindEvent overwrites any union data inside the WebhookEvent as the provided DeviceOSBehindEvent
+func (t *WebhookEvent) FromDeviceOSBehindEvent(v DeviceOSBehindEvent) error {
+	b, err := runtime.JSONMarshal(v)
+	if err != nil {
+		return err
+	}
+	b, err = runtime.JSONMerge(b, []byte(`{"type":"device.os_behind"}`))
+	t.union = b
+	return err
+}
+
+// MergeDeviceOSBehindEvent performs a merge with any union data inside the WebhookEvent, using the provided DeviceOSBehindEvent
+func (t *WebhookEvent) MergeDeviceOSBehindEvent(v DeviceOSBehindEvent) error {
+	b, err := runtime.JSONMarshal(v)
+	if err != nil {
+		return err
+	}
+	b, err = runtime.JSONMerge(b, []byte(`{"type":"device.os_behind"}`))
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+// AsCommandCompletedEvent returns the union data inside the WebhookEvent as a CommandCompletedEvent
+func (t WebhookEvent) AsCommandCompletedEvent() (CommandCompletedEvent, error) {
+	var body CommandCompletedEvent
+	err := runtime.JSONUnmarshal(t.union, &body)
+	return body, err
+}
+
+// FromCommandCompletedEvent overwrites any union data inside the WebhookEvent as the provided CommandCompletedEvent
+func (t *WebhookEvent) FromCommandCompletedEvent(v CommandCompletedEvent) error {
+	b, err := runtime.JSONMarshal(v)
+	if err != nil {
+		return err
+	}
+	b, err = runtime.JSONMerge(b, []byte(`{"type":"command.completed"}`))
+	t.union = b
+	return err
+}
+
+// MergeCommandCompletedEvent performs a merge with any union data inside the WebhookEvent, using the provided CommandCompletedEvent
+func (t *WebhookEvent) MergeCommandCompletedEvent(v CommandCompletedEvent) error {
+	b, err := runtime.JSONMarshal(v)
+	if err != nil {
+		return err
+	}
+	b, err = runtime.JSONMerge(b, []byte(`{"type":"command.completed"}`))
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+// AsPushCertificateExpiringEvent returns the union data inside the WebhookEvent as a PushCertificateExpiringEvent
+func (t WebhookEvent) AsPushCertificateExpiringEvent() (PushCertificateExpiringEvent, error) {
+	var body PushCertificateExpiringEvent
+	err := runtime.JSONUnmarshal(t.union, &body)
+	return body, err
+}
+
+// FromPushCertificateExpiringEvent overwrites any union data inside the WebhookEvent as the provided PushCertificateExpiringEvent
+func (t *WebhookEvent) FromPushCertificateExpiringEvent(v PushCertificateExpiringEvent) error {
+	b, err := runtime.JSONMarshal(v)
+	if err != nil {
+		return err
+	}
+	b, err = runtime.JSONMerge(b, []byte(`{"type":"push_certificate.expiring"}`))
+	t.union = b
+	return err
+}
+
+// MergePushCertificateExpiringEvent performs a merge with any union data inside the WebhookEvent, using the provided PushCertificateExpiringEvent
+func (t *WebhookEvent) MergePushCertificateExpiringEvent(v PushCertificateExpiringEvent) error {
+	b, err := runtime.JSONMarshal(v)
+	if err != nil {
+		return err
+	}
+	b, err = runtime.JSONMerge(b, []byte(`{"type":"push_certificate.expiring"}`))
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+// AsTenantDeletingEvent returns the union data inside the WebhookEvent as a TenantDeletingEvent
+func (t WebhookEvent) AsTenantDeletingEvent() (TenantDeletingEvent, error) {
+	var body TenantDeletingEvent
+	err := runtime.JSONUnmarshal(t.union, &body)
+	return body, err
+}
+
+// FromTenantDeletingEvent overwrites any union data inside the WebhookEvent as the provided TenantDeletingEvent
+func (t *WebhookEvent) FromTenantDeletingEvent(v TenantDeletingEvent) error {
+	b, err := runtime.JSONMarshal(v)
+	if err != nil {
+		return err
+	}
+	b, err = runtime.JSONMerge(b, []byte(`{"type":"tenant.deleting"}`))
+	t.union = b
+	return err
+}
+
+// MergeTenantDeletingEvent performs a merge with any union data inside the WebhookEvent, using the provided TenantDeletingEvent
+func (t *WebhookEvent) MergeTenantDeletingEvent(v TenantDeletingEvent) error {
+	b, err := runtime.JSONMarshal(v)
+	if err != nil {
+		return err
+	}
+	b, err = runtime.JSONMerge(b, []byte(`{"type":"tenant.deleting"}`))
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+// AsTenantDeletedEvent returns the union data inside the WebhookEvent as a TenantDeletedEvent
+func (t WebhookEvent) AsTenantDeletedEvent() (TenantDeletedEvent, error) {
+	var body TenantDeletedEvent
+	err := runtime.JSONUnmarshal(t.union, &body)
+	return body, err
+}
+
+// FromTenantDeletedEvent overwrites any union data inside the WebhookEvent as the provided TenantDeletedEvent
+func (t *WebhookEvent) FromTenantDeletedEvent(v TenantDeletedEvent) error {
+	b, err := runtime.JSONMarshal(v)
+	if err != nil {
+		return err
+	}
+	b, err = runtime.JSONMerge(b, []byte(`{"type":"tenant.deleted"}`))
+	t.union = b
+	return err
+}
+
+// MergeTenantDeletedEvent performs a merge with any union data inside the WebhookEvent, using the provided TenantDeletedEvent
+func (t *WebhookEvent) MergeTenantDeletedEvent(v TenantDeletedEvent) error {
+	b, err := runtime.JSONMarshal(v)
+	if err != nil {
+		return err
+	}
+	b, err = runtime.JSONMerge(b, []byte(`{"type":"tenant.deleted"}`))
+	if err != nil {
+		return err
+	}
+
+	merged, err := runtime.JSONMerge(t.union, b)
+	t.union = merged
+	return err
+}
+
+func (t WebhookEvent) Discriminator() (string, error) {
+	var discriminator struct {
+		Discriminator string `json:"type"`
+	}
+	err := runtime.JSONUnmarshal(t.union, &discriminator)
+	return discriminator.Discriminator, err
+}
+
+func (t WebhookEvent) ValueByDiscriminator() (any, error) {
+	discriminator, err := t.Discriminator()
+	if err != nil {
+		return nil, err
+	}
+	switch discriminator {
+	case "command.completed":
+		return t.AsCommandCompletedEvent()
+	case "device.enrolled":
+		return t.AsDeviceEnrolledEvent()
+	case "device.os_behind":
+		return t.AsDeviceOSBehindEvent()
+	case "device.policy_status":
+		return t.AsDevicePolicyStatusEvent()
+	case "device.unenrolled":
+		return t.AsDeviceUnenrolledEvent()
+	case "push_certificate.expiring":
+		return t.AsPushCertificateExpiringEvent()
+	case "tenant.deleted":
+		return t.AsTenantDeletedEvent()
+	case "tenant.deleting":
+		return t.AsTenantDeletingEvent()
+	default:
+		return nil, errors.New("unknown discriminator value: " + discriminator)
+	}
+}
+
+func (t WebhookEvent) MarshalJSON() ([]byte, error) {
+	b, err := t.union.MarshalJSON()
+	return b, err
+}
+
+func (t *WebhookEvent) UnmarshalJSON(b []byte) error {
+	err := t.union.UnmarshalJSON(b)
+	return err
+}
 
 // RequestEditorFn is the function signature for the RequestEditor callback function
 type RequestEditorFn func(ctx context.Context, req *http.Request) error
@@ -1569,6 +2850,199 @@ func WithRequestEditorFn(fn RequestEditorFn) ClientOption {
 
 // The interface specification for the client above.
 type ClientInterface interface {
+
+	// GetAccount The caller's account
+	//
+	// Its name, contact, API clients, and registered browser origins. Account clients, and console owners and admins.
+	//
+	// Corresponds with GET /api/v1/account (the `GetAccount` operationId).
+	GetAccount(ctx context.Context, params *GetAccountParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ListHolders List the account's credential holders
+	//
+	// Account clients with account:credentials. A credential holder is the legal entity that holds Apple credentials (the push certificate, the Automated Device Enrollment token, the Apps and Books token). Every account has a default holder; a tenant uses it unless it names another.
+	//
+	// Corresponds with GET /api/v1/account/holders (the `ListHolders` operationId).
+	ListHolders(ctx context.Context, params *ListHoldersParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// CreateHolderWithBody Add a credential holder
+	//
+	// Another legal entity the account serves, such as a managed service provider's customer.
+	//
+	// Takes any type of body and a specified content type.
+	//
+	// Corresponds with POST /api/v1/account/holders (the `CreateHolder` operationId).
+	CreateHolderWithBody(ctx context.Context, params *CreateHolderParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// CreateHolder Add a credential holder
+	//
+	// Another legal entity the account serves, such as a managed service provider's customer.
+	//
+	// Takes a body of the `application/json` content type.
+	//
+	// Corresponds with POST /api/v1/account/holders (the `CreateHolder` operationId).
+	CreateHolder(ctx context.Context, params *CreateHolderParams, body CreateHolderJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// DeleteHolder Delete a credential holder
+	//
+	// Not the default holder, nor one a tenant uses (409).
+	//
+	// Corresponds with DELETE /api/v1/account/holders/{holder} (the `DeleteHolder` operationId).
+	DeleteHolder(ctx context.Context, holder openapi_types.UUID, params *DeleteHolderParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetHolder Get a credential holder
+	//
+	// Corresponds with GET /api/v1/account/holders/{holder} (the `GetHolder` operationId).
+	GetHolder(ctx context.Context, holder openapi_types.UUID, params *GetHolderParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// UpdateHolderWithBody Rename a credential holder
+	//
+	// Takes any type of body and a specified content type.
+	//
+	// Corresponds with PATCH /api/v1/account/holders/{holder} (the `UpdateHolder` operationId).
+	UpdateHolderWithBody(ctx context.Context, holder openapi_types.UUID, params *UpdateHolderParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// UpdateHolder Rename a credential holder
+	//
+	// Takes a body of the `application/json` content type.
+	//
+	// Corresponds with PATCH /api/v1/account/holders/{holder} (the `UpdateHolder` operationId).
+	UpdateHolder(ctx context.Context, holder openapi_types.UUID, params *UpdateHolderParams, body UpdateHolderJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetADEPublicKey The holder's public key for Apple Business Manager
+	//
+	// The certificate to give Apple Business Manager when adding mdm as a device management service; made on first request. mdm keeps its private key to decrypt the server token.
+	//
+	// Corresponds with GET /api/v1/account/holders/{holder}/ade/public-key (the `GetADEPublicKey` operationId).
+	GetADEPublicKey(ctx context.Context, holder openapi_types.UUID, params *GetADEPublicKeyParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// UploadADETokenWithBody Upload the holder's Automated Device Enrollment server token
+	//
+	// The .p7m Apple Business Manager offers for the device management service, base64. mdm decrypts and checks it. Renew it yearly the same way. Device assignment comes later.
+	//
+	// Takes any type of body and a specified content type.
+	//
+	// Corresponds with PUT /api/v1/account/holders/{holder}/ade/token (the `UploadADEToken` operationId).
+	UploadADETokenWithBody(ctx context.Context, holder openapi_types.UUID, params *UploadADETokenParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// UploadADEToken Upload the holder's Automated Device Enrollment server token
+	//
+	// The .p7m Apple Business Manager offers for the device management service, base64. mdm decrypts and checks it. Renew it yearly the same way. Device assignment comes later.
+	//
+	// Takes a body of the `application/json` content type.
+	//
+	// Corresponds with PUT /api/v1/account/holders/{holder}/ade/token (the `UploadADEToken` operationId).
+	UploadADEToken(ctx context.Context, holder openapi_types.UUID, params *UploadADETokenParams, body UploadADETokenJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// UploadPushCertificateWithBody Upload the holder's push certificate
+	//
+	// The certificate Apple issued for the holder's request, or one the holder obtained itself with its key. It must pair with the key, be unexpired, and name a com.apple.mgmt topic no other holder has. A certificate for a different topic is refused while devices are enrolled on the current one (they would all need enrolling again): renew the existing certificate in Apple's portal. The certificate then goes to the push service; devices are sent commands once it is there.
+	//
+	// Takes any type of body and a specified content type.
+	//
+	// Corresponds with PUT /api/v1/account/holders/{holder}/push-certificate (the `UploadPushCertificate` operationId).
+	UploadPushCertificateWithBody(ctx context.Context, holder openapi_types.UUID, params *UploadPushCertificateParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// UploadPushCertificate Upload the holder's push certificate
+	//
+	// The certificate Apple issued for the holder's request, or one the holder obtained itself with its key. It must pair with the key, be unexpired, and name a com.apple.mgmt topic no other holder has. A certificate for a different topic is refused while devices are enrolled on the current one (they would all need enrolling again): renew the existing certificate in Apple's portal. The certificate then goes to the push service; devices are sent commands once it is there.
+	//
+	// Takes a body of the `application/json` content type.
+	//
+	// Corresponds with PUT /api/v1/account/holders/{holder}/push-certificate (the `UploadPushCertificate` operationId).
+	UploadPushCertificate(ctx context.Context, holder openapi_types.UUID, params *UploadPushCertificateParams, body UploadPushCertificateJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// RequestPushCertificate Request a push certificate
+	//
+	// mdm makes a key (kept, never returned) and returns the request, signed with mdm's vendor certificate, to upload at Apple's Push Certificates Portal (identity.apple.com) signed in with the organization's Apple Account: Create for a first certificate, Renew on the existing one to renew. Then upload the certificate Apple issues with PUT .../push-certificate. 409 until mdm has its vendor certificate: upload a certificate with its key instead.
+	//
+	// Corresponds with POST /api/v1/account/holders/{holder}/push-certificate/request (the `RequestPushCertificate` operationId).
+	RequestPushCertificate(ctx context.Context, holder openapi_types.UUID, params *RequestPushCertificateParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// UploadVPPTokenWithBody Upload the holder's Apps and Books content token
+	//
+	// The .vpptoken file's content. Using one token in a second MDM moves its licences away from the first. Renew it yearly; it also ends when the downloading account's password changes. Licence assignment comes later.
+	//
+	// Takes any type of body and a specified content type.
+	//
+	// Corresponds with PUT /api/v1/account/holders/{holder}/vpp/token (the `UploadVPPToken` operationId).
+	UploadVPPTokenWithBody(ctx context.Context, holder openapi_types.UUID, params *UploadVPPTokenParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// UploadVPPToken Upload the holder's Apps and Books content token
+	//
+	// The .vpptoken file's content. Using one token in a second MDM moves its licences away from the first. Renew it yearly; it also ends when the downloading account's password changes. Licence assignment comes later.
+	//
+	// Takes a body of the `application/json` content type.
+	//
+	// Corresponds with PUT /api/v1/account/holders/{holder}/vpp/token (the `UploadVPPToken` operationId).
+	UploadVPPToken(ctx context.Context, holder openapi_types.UUID, params *UploadVPPTokenParams, body UploadVPPTokenJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ListWebhooks List the account's webhook endpoints
+	//
+	// Account clients with account:webhooks. Secrets are never listed.
+	//
+	// Corresponds with GET /api/v1/account/webhooks (the `ListWebhooks` operationId).
+	ListWebhooks(ctx context.Context, params *ListWebhooksParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// CreateWebhookWithBody Add a webhook endpoint
+	//
+	// An https URL that receives the account's events, signed per Standard Webhooks 1.0 (webhook-id, webhook-timestamp, webhook-signature v1 HMAC-SHA256 over id.timestamp.body) with the secret in this response, shown only here. events limits the subscription; empty takes every event. Deliveries go one at a time per endpoint, in order, retried at 5 s, 5 m, 30 m, 2 h, 5 h, 10 h, 14 h, 20 h, and 24 h; after the last, or on 410, the endpoint is disabled. Receivers dedupe on webhook-id. The address must resolve to a public IP; redirects are not followed.
+	//
+	// Takes any type of body and a specified content type.
+	//
+	// Corresponds with POST /api/v1/account/webhooks (the `CreateWebhook` operationId).
+	CreateWebhookWithBody(ctx context.Context, params *CreateWebhookParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// CreateWebhook Add a webhook endpoint
+	//
+	// An https URL that receives the account's events, signed per Standard Webhooks 1.0 (webhook-id, webhook-timestamp, webhook-signature v1 HMAC-SHA256 over id.timestamp.body) with the secret in this response, shown only here. events limits the subscription; empty takes every event. Deliveries go one at a time per endpoint, in order, retried at 5 s, 5 m, 30 m, 2 h, 5 h, 10 h, 14 h, 20 h, and 24 h; after the last, or on 410, the endpoint is disabled. Receivers dedupe on webhook-id. The address must resolve to a public IP; redirects are not followed.
+	//
+	// Takes a body of the `application/json` content type.
+	//
+	// Corresponds with POST /api/v1/account/webhooks (the `CreateWebhook` operationId).
+	CreateWebhook(ctx context.Context, params *CreateWebhookParams, body CreateWebhookJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// DeleteWebhook Delete a webhook endpoint and its deliveries
+	//
+	// Corresponds with DELETE /api/v1/account/webhooks/{webhook} (the `DeleteWebhook` operationId).
+	DeleteWebhook(ctx context.Context, webhook openapi_types.UUID, params *DeleteWebhookParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetWebhook Get a webhook endpoint
+	//
+	// Corresponds with GET /api/v1/account/webhooks/{webhook} (the `GetWebhook` operationId).
+	GetWebhook(ctx context.Context, webhook openapi_types.UUID, params *GetWebhookParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// UpdateWebhookWithBody Change a webhook endpoint
+	//
+	// Enabling a disabled endpoint resumes its pending deliveries.
+	//
+	// Takes any type of body and a specified content type.
+	//
+	// Corresponds with PATCH /api/v1/account/webhooks/{webhook} (the `UpdateWebhook` operationId).
+	UpdateWebhookWithBody(ctx context.Context, webhook openapi_types.UUID, params *UpdateWebhookParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// UpdateWebhook Change a webhook endpoint
+	//
+	// Enabling a disabled endpoint resumes its pending deliveries.
+	//
+	// Takes a body of the `application/json` content type.
+	//
+	// Corresponds with PATCH /api/v1/account/webhooks/{webhook} (the `UpdateWebhook` operationId).
+	UpdateWebhook(ctx context.Context, webhook openapi_types.UUID, params *UpdateWebhookParams, body UpdateWebhookJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ListWebhookDeliveries An endpoint's latest deliveries
+	//
+	// The 50 latest, newest first.
+	//
+	// Corresponds with GET /api/v1/account/webhooks/{webhook}/deliveries (the `ListWebhookDeliveries` operationId).
+	ListWebhookDeliveries(ctx context.Context, webhook openapi_types.UUID, params *ListWebhookDeliveriesParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// RotateWebhookSecret Rotate a webhook endpoint's secret
+	//
+	// Issues a new secret, shown only here. For 24 hours every delivery carries signatures with both the new and the previous secret.
+	//
+	// Corresponds with POST /api/v1/account/webhooks/{webhook}/rotate-secret (the `RotateWebhookSecret` operationId).
+	RotateWebhookSecret(ctx context.Context, webhook openapi_types.UUID, params *RotateWebhookSecretParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// GetCatalog Settings a device can take
 	//
@@ -1988,6 +3462,467 @@ type ClientInterface interface {
 	//
 	// Corresponds with DELETE /api/v1/tenants/{tenant}/profiles/{profile}/assignments/{assignment} (the `DeleteAssignment` operationId).
 	DeleteAssignment(ctx context.Context, tenant string, profile openapi_types.UUID, assignment openapi_types.UUID, params *DeleteAssignmentParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// CreateTokenWithBody Issue a delegated token for one of the account's users
+	//
+	// Account clients with tokens:issue. The account's backend asks for a token for one of its users after applying its own rules; the user then calls the API directly with it. The token reaches one tenant of the account and, within it, the listed members (and their devices), the current members of the listed groups, or all of it, with the listed permissions (each one the client itself holds). It lasts ttl seconds, at most 900, and is never refreshed: ask again. Signed ES256 with mdm's keys (GET /api/.well-known/jwks.json).
+	//
+	// Takes any type of body and a specified content type.
+	//
+	// Corresponds with POST /api/v1/tokens (the `CreateToken` operationId).
+	CreateTokenWithBody(ctx context.Context, params *CreateTokenParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// CreateToken Issue a delegated token for one of the account's users
+	//
+	// Account clients with tokens:issue. The account's backend asks for a token for one of its users after applying its own rules; the user then calls the API directly with it. The token reaches one tenant of the account and, within it, the listed members (and their devices), the current members of the listed groups, or all of it, with the listed permissions (each one the client itself holds). It lasts ttl seconds, at most 900, and is never refreshed: ask again. Signed ES256 with mdm's keys (GET /api/.well-known/jwks.json).
+	//
+	// Takes a body of the `application/json` content type.
+	//
+	// Corresponds with POST /api/v1/tokens (the `CreateToken` operationId).
+	CreateToken(ctx context.Context, params *CreateTokenParams, body CreateTokenJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+}
+
+// GetAccount The caller's account
+//
+// Its name, contact, API clients, and registered browser origins. Account clients, and console owners and admins.
+//
+// Corresponds with GET /api/v1/account (the `GetAccount` operationId).
+func (c *Client) GetAccount(ctx context.Context, params *GetAccountParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetAccountRequest(c.Server, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// ListHolders List the account's credential holders
+//
+// Account clients with account:credentials. A credential holder is the legal entity that holds Apple credentials (the push certificate, the Automated Device Enrollment token, the Apps and Books token). Every account has a default holder; a tenant uses it unless it names another.
+//
+// Corresponds with GET /api/v1/account/holders (the `ListHolders` operationId).
+func (c *Client) ListHolders(ctx context.Context, params *ListHoldersParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListHoldersRequest(c.Server, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// CreateHolderWithBody Add a credential holder
+//
+// Another legal entity the account serves, such as a managed service provider's customer.
+//
+// Takes any type of body and a specified content type.
+//
+// Corresponds with POST /api/v1/account/holders (the `CreateHolder` operationId).
+func (c *Client) CreateHolderWithBody(ctx context.Context, params *CreateHolderParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateHolderRequestWithBody(c.Server, params, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// CreateHolder Add a credential holder
+//
+// Another legal entity the account serves, such as a managed service provider's customer.
+//
+// Takes a body of the `application/json` content type.
+//
+// Corresponds with POST /api/v1/account/holders (the `CreateHolder` operationId).
+func (c *Client) CreateHolder(ctx context.Context, params *CreateHolderParams, body CreateHolderJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateHolderRequest(c.Server, params, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// DeleteHolder Delete a credential holder
+//
+// Not the default holder, nor one a tenant uses (409).
+//
+// Corresponds with DELETE /api/v1/account/holders/{holder} (the `DeleteHolder` operationId).
+func (c *Client) DeleteHolder(ctx context.Context, holder openapi_types.UUID, params *DeleteHolderParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewDeleteHolderRequest(c.Server, holder, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// GetHolder Get a credential holder
+//
+// Corresponds with GET /api/v1/account/holders/{holder} (the `GetHolder` operationId).
+func (c *Client) GetHolder(ctx context.Context, holder openapi_types.UUID, params *GetHolderParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetHolderRequest(c.Server, holder, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// UpdateHolderWithBody Rename a credential holder
+//
+// Takes any type of body and a specified content type.
+//
+// Corresponds with PATCH /api/v1/account/holders/{holder} (the `UpdateHolder` operationId).
+func (c *Client) UpdateHolderWithBody(ctx context.Context, holder openapi_types.UUID, params *UpdateHolderParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateHolderRequestWithBody(c.Server, holder, params, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// UpdateHolder Rename a credential holder
+//
+// Takes a body of the `application/json` content type.
+//
+// Corresponds with PATCH /api/v1/account/holders/{holder} (the `UpdateHolder` operationId).
+func (c *Client) UpdateHolder(ctx context.Context, holder openapi_types.UUID, params *UpdateHolderParams, body UpdateHolderJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateHolderRequest(c.Server, holder, params, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// GetADEPublicKey The holder's public key for Apple Business Manager
+//
+// The certificate to give Apple Business Manager when adding mdm as a device management service; made on first request. mdm keeps its private key to decrypt the server token.
+//
+// Corresponds with GET /api/v1/account/holders/{holder}/ade/public-key (the `GetADEPublicKey` operationId).
+func (c *Client) GetADEPublicKey(ctx context.Context, holder openapi_types.UUID, params *GetADEPublicKeyParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetADEPublicKeyRequest(c.Server, holder, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// UploadADETokenWithBody Upload the holder's Automated Device Enrollment server token
+//
+// The .p7m Apple Business Manager offers for the device management service, base64. mdm decrypts and checks it. Renew it yearly the same way. Device assignment comes later.
+//
+// Takes any type of body and a specified content type.
+//
+// Corresponds with PUT /api/v1/account/holders/{holder}/ade/token (the `UploadADEToken` operationId).
+func (c *Client) UploadADETokenWithBody(ctx context.Context, holder openapi_types.UUID, params *UploadADETokenParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUploadADETokenRequestWithBody(c.Server, holder, params, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// UploadADEToken Upload the holder's Automated Device Enrollment server token
+//
+// The .p7m Apple Business Manager offers for the device management service, base64. mdm decrypts and checks it. Renew it yearly the same way. Device assignment comes later.
+//
+// Takes a body of the `application/json` content type.
+//
+// Corresponds with PUT /api/v1/account/holders/{holder}/ade/token (the `UploadADEToken` operationId).
+func (c *Client) UploadADEToken(ctx context.Context, holder openapi_types.UUID, params *UploadADETokenParams, body UploadADETokenJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUploadADETokenRequest(c.Server, holder, params, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// UploadPushCertificateWithBody Upload the holder's push certificate
+//
+// The certificate Apple issued for the holder's request, or one the holder obtained itself with its key. It must pair with the key, be unexpired, and name a com.apple.mgmt topic no other holder has. A certificate for a different topic is refused while devices are enrolled on the current one (they would all need enrolling again): renew the existing certificate in Apple's portal. The certificate then goes to the push service; devices are sent commands once it is there.
+//
+// Takes any type of body and a specified content type.
+//
+// Corresponds with PUT /api/v1/account/holders/{holder}/push-certificate (the `UploadPushCertificate` operationId).
+func (c *Client) UploadPushCertificateWithBody(ctx context.Context, holder openapi_types.UUID, params *UploadPushCertificateParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUploadPushCertificateRequestWithBody(c.Server, holder, params, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// UploadPushCertificate Upload the holder's push certificate
+//
+// The certificate Apple issued for the holder's request, or one the holder obtained itself with its key. It must pair with the key, be unexpired, and name a com.apple.mgmt topic no other holder has. A certificate for a different topic is refused while devices are enrolled on the current one (they would all need enrolling again): renew the existing certificate in Apple's portal. The certificate then goes to the push service; devices are sent commands once it is there.
+//
+// Takes a body of the `application/json` content type.
+//
+// Corresponds with PUT /api/v1/account/holders/{holder}/push-certificate (the `UploadPushCertificate` operationId).
+func (c *Client) UploadPushCertificate(ctx context.Context, holder openapi_types.UUID, params *UploadPushCertificateParams, body UploadPushCertificateJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUploadPushCertificateRequest(c.Server, holder, params, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// RequestPushCertificate Request a push certificate
+//
+// mdm makes a key (kept, never returned) and returns the request, signed with mdm's vendor certificate, to upload at Apple's Push Certificates Portal (identity.apple.com) signed in with the organization's Apple Account: Create for a first certificate, Renew on the existing one to renew. Then upload the certificate Apple issues with PUT .../push-certificate. 409 until mdm has its vendor certificate: upload a certificate with its key instead.
+//
+// Corresponds with POST /api/v1/account/holders/{holder}/push-certificate/request (the `RequestPushCertificate` operationId).
+func (c *Client) RequestPushCertificate(ctx context.Context, holder openapi_types.UUID, params *RequestPushCertificateParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewRequestPushCertificateRequest(c.Server, holder, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// UploadVPPTokenWithBody Upload the holder's Apps and Books content token
+//
+// The .vpptoken file's content. Using one token in a second MDM moves its licences away from the first. Renew it yearly; it also ends when the downloading account's password changes. Licence assignment comes later.
+//
+// Takes any type of body and a specified content type.
+//
+// Corresponds with PUT /api/v1/account/holders/{holder}/vpp/token (the `UploadVPPToken` operationId).
+func (c *Client) UploadVPPTokenWithBody(ctx context.Context, holder openapi_types.UUID, params *UploadVPPTokenParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUploadVPPTokenRequestWithBody(c.Server, holder, params, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// UploadVPPToken Upload the holder's Apps and Books content token
+//
+// The .vpptoken file's content. Using one token in a second MDM moves its licences away from the first. Renew it yearly; it also ends when the downloading account's password changes. Licence assignment comes later.
+//
+// Takes a body of the `application/json` content type.
+//
+// Corresponds with PUT /api/v1/account/holders/{holder}/vpp/token (the `UploadVPPToken` operationId).
+func (c *Client) UploadVPPToken(ctx context.Context, holder openapi_types.UUID, params *UploadVPPTokenParams, body UploadVPPTokenJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUploadVPPTokenRequest(c.Server, holder, params, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// ListWebhooks List the account's webhook endpoints
+//
+// Account clients with account:webhooks. Secrets are never listed.
+//
+// Corresponds with GET /api/v1/account/webhooks (the `ListWebhooks` operationId).
+func (c *Client) ListWebhooks(ctx context.Context, params *ListWebhooksParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListWebhooksRequest(c.Server, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// CreateWebhookWithBody Add a webhook endpoint
+//
+// An https URL that receives the account's events, signed per Standard Webhooks 1.0 (webhook-id, webhook-timestamp, webhook-signature v1 HMAC-SHA256 over id.timestamp.body) with the secret in this response, shown only here. events limits the subscription; empty takes every event. Deliveries go one at a time per endpoint, in order, retried at 5 s, 5 m, 30 m, 2 h, 5 h, 10 h, 14 h, 20 h, and 24 h; after the last, or on 410, the endpoint is disabled. Receivers dedupe on webhook-id. The address must resolve to a public IP; redirects are not followed.
+//
+// Takes any type of body and a specified content type.
+//
+// Corresponds with POST /api/v1/account/webhooks (the `CreateWebhook` operationId).
+func (c *Client) CreateWebhookWithBody(ctx context.Context, params *CreateWebhookParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateWebhookRequestWithBody(c.Server, params, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// CreateWebhook Add a webhook endpoint
+//
+// An https URL that receives the account's events, signed per Standard Webhooks 1.0 (webhook-id, webhook-timestamp, webhook-signature v1 HMAC-SHA256 over id.timestamp.body) with the secret in this response, shown only here. events limits the subscription; empty takes every event. Deliveries go one at a time per endpoint, in order, retried at 5 s, 5 m, 30 m, 2 h, 5 h, 10 h, 14 h, 20 h, and 24 h; after the last, or on 410, the endpoint is disabled. Receivers dedupe on webhook-id. The address must resolve to a public IP; redirects are not followed.
+//
+// Takes a body of the `application/json` content type.
+//
+// Corresponds with POST /api/v1/account/webhooks (the `CreateWebhook` operationId).
+func (c *Client) CreateWebhook(ctx context.Context, params *CreateWebhookParams, body CreateWebhookJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateWebhookRequest(c.Server, params, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// DeleteWebhook Delete a webhook endpoint and its deliveries
+//
+// Corresponds with DELETE /api/v1/account/webhooks/{webhook} (the `DeleteWebhook` operationId).
+func (c *Client) DeleteWebhook(ctx context.Context, webhook openapi_types.UUID, params *DeleteWebhookParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewDeleteWebhookRequest(c.Server, webhook, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// GetWebhook Get a webhook endpoint
+//
+// Corresponds with GET /api/v1/account/webhooks/{webhook} (the `GetWebhook` operationId).
+func (c *Client) GetWebhook(ctx context.Context, webhook openapi_types.UUID, params *GetWebhookParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetWebhookRequest(c.Server, webhook, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// UpdateWebhookWithBody Change a webhook endpoint
+//
+// Enabling a disabled endpoint resumes its pending deliveries.
+//
+// Takes any type of body and a specified content type.
+//
+// Corresponds with PATCH /api/v1/account/webhooks/{webhook} (the `UpdateWebhook` operationId).
+func (c *Client) UpdateWebhookWithBody(ctx context.Context, webhook openapi_types.UUID, params *UpdateWebhookParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateWebhookRequestWithBody(c.Server, webhook, params, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// UpdateWebhook Change a webhook endpoint
+//
+// Enabling a disabled endpoint resumes its pending deliveries.
+//
+// Takes a body of the `application/json` content type.
+//
+// Corresponds with PATCH /api/v1/account/webhooks/{webhook} (the `UpdateWebhook` operationId).
+func (c *Client) UpdateWebhook(ctx context.Context, webhook openapi_types.UUID, params *UpdateWebhookParams, body UpdateWebhookJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateWebhookRequest(c.Server, webhook, params, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// ListWebhookDeliveries An endpoint's latest deliveries
+//
+// The 50 latest, newest first.
+//
+// Corresponds with GET /api/v1/account/webhooks/{webhook}/deliveries (the `ListWebhookDeliveries` operationId).
+func (c *Client) ListWebhookDeliveries(ctx context.Context, webhook openapi_types.UUID, params *ListWebhookDeliveriesParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListWebhookDeliveriesRequest(c.Server, webhook, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// RotateWebhookSecret Rotate a webhook endpoint's secret
+//
+// Issues a new secret, shown only here. For 24 hours every delivery carries signatures with both the new and the previous secret.
+//
+// Corresponds with POST /api/v1/account/webhooks/{webhook}/rotate-secret (the `RotateWebhookSecret` operationId).
+func (c *Client) RotateWebhookSecret(ctx context.Context, webhook openapi_types.UUID, params *RotateWebhookSecretParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewRotateWebhookSecretRequest(c.Server, webhook, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
 }
 
 // GetCatalog Settings a device can take
@@ -2977,6 +4912,1026 @@ func (c *Client) DeleteAssignment(ctx context.Context, tenant string, profile op
 		return nil, err
 	}
 	return c.Client.Do(req)
+}
+
+// CreateTokenWithBody Issue a delegated token for one of the account's users
+//
+// Account clients with tokens:issue. The account's backend asks for a token for one of its users after applying its own rules; the user then calls the API directly with it. The token reaches one tenant of the account and, within it, the listed members (and their devices), the current members of the listed groups, or all of it, with the listed permissions (each one the client itself holds). It lasts ttl seconds, at most 900, and is never refreshed: ask again. Signed ES256 with mdm's keys (GET /api/.well-known/jwks.json).
+//
+// Takes any type of body and a specified content type.
+//
+// Corresponds with POST /api/v1/tokens (the `CreateToken` operationId).
+func (c *Client) CreateTokenWithBody(ctx context.Context, params *CreateTokenParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateTokenRequestWithBody(c.Server, params, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// CreateToken Issue a delegated token for one of the account's users
+//
+// Account clients with tokens:issue. The account's backend asks for a token for one of its users after applying its own rules; the user then calls the API directly with it. The token reaches one tenant of the account and, within it, the listed members (and their devices), the current members of the listed groups, or all of it, with the listed permissions (each one the client itself holds). It lasts ttl seconds, at most 900, and is never refreshed: ask again. Signed ES256 with mdm's keys (GET /api/.well-known/jwks.json).
+//
+// Takes a body of the `application/json` content type.
+//
+// Corresponds with POST /api/v1/tokens (the `CreateToken` operationId).
+func (c *Client) CreateToken(ctx context.Context, params *CreateTokenParams, body CreateTokenJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateTokenRequest(c.Server, params, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// NewGetAccountRequest constructs an http.Request for the GetAccount method
+func NewGetAccountRequest(server string, params *GetAccountParams) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := "/api/v1/account"
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+
+		if params.MdmActor != nil {
+			var headerParam0 string
+
+			headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Mdm-Actor", *params.MdmActor, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Mdm-Actor", headerParam0)
+		}
+
+	}
+
+	return req, nil
+}
+
+// NewListHoldersRequest constructs an http.Request for the ListHolders method
+func NewListHoldersRequest(server string, params *ListHoldersParams) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := "/api/v1/account/holders"
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+
+		if params.MdmActor != nil {
+			var headerParam0 string
+
+			headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Mdm-Actor", *params.MdmActor, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Mdm-Actor", headerParam0)
+		}
+
+	}
+
+	return req, nil
+}
+
+// NewCreateHolderRequest calls the generic CreateHolder builder with application/json body
+func NewCreateHolderRequest(server string, params *CreateHolderParams, body CreateHolderJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := runtime.JSONMarshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewCreateHolderRequestWithBody(server, params, "application/json", bodyReader)
+}
+
+// NewCreateHolderRequestWithBody constructs an http.Request for the CreateHolder method, with any body, and a specified content type
+func NewCreateHolderRequestWithBody(server string, params *CreateHolderParams, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := "/api/v1/account/holders"
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	if params != nil {
+
+		if params.IdempotencyKey != nil {
+			var headerParam0 string
+
+			headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Idempotency-Key", *params.IdempotencyKey, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Idempotency-Key", headerParam0)
+		}
+
+		if params.MdmActor != nil {
+			var headerParam1 string
+
+			headerParam1, err = runtime.StyleParamWithOptions("simple", false, "Mdm-Actor", *params.MdmActor, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Mdm-Actor", headerParam1)
+		}
+
+	}
+
+	return req, nil
+}
+
+// NewDeleteHolderRequest constructs an http.Request for the DeleteHolder method
+func NewDeleteHolderRequest(server string, holder openapi_types.UUID, params *DeleteHolderParams) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "holder", holder, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: "uuid"})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := "/api/v1/account/holders/" + pathParam0
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodDelete, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+
+		if params.MdmActor != nil {
+			var headerParam0 string
+
+			headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Mdm-Actor", *params.MdmActor, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Mdm-Actor", headerParam0)
+		}
+
+	}
+
+	return req, nil
+}
+
+// NewGetHolderRequest constructs an http.Request for the GetHolder method
+func NewGetHolderRequest(server string, holder openapi_types.UUID, params *GetHolderParams) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "holder", holder, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: "uuid"})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := "/api/v1/account/holders/" + pathParam0
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+
+		if params.MdmActor != nil {
+			var headerParam0 string
+
+			headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Mdm-Actor", *params.MdmActor, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Mdm-Actor", headerParam0)
+		}
+
+	}
+
+	return req, nil
+}
+
+// NewUpdateHolderRequest calls the generic UpdateHolder builder with application/json body
+func NewUpdateHolderRequest(server string, holder openapi_types.UUID, params *UpdateHolderParams, body UpdateHolderJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := runtime.JSONMarshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewUpdateHolderRequestWithBody(server, holder, params, "application/json", bodyReader)
+}
+
+// NewUpdateHolderRequestWithBody constructs an http.Request for the UpdateHolder method, with any body, and a specified content type
+func NewUpdateHolderRequestWithBody(server string, holder openapi_types.UUID, params *UpdateHolderParams, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "holder", holder, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: "uuid"})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := "/api/v1/account/holders/" + pathParam0
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPatch, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	if params != nil {
+
+		if params.MdmActor != nil {
+			var headerParam0 string
+
+			headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Mdm-Actor", *params.MdmActor, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Mdm-Actor", headerParam0)
+		}
+
+	}
+
+	return req, nil
+}
+
+// NewGetADEPublicKeyRequest constructs an http.Request for the GetADEPublicKey method
+func NewGetADEPublicKeyRequest(server string, holder openapi_types.UUID, params *GetADEPublicKeyParams) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "holder", holder, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: "uuid"})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := "/api/v1/account/holders/" + pathParam0 + "/ade/public-key"
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+
+		if params.MdmActor != nil {
+			var headerParam0 string
+
+			headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Mdm-Actor", *params.MdmActor, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Mdm-Actor", headerParam0)
+		}
+
+	}
+
+	return req, nil
+}
+
+// NewUploadADETokenRequest calls the generic UploadADEToken builder with application/json body
+func NewUploadADETokenRequest(server string, holder openapi_types.UUID, params *UploadADETokenParams, body UploadADETokenJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := runtime.JSONMarshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewUploadADETokenRequestWithBody(server, holder, params, "application/json", bodyReader)
+}
+
+// NewUploadADETokenRequestWithBody constructs an http.Request for the UploadADEToken method, with any body, and a specified content type
+func NewUploadADETokenRequestWithBody(server string, holder openapi_types.UUID, params *UploadADETokenParams, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "holder", holder, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: "uuid"})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := "/api/v1/account/holders/" + pathParam0 + "/ade/token"
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPut, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	if params != nil {
+
+		if params.MdmActor != nil {
+			var headerParam0 string
+
+			headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Mdm-Actor", *params.MdmActor, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Mdm-Actor", headerParam0)
+		}
+
+	}
+
+	return req, nil
+}
+
+// NewUploadPushCertificateRequest calls the generic UploadPushCertificate builder with application/json body
+func NewUploadPushCertificateRequest(server string, holder openapi_types.UUID, params *UploadPushCertificateParams, body UploadPushCertificateJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := runtime.JSONMarshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewUploadPushCertificateRequestWithBody(server, holder, params, "application/json", bodyReader)
+}
+
+// NewUploadPushCertificateRequestWithBody constructs an http.Request for the UploadPushCertificate method, with any body, and a specified content type
+func NewUploadPushCertificateRequestWithBody(server string, holder openapi_types.UUID, params *UploadPushCertificateParams, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "holder", holder, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: "uuid"})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := "/api/v1/account/holders/" + pathParam0 + "/push-certificate"
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPut, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	if params != nil {
+
+		if params.MdmActor != nil {
+			var headerParam0 string
+
+			headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Mdm-Actor", *params.MdmActor, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Mdm-Actor", headerParam0)
+		}
+
+	}
+
+	return req, nil
+}
+
+// NewRequestPushCertificateRequest constructs an http.Request for the RequestPushCertificate method
+func NewRequestPushCertificateRequest(server string, holder openapi_types.UUID, params *RequestPushCertificateParams) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "holder", holder, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: "uuid"})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := "/api/v1/account/holders/" + pathParam0 + "/push-certificate/request"
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+
+		if params.IdempotencyKey != nil {
+			var headerParam0 string
+
+			headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Idempotency-Key", *params.IdempotencyKey, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Idempotency-Key", headerParam0)
+		}
+
+		if params.MdmActor != nil {
+			var headerParam1 string
+
+			headerParam1, err = runtime.StyleParamWithOptions("simple", false, "Mdm-Actor", *params.MdmActor, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Mdm-Actor", headerParam1)
+		}
+
+	}
+
+	return req, nil
+}
+
+// NewUploadVPPTokenRequest calls the generic UploadVPPToken builder with application/json body
+func NewUploadVPPTokenRequest(server string, holder openapi_types.UUID, params *UploadVPPTokenParams, body UploadVPPTokenJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := runtime.JSONMarshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewUploadVPPTokenRequestWithBody(server, holder, params, "application/json", bodyReader)
+}
+
+// NewUploadVPPTokenRequestWithBody constructs an http.Request for the UploadVPPToken method, with any body, and a specified content type
+func NewUploadVPPTokenRequestWithBody(server string, holder openapi_types.UUID, params *UploadVPPTokenParams, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "holder", holder, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: "uuid"})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := "/api/v1/account/holders/" + pathParam0 + "/vpp/token"
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPut, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	if params != nil {
+
+		if params.MdmActor != nil {
+			var headerParam0 string
+
+			headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Mdm-Actor", *params.MdmActor, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Mdm-Actor", headerParam0)
+		}
+
+	}
+
+	return req, nil
+}
+
+// NewListWebhooksRequest constructs an http.Request for the ListWebhooks method
+func NewListWebhooksRequest(server string, params *ListWebhooksParams) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := "/api/v1/account/webhooks"
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+
+		if params.MdmActor != nil {
+			var headerParam0 string
+
+			headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Mdm-Actor", *params.MdmActor, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Mdm-Actor", headerParam0)
+		}
+
+	}
+
+	return req, nil
+}
+
+// NewCreateWebhookRequest calls the generic CreateWebhook builder with application/json body
+func NewCreateWebhookRequest(server string, params *CreateWebhookParams, body CreateWebhookJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := runtime.JSONMarshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewCreateWebhookRequestWithBody(server, params, "application/json", bodyReader)
+}
+
+// NewCreateWebhookRequestWithBody constructs an http.Request for the CreateWebhook method, with any body, and a specified content type
+func NewCreateWebhookRequestWithBody(server string, params *CreateWebhookParams, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := "/api/v1/account/webhooks"
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	if params != nil {
+
+		if params.IdempotencyKey != nil {
+			var headerParam0 string
+
+			headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Idempotency-Key", *params.IdempotencyKey, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Idempotency-Key", headerParam0)
+		}
+
+		if params.MdmActor != nil {
+			var headerParam1 string
+
+			headerParam1, err = runtime.StyleParamWithOptions("simple", false, "Mdm-Actor", *params.MdmActor, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Mdm-Actor", headerParam1)
+		}
+
+	}
+
+	return req, nil
+}
+
+// NewDeleteWebhookRequest constructs an http.Request for the DeleteWebhook method
+func NewDeleteWebhookRequest(server string, webhook openapi_types.UUID, params *DeleteWebhookParams) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "webhook", webhook, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: "uuid"})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := "/api/v1/account/webhooks/" + pathParam0
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodDelete, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+
+		if params.MdmActor != nil {
+			var headerParam0 string
+
+			headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Mdm-Actor", *params.MdmActor, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Mdm-Actor", headerParam0)
+		}
+
+	}
+
+	return req, nil
+}
+
+// NewGetWebhookRequest constructs an http.Request for the GetWebhook method
+func NewGetWebhookRequest(server string, webhook openapi_types.UUID, params *GetWebhookParams) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "webhook", webhook, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: "uuid"})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := "/api/v1/account/webhooks/" + pathParam0
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+
+		if params.MdmActor != nil {
+			var headerParam0 string
+
+			headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Mdm-Actor", *params.MdmActor, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Mdm-Actor", headerParam0)
+		}
+
+	}
+
+	return req, nil
+}
+
+// NewUpdateWebhookRequest calls the generic UpdateWebhook builder with application/json body
+func NewUpdateWebhookRequest(server string, webhook openapi_types.UUID, params *UpdateWebhookParams, body UpdateWebhookJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := runtime.JSONMarshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewUpdateWebhookRequestWithBody(server, webhook, params, "application/json", bodyReader)
+}
+
+// NewUpdateWebhookRequestWithBody constructs an http.Request for the UpdateWebhook method, with any body, and a specified content type
+func NewUpdateWebhookRequestWithBody(server string, webhook openapi_types.UUID, params *UpdateWebhookParams, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "webhook", webhook, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: "uuid"})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := "/api/v1/account/webhooks/" + pathParam0
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPatch, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	if params != nil {
+
+		if params.MdmActor != nil {
+			var headerParam0 string
+
+			headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Mdm-Actor", *params.MdmActor, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Mdm-Actor", headerParam0)
+		}
+
+	}
+
+	return req, nil
+}
+
+// NewListWebhookDeliveriesRequest constructs an http.Request for the ListWebhookDeliveries method
+func NewListWebhookDeliveriesRequest(server string, webhook openapi_types.UUID, params *ListWebhookDeliveriesParams) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "webhook", webhook, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: "uuid"})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := "/api/v1/account/webhooks/" + pathParam0 + "/deliveries"
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+
+		if params.MdmActor != nil {
+			var headerParam0 string
+
+			headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Mdm-Actor", *params.MdmActor, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Mdm-Actor", headerParam0)
+		}
+
+	}
+
+	return req, nil
+}
+
+// NewRotateWebhookSecretRequest constructs an http.Request for the RotateWebhookSecret method
+func NewRotateWebhookSecretRequest(server string, webhook openapi_types.UUID, params *RotateWebhookSecretParams) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "webhook", webhook, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: "uuid"})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := "/api/v1/account/webhooks/" + pathParam0 + "/rotate-secret"
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+
+		if params.IdempotencyKey != nil {
+			var headerParam0 string
+
+			headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Idempotency-Key", *params.IdempotencyKey, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Idempotency-Key", headerParam0)
+		}
+
+		if params.MdmActor != nil {
+			var headerParam1 string
+
+			headerParam1, err = runtime.StyleParamWithOptions("simple", false, "Mdm-Actor", *params.MdmActor, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Mdm-Actor", headerParam1)
+		}
+
+	}
+
+	return req, nil
 }
 
 // NewGetCatalogRequest constructs an http.Request for the GetCatalog method
@@ -5672,6 +8627,61 @@ func NewDeleteAssignmentRequest(server string, tenant string, profile openapi_ty
 	return req, nil
 }
 
+// NewCreateTokenRequest calls the generic CreateToken builder with application/json body
+func NewCreateTokenRequest(server string, params *CreateTokenParams, body CreateTokenJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := runtime.JSONMarshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewCreateTokenRequestWithBody(server, params, "application/json", bodyReader)
+}
+
+// NewCreateTokenRequestWithBody constructs an http.Request for the CreateToken method, with any body, and a specified content type
+func NewCreateTokenRequestWithBody(server string, params *CreateTokenParams, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := "/api/v1/tokens"
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	if params != nil {
+
+		if params.MdmActor != nil {
+			var headerParam0 string
+
+			headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Mdm-Actor", *params.MdmActor, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Mdm-Actor", headerParam0)
+		}
+
+	}
+
+	return req, nil
+}
+
 func (c *Client) applyEditors(ctx context.Context, req *http.Request, additionalEditors []RequestEditorFn) error {
 	for _, r := range c.RequestEditors {
 		if err := r(ctx, req); err != nil {
@@ -5715,6 +8725,221 @@ func WithBaseURL(baseURL string) ClientOption {
 
 // ClientWithResponsesInterface is the interface specification for the client with responses above.
 type ClientWithResponsesInterface interface {
+
+	// GetAccountWithResponse The caller's account
+	//
+	// Its name, contact, API clients, and registered browser origins. Account clients, and console owners and admins.
+	//
+	// Returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with GET /api/v1/account (the `GetAccount` operationId).
+	GetAccountWithResponse(ctx context.Context, params *GetAccountParams, reqEditors ...RequestEditorFn) (*GetAccountResponse, error)
+
+	// ListHoldersWithResponse List the account's credential holders
+	//
+	// Account clients with account:credentials. A credential holder is the legal entity that holds Apple credentials (the push certificate, the Automated Device Enrollment token, the Apps and Books token). Every account has a default holder; a tenant uses it unless it names another.
+	//
+	// Returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with GET /api/v1/account/holders (the `ListHolders` operationId).
+	ListHoldersWithResponse(ctx context.Context, params *ListHoldersParams, reqEditors ...RequestEditorFn) (*ListHoldersResponse, error)
+
+	// CreateHolderWithBodyWithResponse Add a credential holder
+	//
+	// Another legal entity the account serves, such as a managed service provider's customer.
+	//
+	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with POST /api/v1/account/holders (the `CreateHolder` operationId).
+	CreateHolderWithBodyWithResponse(ctx context.Context, params *CreateHolderParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateHolderResponse, error)
+
+	// CreateHolderWithResponse Add a credential holder
+	//
+	// Another legal entity the account serves, such as a managed service provider's customer.
+	//
+	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with POST /api/v1/account/holders (the `CreateHolder` operationId).
+	CreateHolderWithResponse(ctx context.Context, params *CreateHolderParams, body CreateHolderJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateHolderResponse, error)
+
+	// DeleteHolderWithResponse Delete a credential holder
+	//
+	// Not the default holder, nor one a tenant uses (409).
+	//
+	// Returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with DELETE /api/v1/account/holders/{holder} (the `DeleteHolder` operationId).
+	DeleteHolderWithResponse(ctx context.Context, holder openapi_types.UUID, params *DeleteHolderParams, reqEditors ...RequestEditorFn) (*DeleteHolderResponse, error)
+
+	// GetHolderWithResponse Get a credential holder
+	//
+	// Returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with GET /api/v1/account/holders/{holder} (the `GetHolder` operationId).
+	GetHolderWithResponse(ctx context.Context, holder openapi_types.UUID, params *GetHolderParams, reqEditors ...RequestEditorFn) (*GetHolderResponse, error)
+
+	// UpdateHolderWithBodyWithResponse Rename a credential holder
+	//
+	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with PATCH /api/v1/account/holders/{holder} (the `UpdateHolder` operationId).
+	UpdateHolderWithBodyWithResponse(ctx context.Context, holder openapi_types.UUID, params *UpdateHolderParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateHolderResponse, error)
+
+	// UpdateHolderWithResponse Rename a credential holder
+	//
+	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with PATCH /api/v1/account/holders/{holder} (the `UpdateHolder` operationId).
+	UpdateHolderWithResponse(ctx context.Context, holder openapi_types.UUID, params *UpdateHolderParams, body UpdateHolderJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateHolderResponse, error)
+
+	// GetADEPublicKeyWithResponse The holder's public key for Apple Business Manager
+	//
+	// The certificate to give Apple Business Manager when adding mdm as a device management service; made on first request. mdm keeps its private key to decrypt the server token.
+	//
+	// Returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with GET /api/v1/account/holders/{holder}/ade/public-key (the `GetADEPublicKey` operationId).
+	GetADEPublicKeyWithResponse(ctx context.Context, holder openapi_types.UUID, params *GetADEPublicKeyParams, reqEditors ...RequestEditorFn) (*GetADEPublicKeyResponse, error)
+
+	// UploadADETokenWithBodyWithResponse Upload the holder's Automated Device Enrollment server token
+	//
+	// The .p7m Apple Business Manager offers for the device management service, base64. mdm decrypts and checks it. Renew it yearly the same way. Device assignment comes later.
+	//
+	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with PUT /api/v1/account/holders/{holder}/ade/token (the `UploadADEToken` operationId).
+	UploadADETokenWithBodyWithResponse(ctx context.Context, holder openapi_types.UUID, params *UploadADETokenParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UploadADETokenResponse, error)
+
+	// UploadADETokenWithResponse Upload the holder's Automated Device Enrollment server token
+	//
+	// The .p7m Apple Business Manager offers for the device management service, base64. mdm decrypts and checks it. Renew it yearly the same way. Device assignment comes later.
+	//
+	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with PUT /api/v1/account/holders/{holder}/ade/token (the `UploadADEToken` operationId).
+	UploadADETokenWithResponse(ctx context.Context, holder openapi_types.UUID, params *UploadADETokenParams, body UploadADETokenJSONRequestBody, reqEditors ...RequestEditorFn) (*UploadADETokenResponse, error)
+
+	// UploadPushCertificateWithBodyWithResponse Upload the holder's push certificate
+	//
+	// The certificate Apple issued for the holder's request, or one the holder obtained itself with its key. It must pair with the key, be unexpired, and name a com.apple.mgmt topic no other holder has. A certificate for a different topic is refused while devices are enrolled on the current one (they would all need enrolling again): renew the existing certificate in Apple's portal. The certificate then goes to the push service; devices are sent commands once it is there.
+	//
+	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with PUT /api/v1/account/holders/{holder}/push-certificate (the `UploadPushCertificate` operationId).
+	UploadPushCertificateWithBodyWithResponse(ctx context.Context, holder openapi_types.UUID, params *UploadPushCertificateParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UploadPushCertificateResponse, error)
+
+	// UploadPushCertificateWithResponse Upload the holder's push certificate
+	//
+	// The certificate Apple issued for the holder's request, or one the holder obtained itself with its key. It must pair with the key, be unexpired, and name a com.apple.mgmt topic no other holder has. A certificate for a different topic is refused while devices are enrolled on the current one (they would all need enrolling again): renew the existing certificate in Apple's portal. The certificate then goes to the push service; devices are sent commands once it is there.
+	//
+	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with PUT /api/v1/account/holders/{holder}/push-certificate (the `UploadPushCertificate` operationId).
+	UploadPushCertificateWithResponse(ctx context.Context, holder openapi_types.UUID, params *UploadPushCertificateParams, body UploadPushCertificateJSONRequestBody, reqEditors ...RequestEditorFn) (*UploadPushCertificateResponse, error)
+
+	// RequestPushCertificateWithResponse Request a push certificate
+	//
+	// mdm makes a key (kept, never returned) and returns the request, signed with mdm's vendor certificate, to upload at Apple's Push Certificates Portal (identity.apple.com) signed in with the organization's Apple Account: Create for a first certificate, Renew on the existing one to renew. Then upload the certificate Apple issues with PUT .../push-certificate. 409 until mdm has its vendor certificate: upload a certificate with its key instead.
+	//
+	// Returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with POST /api/v1/account/holders/{holder}/push-certificate/request (the `RequestPushCertificate` operationId).
+	RequestPushCertificateWithResponse(ctx context.Context, holder openapi_types.UUID, params *RequestPushCertificateParams, reqEditors ...RequestEditorFn) (*RequestPushCertificateResponse, error)
+
+	// UploadVPPTokenWithBodyWithResponse Upload the holder's Apps and Books content token
+	//
+	// The .vpptoken file's content. Using one token in a second MDM moves its licences away from the first. Renew it yearly; it also ends when the downloading account's password changes. Licence assignment comes later.
+	//
+	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with PUT /api/v1/account/holders/{holder}/vpp/token (the `UploadVPPToken` operationId).
+	UploadVPPTokenWithBodyWithResponse(ctx context.Context, holder openapi_types.UUID, params *UploadVPPTokenParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UploadVPPTokenResponse, error)
+
+	// UploadVPPTokenWithResponse Upload the holder's Apps and Books content token
+	//
+	// The .vpptoken file's content. Using one token in a second MDM moves its licences away from the first. Renew it yearly; it also ends when the downloading account's password changes. Licence assignment comes later.
+	//
+	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with PUT /api/v1/account/holders/{holder}/vpp/token (the `UploadVPPToken` operationId).
+	UploadVPPTokenWithResponse(ctx context.Context, holder openapi_types.UUID, params *UploadVPPTokenParams, body UploadVPPTokenJSONRequestBody, reqEditors ...RequestEditorFn) (*UploadVPPTokenResponse, error)
+
+	// ListWebhooksWithResponse List the account's webhook endpoints
+	//
+	// Account clients with account:webhooks. Secrets are never listed.
+	//
+	// Returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with GET /api/v1/account/webhooks (the `ListWebhooks` operationId).
+	ListWebhooksWithResponse(ctx context.Context, params *ListWebhooksParams, reqEditors ...RequestEditorFn) (*ListWebhooksResponse, error)
+
+	// CreateWebhookWithBodyWithResponse Add a webhook endpoint
+	//
+	// An https URL that receives the account's events, signed per Standard Webhooks 1.0 (webhook-id, webhook-timestamp, webhook-signature v1 HMAC-SHA256 over id.timestamp.body) with the secret in this response, shown only here. events limits the subscription; empty takes every event. Deliveries go one at a time per endpoint, in order, retried at 5 s, 5 m, 30 m, 2 h, 5 h, 10 h, 14 h, 20 h, and 24 h; after the last, or on 410, the endpoint is disabled. Receivers dedupe on webhook-id. The address must resolve to a public IP; redirects are not followed.
+	//
+	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with POST /api/v1/account/webhooks (the `CreateWebhook` operationId).
+	CreateWebhookWithBodyWithResponse(ctx context.Context, params *CreateWebhookParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateWebhookResponse, error)
+
+	// CreateWebhookWithResponse Add a webhook endpoint
+	//
+	// An https URL that receives the account's events, signed per Standard Webhooks 1.0 (webhook-id, webhook-timestamp, webhook-signature v1 HMAC-SHA256 over id.timestamp.body) with the secret in this response, shown only here. events limits the subscription; empty takes every event. Deliveries go one at a time per endpoint, in order, retried at 5 s, 5 m, 30 m, 2 h, 5 h, 10 h, 14 h, 20 h, and 24 h; after the last, or on 410, the endpoint is disabled. Receivers dedupe on webhook-id. The address must resolve to a public IP; redirects are not followed.
+	//
+	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with POST /api/v1/account/webhooks (the `CreateWebhook` operationId).
+	CreateWebhookWithResponse(ctx context.Context, params *CreateWebhookParams, body CreateWebhookJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateWebhookResponse, error)
+
+	// DeleteWebhookWithResponse Delete a webhook endpoint and its deliveries
+	//
+	// Returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with DELETE /api/v1/account/webhooks/{webhook} (the `DeleteWebhook` operationId).
+	DeleteWebhookWithResponse(ctx context.Context, webhook openapi_types.UUID, params *DeleteWebhookParams, reqEditors ...RequestEditorFn) (*DeleteWebhookResponse, error)
+
+	// GetWebhookWithResponse Get a webhook endpoint
+	//
+	// Returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with GET /api/v1/account/webhooks/{webhook} (the `GetWebhook` operationId).
+	GetWebhookWithResponse(ctx context.Context, webhook openapi_types.UUID, params *GetWebhookParams, reqEditors ...RequestEditorFn) (*GetWebhookResponse, error)
+
+	// UpdateWebhookWithBodyWithResponse Change a webhook endpoint
+	//
+	// Enabling a disabled endpoint resumes its pending deliveries.
+	//
+	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with PATCH /api/v1/account/webhooks/{webhook} (the `UpdateWebhook` operationId).
+	UpdateWebhookWithBodyWithResponse(ctx context.Context, webhook openapi_types.UUID, params *UpdateWebhookParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateWebhookResponse, error)
+
+	// UpdateWebhookWithResponse Change a webhook endpoint
+	//
+	// Enabling a disabled endpoint resumes its pending deliveries.
+	//
+	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with PATCH /api/v1/account/webhooks/{webhook} (the `UpdateWebhook` operationId).
+	UpdateWebhookWithResponse(ctx context.Context, webhook openapi_types.UUID, params *UpdateWebhookParams, body UpdateWebhookJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateWebhookResponse, error)
+
+	// ListWebhookDeliveriesWithResponse An endpoint's latest deliveries
+	//
+	// The 50 latest, newest first.
+	//
+	// Returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with GET /api/v1/account/webhooks/{webhook}/deliveries (the `ListWebhookDeliveries` operationId).
+	ListWebhookDeliveriesWithResponse(ctx context.Context, webhook openapi_types.UUID, params *ListWebhookDeliveriesParams, reqEditors ...RequestEditorFn) (*ListWebhookDeliveriesResponse, error)
+
+	// RotateWebhookSecretWithResponse Rotate a webhook endpoint's secret
+	//
+	// Issues a new secret, shown only here. For 24 hours every delivery carries signatures with both the new and the previous secret.
+	//
+	// Returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with POST /api/v1/account/webhooks/{webhook}/rotate-secret (the `RotateWebhookSecret` operationId).
+	RotateWebhookSecretWithResponse(ctx context.Context, webhook openapi_types.UUID, params *RotateWebhookSecretParams, reqEditors ...RequestEditorFn) (*RotateWebhookSecretResponse, error)
 
 	// GetCatalogWithResponse Settings a device can take
 	//
@@ -6196,6 +9421,1553 @@ type ClientWithResponsesInterface interface {
 	//
 	// Corresponds with DELETE /api/v1/tenants/{tenant}/profiles/{profile}/assignments/{assignment} (the `DeleteAssignment` operationId).
 	DeleteAssignmentWithResponse(ctx context.Context, tenant string, profile openapi_types.UUID, assignment openapi_types.UUID, params *DeleteAssignmentParams, reqEditors ...RequestEditorFn) (*DeleteAssignmentResponse, error)
+
+	// CreateTokenWithBodyWithResponse Issue a delegated token for one of the account's users
+	//
+	// Account clients with tokens:issue. The account's backend asks for a token for one of its users after applying its own rules; the user then calls the API directly with it. The token reaches one tenant of the account and, within it, the listed members (and their devices), the current members of the listed groups, or all of it, with the listed permissions (each one the client itself holds). It lasts ttl seconds, at most 900, and is never refreshed: ask again. Signed ES256 with mdm's keys (GET /api/.well-known/jwks.json).
+	//
+	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with POST /api/v1/tokens (the `CreateToken` operationId).
+	CreateTokenWithBodyWithResponse(ctx context.Context, params *CreateTokenParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateTokenResponse, error)
+
+	// CreateTokenWithResponse Issue a delegated token for one of the account's users
+	//
+	// Account clients with tokens:issue. The account's backend asks for a token for one of its users after applying its own rules; the user then calls the API directly with it. The token reaches one tenant of the account and, within it, the listed members (and their devices), the current members of the listed groups, or all of it, with the listed permissions (each one the client itself holds). It lasts ttl seconds, at most 900, and is never refreshed: ask again. Signed ES256 with mdm's keys (GET /api/.well-known/jwks.json).
+	//
+	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with POST /api/v1/tokens (the `CreateToken` operationId).
+	CreateTokenWithResponse(ctx context.Context, params *CreateTokenParams, body CreateTokenJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateTokenResponse, error)
+}
+
+// GetAccountResponse429Headers the declared response headers of an HTTP 429 response for GetAccount
+type GetAccountResponse429Headers struct {
+	RetryAfter *int
+}
+
+type GetAccountResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON200 the response for an HTTP 200 `application/json` response
+	JSON200 *Account
+	// ApplicationproblemJSON401 the response for an HTTP 401 `application/problem+json` response
+	ApplicationproblemJSON401 *Problem
+	// ApplicationproblemJSON403 the response for an HTTP 403 `application/problem+json` response
+	ApplicationproblemJSON403 *Problem
+	// ApplicationproblemJSON429 the response for an HTTP 429 `application/problem+json` response
+	ApplicationproblemJSON429 *Problem
+	// Headers429 the parsed response headers for an HTTP 429 response
+	Headers429 *GetAccountResponse429Headers
+}
+
+// GetJSON200 returns the response for an HTTP 200 `application/json` response
+func (r GetAccountResponse) GetJSON200() *Account {
+	return r.JSON200
+}
+
+// GetApplicationproblemJSON401 returns the response for an HTTP 401 `application/problem+json` response
+func (r GetAccountResponse) GetApplicationproblemJSON401() *Problem {
+	return r.ApplicationproblemJSON401
+}
+
+// GetApplicationproblemJSON403 returns the response for an HTTP 403 `application/problem+json` response
+func (r GetAccountResponse) GetApplicationproblemJSON403() *Problem {
+	return r.ApplicationproblemJSON403
+}
+
+// GetApplicationproblemJSON429 returns the response for an HTTP 429 `application/problem+json` response
+func (r GetAccountResponse) GetApplicationproblemJSON429() *Problem {
+	return r.ApplicationproblemJSON429
+}
+
+// GetBody returns the raw response body bytes
+func (r GetAccountResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r GetAccountResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetAccountResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r GetAccountResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+// ListHoldersResponse429Headers the declared response headers of an HTTP 429 response for ListHolders
+type ListHoldersResponse429Headers struct {
+	RetryAfter *int
+}
+
+type ListHoldersResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON200 the response for an HTTP 200 `application/json` response
+	JSON200 *[]Holder
+	// ApplicationproblemJSON401 the response for an HTTP 401 `application/problem+json` response
+	ApplicationproblemJSON401 *Problem
+	// ApplicationproblemJSON403 the response for an HTTP 403 `application/problem+json` response
+	ApplicationproblemJSON403 *Problem
+	// ApplicationproblemJSON429 the response for an HTTP 429 `application/problem+json` response
+	ApplicationproblemJSON429 *Problem
+	// Headers429 the parsed response headers for an HTTP 429 response
+	Headers429 *ListHoldersResponse429Headers
+}
+
+// GetJSON200 returns the response for an HTTP 200 `application/json` response
+func (r ListHoldersResponse) GetJSON200() *[]Holder {
+	return r.JSON200
+}
+
+// GetApplicationproblemJSON401 returns the response for an HTTP 401 `application/problem+json` response
+func (r ListHoldersResponse) GetApplicationproblemJSON401() *Problem {
+	return r.ApplicationproblemJSON401
+}
+
+// GetApplicationproblemJSON403 returns the response for an HTTP 403 `application/problem+json` response
+func (r ListHoldersResponse) GetApplicationproblemJSON403() *Problem {
+	return r.ApplicationproblemJSON403
+}
+
+// GetApplicationproblemJSON429 returns the response for an HTTP 429 `application/problem+json` response
+func (r ListHoldersResponse) GetApplicationproblemJSON429() *Problem {
+	return r.ApplicationproblemJSON429
+}
+
+// GetBody returns the raw response body bytes
+func (r ListHoldersResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r ListHoldersResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ListHoldersResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r ListHoldersResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+// CreateHolderResponse429Headers the declared response headers of an HTTP 429 response for CreateHolder
+type CreateHolderResponse429Headers struct {
+	RetryAfter *int
+}
+
+type CreateHolderResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON201 the response for an HTTP 201 `application/json` response
+	JSON201 *Holder
+	// ApplicationproblemJSON400 the response for an HTTP 400 `application/problem+json` response
+	ApplicationproblemJSON400 *Problem
+	// ApplicationproblemJSON401 the response for an HTTP 401 `application/problem+json` response
+	ApplicationproblemJSON401 *Problem
+	// ApplicationproblemJSON403 the response for an HTTP 403 `application/problem+json` response
+	ApplicationproblemJSON403 *Problem
+	// ApplicationproblemJSON409 the response for an HTTP 409 `application/problem+json` response
+	ApplicationproblemJSON409 *Problem
+	// ApplicationproblemJSON422 the response for an HTTP 422 `application/problem+json` response
+	ApplicationproblemJSON422 *Problem
+	// ApplicationproblemJSON429 the response for an HTTP 429 `application/problem+json` response
+	ApplicationproblemJSON429 *Problem
+	// Headers429 the parsed response headers for an HTTP 429 response
+	Headers429 *CreateHolderResponse429Headers
+}
+
+// GetJSON201 returns the response for an HTTP 201 `application/json` response
+func (r CreateHolderResponse) GetJSON201() *Holder {
+	return r.JSON201
+}
+
+// GetApplicationproblemJSON400 returns the response for an HTTP 400 `application/problem+json` response
+func (r CreateHolderResponse) GetApplicationproblemJSON400() *Problem {
+	return r.ApplicationproblemJSON400
+}
+
+// GetApplicationproblemJSON401 returns the response for an HTTP 401 `application/problem+json` response
+func (r CreateHolderResponse) GetApplicationproblemJSON401() *Problem {
+	return r.ApplicationproblemJSON401
+}
+
+// GetApplicationproblemJSON403 returns the response for an HTTP 403 `application/problem+json` response
+func (r CreateHolderResponse) GetApplicationproblemJSON403() *Problem {
+	return r.ApplicationproblemJSON403
+}
+
+// GetApplicationproblemJSON409 returns the response for an HTTP 409 `application/problem+json` response
+func (r CreateHolderResponse) GetApplicationproblemJSON409() *Problem {
+	return r.ApplicationproblemJSON409
+}
+
+// GetApplicationproblemJSON422 returns the response for an HTTP 422 `application/problem+json` response
+func (r CreateHolderResponse) GetApplicationproblemJSON422() *Problem {
+	return r.ApplicationproblemJSON422
+}
+
+// GetApplicationproblemJSON429 returns the response for an HTTP 429 `application/problem+json` response
+func (r CreateHolderResponse) GetApplicationproblemJSON429() *Problem {
+	return r.ApplicationproblemJSON429
+}
+
+// GetBody returns the raw response body bytes
+func (r CreateHolderResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r CreateHolderResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r CreateHolderResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r CreateHolderResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+// DeleteHolderResponse429Headers the declared response headers of an HTTP 429 response for DeleteHolder
+type DeleteHolderResponse429Headers struct {
+	RetryAfter *int
+}
+
+type DeleteHolderResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// ApplicationproblemJSON400 the response for an HTTP 400 `application/problem+json` response
+	ApplicationproblemJSON400 *Problem
+	// ApplicationproblemJSON401 the response for an HTTP 401 `application/problem+json` response
+	ApplicationproblemJSON401 *Problem
+	// ApplicationproblemJSON403 the response for an HTTP 403 `application/problem+json` response
+	ApplicationproblemJSON403 *Problem
+	// ApplicationproblemJSON404 the response for an HTTP 404 `application/problem+json` response
+	ApplicationproblemJSON404 *Problem
+	// ApplicationproblemJSON409 the response for an HTTP 409 `application/problem+json` response
+	ApplicationproblemJSON409 *Problem
+	// ApplicationproblemJSON429 the response for an HTTP 429 `application/problem+json` response
+	ApplicationproblemJSON429 *Problem
+	// Headers429 the parsed response headers for an HTTP 429 response
+	Headers429 *DeleteHolderResponse429Headers
+}
+
+// GetApplicationproblemJSON400 returns the response for an HTTP 400 `application/problem+json` response
+func (r DeleteHolderResponse) GetApplicationproblemJSON400() *Problem {
+	return r.ApplicationproblemJSON400
+}
+
+// GetApplicationproblemJSON401 returns the response for an HTTP 401 `application/problem+json` response
+func (r DeleteHolderResponse) GetApplicationproblemJSON401() *Problem {
+	return r.ApplicationproblemJSON401
+}
+
+// GetApplicationproblemJSON403 returns the response for an HTTP 403 `application/problem+json` response
+func (r DeleteHolderResponse) GetApplicationproblemJSON403() *Problem {
+	return r.ApplicationproblemJSON403
+}
+
+// GetApplicationproblemJSON404 returns the response for an HTTP 404 `application/problem+json` response
+func (r DeleteHolderResponse) GetApplicationproblemJSON404() *Problem {
+	return r.ApplicationproblemJSON404
+}
+
+// GetApplicationproblemJSON409 returns the response for an HTTP 409 `application/problem+json` response
+func (r DeleteHolderResponse) GetApplicationproblemJSON409() *Problem {
+	return r.ApplicationproblemJSON409
+}
+
+// GetApplicationproblemJSON429 returns the response for an HTTP 429 `application/problem+json` response
+func (r DeleteHolderResponse) GetApplicationproblemJSON429() *Problem {
+	return r.ApplicationproblemJSON429
+}
+
+// GetBody returns the raw response body bytes
+func (r DeleteHolderResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r DeleteHolderResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r DeleteHolderResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r DeleteHolderResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+// GetHolderResponse429Headers the declared response headers of an HTTP 429 response for GetHolder
+type GetHolderResponse429Headers struct {
+	RetryAfter *int
+}
+
+type GetHolderResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON200 the response for an HTTP 200 `application/json` response
+	JSON200 *Holder
+	// ApplicationproblemJSON400 the response for an HTTP 400 `application/problem+json` response
+	ApplicationproblemJSON400 *Problem
+	// ApplicationproblemJSON401 the response for an HTTP 401 `application/problem+json` response
+	ApplicationproblemJSON401 *Problem
+	// ApplicationproblemJSON403 the response for an HTTP 403 `application/problem+json` response
+	ApplicationproblemJSON403 *Problem
+	// ApplicationproblemJSON404 the response for an HTTP 404 `application/problem+json` response
+	ApplicationproblemJSON404 *Problem
+	// ApplicationproblemJSON429 the response for an HTTP 429 `application/problem+json` response
+	ApplicationproblemJSON429 *Problem
+	// Headers429 the parsed response headers for an HTTP 429 response
+	Headers429 *GetHolderResponse429Headers
+}
+
+// GetJSON200 returns the response for an HTTP 200 `application/json` response
+func (r GetHolderResponse) GetJSON200() *Holder {
+	return r.JSON200
+}
+
+// GetApplicationproblemJSON400 returns the response for an HTTP 400 `application/problem+json` response
+func (r GetHolderResponse) GetApplicationproblemJSON400() *Problem {
+	return r.ApplicationproblemJSON400
+}
+
+// GetApplicationproblemJSON401 returns the response for an HTTP 401 `application/problem+json` response
+func (r GetHolderResponse) GetApplicationproblemJSON401() *Problem {
+	return r.ApplicationproblemJSON401
+}
+
+// GetApplicationproblemJSON403 returns the response for an HTTP 403 `application/problem+json` response
+func (r GetHolderResponse) GetApplicationproblemJSON403() *Problem {
+	return r.ApplicationproblemJSON403
+}
+
+// GetApplicationproblemJSON404 returns the response for an HTTP 404 `application/problem+json` response
+func (r GetHolderResponse) GetApplicationproblemJSON404() *Problem {
+	return r.ApplicationproblemJSON404
+}
+
+// GetApplicationproblemJSON429 returns the response for an HTTP 429 `application/problem+json` response
+func (r GetHolderResponse) GetApplicationproblemJSON429() *Problem {
+	return r.ApplicationproblemJSON429
+}
+
+// GetBody returns the raw response body bytes
+func (r GetHolderResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r GetHolderResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetHolderResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r GetHolderResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+// UpdateHolderResponse429Headers the declared response headers of an HTTP 429 response for UpdateHolder
+type UpdateHolderResponse429Headers struct {
+	RetryAfter *int
+}
+
+type UpdateHolderResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON200 the response for an HTTP 200 `application/json` response
+	JSON200 *Holder
+	// ApplicationproblemJSON400 the response for an HTTP 400 `application/problem+json` response
+	ApplicationproblemJSON400 *Problem
+	// ApplicationproblemJSON401 the response for an HTTP 401 `application/problem+json` response
+	ApplicationproblemJSON401 *Problem
+	// ApplicationproblemJSON403 the response for an HTTP 403 `application/problem+json` response
+	ApplicationproblemJSON403 *Problem
+	// ApplicationproblemJSON404 the response for an HTTP 404 `application/problem+json` response
+	ApplicationproblemJSON404 *Problem
+	// ApplicationproblemJSON422 the response for an HTTP 422 `application/problem+json` response
+	ApplicationproblemJSON422 *Problem
+	// ApplicationproblemJSON429 the response for an HTTP 429 `application/problem+json` response
+	ApplicationproblemJSON429 *Problem
+	// Headers429 the parsed response headers for an HTTP 429 response
+	Headers429 *UpdateHolderResponse429Headers
+}
+
+// GetJSON200 returns the response for an HTTP 200 `application/json` response
+func (r UpdateHolderResponse) GetJSON200() *Holder {
+	return r.JSON200
+}
+
+// GetApplicationproblemJSON400 returns the response for an HTTP 400 `application/problem+json` response
+func (r UpdateHolderResponse) GetApplicationproblemJSON400() *Problem {
+	return r.ApplicationproblemJSON400
+}
+
+// GetApplicationproblemJSON401 returns the response for an HTTP 401 `application/problem+json` response
+func (r UpdateHolderResponse) GetApplicationproblemJSON401() *Problem {
+	return r.ApplicationproblemJSON401
+}
+
+// GetApplicationproblemJSON403 returns the response for an HTTP 403 `application/problem+json` response
+func (r UpdateHolderResponse) GetApplicationproblemJSON403() *Problem {
+	return r.ApplicationproblemJSON403
+}
+
+// GetApplicationproblemJSON404 returns the response for an HTTP 404 `application/problem+json` response
+func (r UpdateHolderResponse) GetApplicationproblemJSON404() *Problem {
+	return r.ApplicationproblemJSON404
+}
+
+// GetApplicationproblemJSON422 returns the response for an HTTP 422 `application/problem+json` response
+func (r UpdateHolderResponse) GetApplicationproblemJSON422() *Problem {
+	return r.ApplicationproblemJSON422
+}
+
+// GetApplicationproblemJSON429 returns the response for an HTTP 429 `application/problem+json` response
+func (r UpdateHolderResponse) GetApplicationproblemJSON429() *Problem {
+	return r.ApplicationproblemJSON429
+}
+
+// GetBody returns the raw response body bytes
+func (r UpdateHolderResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r UpdateHolderResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r UpdateHolderResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r UpdateHolderResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+// GetADEPublicKeyResponse429Headers the declared response headers of an HTTP 429 response for GetADEPublicKey
+type GetADEPublicKeyResponse429Headers struct {
+	RetryAfter *int
+}
+
+type GetADEPublicKeyResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON200 the response for an HTTP 200 `application/json` response
+	JSON200 *ADEPublicKey
+	// ApplicationproblemJSON400 the response for an HTTP 400 `application/problem+json` response
+	ApplicationproblemJSON400 *Problem
+	// ApplicationproblemJSON401 the response for an HTTP 401 `application/problem+json` response
+	ApplicationproblemJSON401 *Problem
+	// ApplicationproblemJSON403 the response for an HTTP 403 `application/problem+json` response
+	ApplicationproblemJSON403 *Problem
+	// ApplicationproblemJSON404 the response for an HTTP 404 `application/problem+json` response
+	ApplicationproblemJSON404 *Problem
+	// ApplicationproblemJSON429 the response for an HTTP 429 `application/problem+json` response
+	ApplicationproblemJSON429 *Problem
+	// Headers429 the parsed response headers for an HTTP 429 response
+	Headers429 *GetADEPublicKeyResponse429Headers
+}
+
+// GetJSON200 returns the response for an HTTP 200 `application/json` response
+func (r GetADEPublicKeyResponse) GetJSON200() *ADEPublicKey {
+	return r.JSON200
+}
+
+// GetApplicationproblemJSON400 returns the response for an HTTP 400 `application/problem+json` response
+func (r GetADEPublicKeyResponse) GetApplicationproblemJSON400() *Problem {
+	return r.ApplicationproblemJSON400
+}
+
+// GetApplicationproblemJSON401 returns the response for an HTTP 401 `application/problem+json` response
+func (r GetADEPublicKeyResponse) GetApplicationproblemJSON401() *Problem {
+	return r.ApplicationproblemJSON401
+}
+
+// GetApplicationproblemJSON403 returns the response for an HTTP 403 `application/problem+json` response
+func (r GetADEPublicKeyResponse) GetApplicationproblemJSON403() *Problem {
+	return r.ApplicationproblemJSON403
+}
+
+// GetApplicationproblemJSON404 returns the response for an HTTP 404 `application/problem+json` response
+func (r GetADEPublicKeyResponse) GetApplicationproblemJSON404() *Problem {
+	return r.ApplicationproblemJSON404
+}
+
+// GetApplicationproblemJSON429 returns the response for an HTTP 429 `application/problem+json` response
+func (r GetADEPublicKeyResponse) GetApplicationproblemJSON429() *Problem {
+	return r.ApplicationproblemJSON429
+}
+
+// GetBody returns the raw response body bytes
+func (r GetADEPublicKeyResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r GetADEPublicKeyResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetADEPublicKeyResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r GetADEPublicKeyResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+// UploadADETokenResponse429Headers the declared response headers of an HTTP 429 response for UploadADEToken
+type UploadADETokenResponse429Headers struct {
+	RetryAfter *int
+}
+
+type UploadADETokenResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON200 the response for an HTTP 200 `application/json` response
+	JSON200 *Holder
+	// ApplicationproblemJSON400 the response for an HTTP 400 `application/problem+json` response
+	ApplicationproblemJSON400 *Problem
+	// ApplicationproblemJSON401 the response for an HTTP 401 `application/problem+json` response
+	ApplicationproblemJSON401 *Problem
+	// ApplicationproblemJSON403 the response for an HTTP 403 `application/problem+json` response
+	ApplicationproblemJSON403 *Problem
+	// ApplicationproblemJSON404 the response for an HTTP 404 `application/problem+json` response
+	ApplicationproblemJSON404 *Problem
+	// ApplicationproblemJSON422 the response for an HTTP 422 `application/problem+json` response
+	ApplicationproblemJSON422 *Problem
+	// ApplicationproblemJSON429 the response for an HTTP 429 `application/problem+json` response
+	ApplicationproblemJSON429 *Problem
+	// Headers429 the parsed response headers for an HTTP 429 response
+	Headers429 *UploadADETokenResponse429Headers
+}
+
+// GetJSON200 returns the response for an HTTP 200 `application/json` response
+func (r UploadADETokenResponse) GetJSON200() *Holder {
+	return r.JSON200
+}
+
+// GetApplicationproblemJSON400 returns the response for an HTTP 400 `application/problem+json` response
+func (r UploadADETokenResponse) GetApplicationproblemJSON400() *Problem {
+	return r.ApplicationproblemJSON400
+}
+
+// GetApplicationproblemJSON401 returns the response for an HTTP 401 `application/problem+json` response
+func (r UploadADETokenResponse) GetApplicationproblemJSON401() *Problem {
+	return r.ApplicationproblemJSON401
+}
+
+// GetApplicationproblemJSON403 returns the response for an HTTP 403 `application/problem+json` response
+func (r UploadADETokenResponse) GetApplicationproblemJSON403() *Problem {
+	return r.ApplicationproblemJSON403
+}
+
+// GetApplicationproblemJSON404 returns the response for an HTTP 404 `application/problem+json` response
+func (r UploadADETokenResponse) GetApplicationproblemJSON404() *Problem {
+	return r.ApplicationproblemJSON404
+}
+
+// GetApplicationproblemJSON422 returns the response for an HTTP 422 `application/problem+json` response
+func (r UploadADETokenResponse) GetApplicationproblemJSON422() *Problem {
+	return r.ApplicationproblemJSON422
+}
+
+// GetApplicationproblemJSON429 returns the response for an HTTP 429 `application/problem+json` response
+func (r UploadADETokenResponse) GetApplicationproblemJSON429() *Problem {
+	return r.ApplicationproblemJSON429
+}
+
+// GetBody returns the raw response body bytes
+func (r UploadADETokenResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r UploadADETokenResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r UploadADETokenResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r UploadADETokenResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+// UploadPushCertificateResponse429Headers the declared response headers of an HTTP 429 response for UploadPushCertificate
+type UploadPushCertificateResponse429Headers struct {
+	RetryAfter *int
+}
+
+type UploadPushCertificateResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON200 the response for an HTTP 200 `application/json` response
+	JSON200 *Holder
+	// ApplicationproblemJSON400 the response for an HTTP 400 `application/problem+json` response
+	ApplicationproblemJSON400 *Problem
+	// ApplicationproblemJSON401 the response for an HTTP 401 `application/problem+json` response
+	ApplicationproblemJSON401 *Problem
+	// ApplicationproblemJSON403 the response for an HTTP 403 `application/problem+json` response
+	ApplicationproblemJSON403 *Problem
+	// ApplicationproblemJSON404 the response for an HTTP 404 `application/problem+json` response
+	ApplicationproblemJSON404 *Problem
+	// ApplicationproblemJSON409 the response for an HTTP 409 `application/problem+json` response
+	ApplicationproblemJSON409 *Problem
+	// ApplicationproblemJSON422 the response for an HTTP 422 `application/problem+json` response
+	ApplicationproblemJSON422 *Problem
+	// ApplicationproblemJSON429 the response for an HTTP 429 `application/problem+json` response
+	ApplicationproblemJSON429 *Problem
+	// Headers429 the parsed response headers for an HTTP 429 response
+	Headers429 *UploadPushCertificateResponse429Headers
+}
+
+// GetJSON200 returns the response for an HTTP 200 `application/json` response
+func (r UploadPushCertificateResponse) GetJSON200() *Holder {
+	return r.JSON200
+}
+
+// GetApplicationproblemJSON400 returns the response for an HTTP 400 `application/problem+json` response
+func (r UploadPushCertificateResponse) GetApplicationproblemJSON400() *Problem {
+	return r.ApplicationproblemJSON400
+}
+
+// GetApplicationproblemJSON401 returns the response for an HTTP 401 `application/problem+json` response
+func (r UploadPushCertificateResponse) GetApplicationproblemJSON401() *Problem {
+	return r.ApplicationproblemJSON401
+}
+
+// GetApplicationproblemJSON403 returns the response for an HTTP 403 `application/problem+json` response
+func (r UploadPushCertificateResponse) GetApplicationproblemJSON403() *Problem {
+	return r.ApplicationproblemJSON403
+}
+
+// GetApplicationproblemJSON404 returns the response for an HTTP 404 `application/problem+json` response
+func (r UploadPushCertificateResponse) GetApplicationproblemJSON404() *Problem {
+	return r.ApplicationproblemJSON404
+}
+
+// GetApplicationproblemJSON409 returns the response for an HTTP 409 `application/problem+json` response
+func (r UploadPushCertificateResponse) GetApplicationproblemJSON409() *Problem {
+	return r.ApplicationproblemJSON409
+}
+
+// GetApplicationproblemJSON422 returns the response for an HTTP 422 `application/problem+json` response
+func (r UploadPushCertificateResponse) GetApplicationproblemJSON422() *Problem {
+	return r.ApplicationproblemJSON422
+}
+
+// GetApplicationproblemJSON429 returns the response for an HTTP 429 `application/problem+json` response
+func (r UploadPushCertificateResponse) GetApplicationproblemJSON429() *Problem {
+	return r.ApplicationproblemJSON429
+}
+
+// GetBody returns the raw response body bytes
+func (r UploadPushCertificateResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r UploadPushCertificateResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r UploadPushCertificateResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r UploadPushCertificateResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+// RequestPushCertificateResponse429Headers the declared response headers of an HTTP 429 response for RequestPushCertificate
+type RequestPushCertificateResponse429Headers struct {
+	RetryAfter *int
+}
+
+type RequestPushCertificateResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON200 the response for an HTTP 200 `application/json` response
+	JSON200 *PushCertificateRequest
+	// ApplicationproblemJSON400 the response for an HTTP 400 `application/problem+json` response
+	ApplicationproblemJSON400 *Problem
+	// ApplicationproblemJSON401 the response for an HTTP 401 `application/problem+json` response
+	ApplicationproblemJSON401 *Problem
+	// ApplicationproblemJSON403 the response for an HTTP 403 `application/problem+json` response
+	ApplicationproblemJSON403 *Problem
+	// ApplicationproblemJSON404 the response for an HTTP 404 `application/problem+json` response
+	ApplicationproblemJSON404 *Problem
+	// ApplicationproblemJSON409 the response for an HTTP 409 `application/problem+json` response
+	ApplicationproblemJSON409 *Problem
+	// ApplicationproblemJSON422 the response for an HTTP 422 `application/problem+json` response
+	ApplicationproblemJSON422 *Problem
+	// ApplicationproblemJSON429 the response for an HTTP 429 `application/problem+json` response
+	ApplicationproblemJSON429 *Problem
+	// Headers429 the parsed response headers for an HTTP 429 response
+	Headers429 *RequestPushCertificateResponse429Headers
+}
+
+// GetJSON200 returns the response for an HTTP 200 `application/json` response
+func (r RequestPushCertificateResponse) GetJSON200() *PushCertificateRequest {
+	return r.JSON200
+}
+
+// GetApplicationproblemJSON400 returns the response for an HTTP 400 `application/problem+json` response
+func (r RequestPushCertificateResponse) GetApplicationproblemJSON400() *Problem {
+	return r.ApplicationproblemJSON400
+}
+
+// GetApplicationproblemJSON401 returns the response for an HTTP 401 `application/problem+json` response
+func (r RequestPushCertificateResponse) GetApplicationproblemJSON401() *Problem {
+	return r.ApplicationproblemJSON401
+}
+
+// GetApplicationproblemJSON403 returns the response for an HTTP 403 `application/problem+json` response
+func (r RequestPushCertificateResponse) GetApplicationproblemJSON403() *Problem {
+	return r.ApplicationproblemJSON403
+}
+
+// GetApplicationproblemJSON404 returns the response for an HTTP 404 `application/problem+json` response
+func (r RequestPushCertificateResponse) GetApplicationproblemJSON404() *Problem {
+	return r.ApplicationproblemJSON404
+}
+
+// GetApplicationproblemJSON409 returns the response for an HTTP 409 `application/problem+json` response
+func (r RequestPushCertificateResponse) GetApplicationproblemJSON409() *Problem {
+	return r.ApplicationproblemJSON409
+}
+
+// GetApplicationproblemJSON422 returns the response for an HTTP 422 `application/problem+json` response
+func (r RequestPushCertificateResponse) GetApplicationproblemJSON422() *Problem {
+	return r.ApplicationproblemJSON422
+}
+
+// GetApplicationproblemJSON429 returns the response for an HTTP 429 `application/problem+json` response
+func (r RequestPushCertificateResponse) GetApplicationproblemJSON429() *Problem {
+	return r.ApplicationproblemJSON429
+}
+
+// GetBody returns the raw response body bytes
+func (r RequestPushCertificateResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r RequestPushCertificateResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r RequestPushCertificateResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r RequestPushCertificateResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+// UploadVPPTokenResponse429Headers the declared response headers of an HTTP 429 response for UploadVPPToken
+type UploadVPPTokenResponse429Headers struct {
+	RetryAfter *int
+}
+
+type UploadVPPTokenResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON200 the response for an HTTP 200 `application/json` response
+	JSON200 *Holder
+	// ApplicationproblemJSON400 the response for an HTTP 400 `application/problem+json` response
+	ApplicationproblemJSON400 *Problem
+	// ApplicationproblemJSON401 the response for an HTTP 401 `application/problem+json` response
+	ApplicationproblemJSON401 *Problem
+	// ApplicationproblemJSON403 the response for an HTTP 403 `application/problem+json` response
+	ApplicationproblemJSON403 *Problem
+	// ApplicationproblemJSON404 the response for an HTTP 404 `application/problem+json` response
+	ApplicationproblemJSON404 *Problem
+	// ApplicationproblemJSON422 the response for an HTTP 422 `application/problem+json` response
+	ApplicationproblemJSON422 *Problem
+	// ApplicationproblemJSON429 the response for an HTTP 429 `application/problem+json` response
+	ApplicationproblemJSON429 *Problem
+	// Headers429 the parsed response headers for an HTTP 429 response
+	Headers429 *UploadVPPTokenResponse429Headers
+}
+
+// GetJSON200 returns the response for an HTTP 200 `application/json` response
+func (r UploadVPPTokenResponse) GetJSON200() *Holder {
+	return r.JSON200
+}
+
+// GetApplicationproblemJSON400 returns the response for an HTTP 400 `application/problem+json` response
+func (r UploadVPPTokenResponse) GetApplicationproblemJSON400() *Problem {
+	return r.ApplicationproblemJSON400
+}
+
+// GetApplicationproblemJSON401 returns the response for an HTTP 401 `application/problem+json` response
+func (r UploadVPPTokenResponse) GetApplicationproblemJSON401() *Problem {
+	return r.ApplicationproblemJSON401
+}
+
+// GetApplicationproblemJSON403 returns the response for an HTTP 403 `application/problem+json` response
+func (r UploadVPPTokenResponse) GetApplicationproblemJSON403() *Problem {
+	return r.ApplicationproblemJSON403
+}
+
+// GetApplicationproblemJSON404 returns the response for an HTTP 404 `application/problem+json` response
+func (r UploadVPPTokenResponse) GetApplicationproblemJSON404() *Problem {
+	return r.ApplicationproblemJSON404
+}
+
+// GetApplicationproblemJSON422 returns the response for an HTTP 422 `application/problem+json` response
+func (r UploadVPPTokenResponse) GetApplicationproblemJSON422() *Problem {
+	return r.ApplicationproblemJSON422
+}
+
+// GetApplicationproblemJSON429 returns the response for an HTTP 429 `application/problem+json` response
+func (r UploadVPPTokenResponse) GetApplicationproblemJSON429() *Problem {
+	return r.ApplicationproblemJSON429
+}
+
+// GetBody returns the raw response body bytes
+func (r UploadVPPTokenResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r UploadVPPTokenResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r UploadVPPTokenResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r UploadVPPTokenResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+// ListWebhooksResponse429Headers the declared response headers of an HTTP 429 response for ListWebhooks
+type ListWebhooksResponse429Headers struct {
+	RetryAfter *int
+}
+
+type ListWebhooksResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON200 the response for an HTTP 200 `application/json` response
+	JSON200 *[]WebhookEndpoint
+	// ApplicationproblemJSON401 the response for an HTTP 401 `application/problem+json` response
+	ApplicationproblemJSON401 *Problem
+	// ApplicationproblemJSON403 the response for an HTTP 403 `application/problem+json` response
+	ApplicationproblemJSON403 *Problem
+	// ApplicationproblemJSON429 the response for an HTTP 429 `application/problem+json` response
+	ApplicationproblemJSON429 *Problem
+	// Headers429 the parsed response headers for an HTTP 429 response
+	Headers429 *ListWebhooksResponse429Headers
+}
+
+// GetJSON200 returns the response for an HTTP 200 `application/json` response
+func (r ListWebhooksResponse) GetJSON200() *[]WebhookEndpoint {
+	return r.JSON200
+}
+
+// GetApplicationproblemJSON401 returns the response for an HTTP 401 `application/problem+json` response
+func (r ListWebhooksResponse) GetApplicationproblemJSON401() *Problem {
+	return r.ApplicationproblemJSON401
+}
+
+// GetApplicationproblemJSON403 returns the response for an HTTP 403 `application/problem+json` response
+func (r ListWebhooksResponse) GetApplicationproblemJSON403() *Problem {
+	return r.ApplicationproblemJSON403
+}
+
+// GetApplicationproblemJSON429 returns the response for an HTTP 429 `application/problem+json` response
+func (r ListWebhooksResponse) GetApplicationproblemJSON429() *Problem {
+	return r.ApplicationproblemJSON429
+}
+
+// GetBody returns the raw response body bytes
+func (r ListWebhooksResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r ListWebhooksResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ListWebhooksResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r ListWebhooksResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+// CreateWebhookResponse429Headers the declared response headers of an HTTP 429 response for CreateWebhook
+type CreateWebhookResponse429Headers struct {
+	RetryAfter *int
+}
+
+type CreateWebhookResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON201 the response for an HTTP 201 `application/json` response
+	JSON201 *WebhookEndpoint
+	// ApplicationproblemJSON400 the response for an HTTP 400 `application/problem+json` response
+	ApplicationproblemJSON400 *Problem
+	// ApplicationproblemJSON401 the response for an HTTP 401 `application/problem+json` response
+	ApplicationproblemJSON401 *Problem
+	// ApplicationproblemJSON403 the response for an HTTP 403 `application/problem+json` response
+	ApplicationproblemJSON403 *Problem
+	// ApplicationproblemJSON409 the response for an HTTP 409 `application/problem+json` response
+	ApplicationproblemJSON409 *Problem
+	// ApplicationproblemJSON422 the response for an HTTP 422 `application/problem+json` response
+	ApplicationproblemJSON422 *Problem
+	// ApplicationproblemJSON429 the response for an HTTP 429 `application/problem+json` response
+	ApplicationproblemJSON429 *Problem
+	// Headers429 the parsed response headers for an HTTP 429 response
+	Headers429 *CreateWebhookResponse429Headers
+}
+
+// GetJSON201 returns the response for an HTTP 201 `application/json` response
+func (r CreateWebhookResponse) GetJSON201() *WebhookEndpoint {
+	return r.JSON201
+}
+
+// GetApplicationproblemJSON400 returns the response for an HTTP 400 `application/problem+json` response
+func (r CreateWebhookResponse) GetApplicationproblemJSON400() *Problem {
+	return r.ApplicationproblemJSON400
+}
+
+// GetApplicationproblemJSON401 returns the response for an HTTP 401 `application/problem+json` response
+func (r CreateWebhookResponse) GetApplicationproblemJSON401() *Problem {
+	return r.ApplicationproblemJSON401
+}
+
+// GetApplicationproblemJSON403 returns the response for an HTTP 403 `application/problem+json` response
+func (r CreateWebhookResponse) GetApplicationproblemJSON403() *Problem {
+	return r.ApplicationproblemJSON403
+}
+
+// GetApplicationproblemJSON409 returns the response for an HTTP 409 `application/problem+json` response
+func (r CreateWebhookResponse) GetApplicationproblemJSON409() *Problem {
+	return r.ApplicationproblemJSON409
+}
+
+// GetApplicationproblemJSON422 returns the response for an HTTP 422 `application/problem+json` response
+func (r CreateWebhookResponse) GetApplicationproblemJSON422() *Problem {
+	return r.ApplicationproblemJSON422
+}
+
+// GetApplicationproblemJSON429 returns the response for an HTTP 429 `application/problem+json` response
+func (r CreateWebhookResponse) GetApplicationproblemJSON429() *Problem {
+	return r.ApplicationproblemJSON429
+}
+
+// GetBody returns the raw response body bytes
+func (r CreateWebhookResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r CreateWebhookResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r CreateWebhookResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r CreateWebhookResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+// DeleteWebhookResponse429Headers the declared response headers of an HTTP 429 response for DeleteWebhook
+type DeleteWebhookResponse429Headers struct {
+	RetryAfter *int
+}
+
+type DeleteWebhookResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// ApplicationproblemJSON400 the response for an HTTP 400 `application/problem+json` response
+	ApplicationproblemJSON400 *Problem
+	// ApplicationproblemJSON401 the response for an HTTP 401 `application/problem+json` response
+	ApplicationproblemJSON401 *Problem
+	// ApplicationproblemJSON403 the response for an HTTP 403 `application/problem+json` response
+	ApplicationproblemJSON403 *Problem
+	// ApplicationproblemJSON404 the response for an HTTP 404 `application/problem+json` response
+	ApplicationproblemJSON404 *Problem
+	// ApplicationproblemJSON429 the response for an HTTP 429 `application/problem+json` response
+	ApplicationproblemJSON429 *Problem
+	// Headers429 the parsed response headers for an HTTP 429 response
+	Headers429 *DeleteWebhookResponse429Headers
+}
+
+// GetApplicationproblemJSON400 returns the response for an HTTP 400 `application/problem+json` response
+func (r DeleteWebhookResponse) GetApplicationproblemJSON400() *Problem {
+	return r.ApplicationproblemJSON400
+}
+
+// GetApplicationproblemJSON401 returns the response for an HTTP 401 `application/problem+json` response
+func (r DeleteWebhookResponse) GetApplicationproblemJSON401() *Problem {
+	return r.ApplicationproblemJSON401
+}
+
+// GetApplicationproblemJSON403 returns the response for an HTTP 403 `application/problem+json` response
+func (r DeleteWebhookResponse) GetApplicationproblemJSON403() *Problem {
+	return r.ApplicationproblemJSON403
+}
+
+// GetApplicationproblemJSON404 returns the response for an HTTP 404 `application/problem+json` response
+func (r DeleteWebhookResponse) GetApplicationproblemJSON404() *Problem {
+	return r.ApplicationproblemJSON404
+}
+
+// GetApplicationproblemJSON429 returns the response for an HTTP 429 `application/problem+json` response
+func (r DeleteWebhookResponse) GetApplicationproblemJSON429() *Problem {
+	return r.ApplicationproblemJSON429
+}
+
+// GetBody returns the raw response body bytes
+func (r DeleteWebhookResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r DeleteWebhookResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r DeleteWebhookResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r DeleteWebhookResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+// GetWebhookResponse429Headers the declared response headers of an HTTP 429 response for GetWebhook
+type GetWebhookResponse429Headers struct {
+	RetryAfter *int
+}
+
+type GetWebhookResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON200 the response for an HTTP 200 `application/json` response
+	JSON200 *WebhookEndpoint
+	// ApplicationproblemJSON400 the response for an HTTP 400 `application/problem+json` response
+	ApplicationproblemJSON400 *Problem
+	// ApplicationproblemJSON401 the response for an HTTP 401 `application/problem+json` response
+	ApplicationproblemJSON401 *Problem
+	// ApplicationproblemJSON403 the response for an HTTP 403 `application/problem+json` response
+	ApplicationproblemJSON403 *Problem
+	// ApplicationproblemJSON404 the response for an HTTP 404 `application/problem+json` response
+	ApplicationproblemJSON404 *Problem
+	// ApplicationproblemJSON429 the response for an HTTP 429 `application/problem+json` response
+	ApplicationproblemJSON429 *Problem
+	// Headers429 the parsed response headers for an HTTP 429 response
+	Headers429 *GetWebhookResponse429Headers
+}
+
+// GetJSON200 returns the response for an HTTP 200 `application/json` response
+func (r GetWebhookResponse) GetJSON200() *WebhookEndpoint {
+	return r.JSON200
+}
+
+// GetApplicationproblemJSON400 returns the response for an HTTP 400 `application/problem+json` response
+func (r GetWebhookResponse) GetApplicationproblemJSON400() *Problem {
+	return r.ApplicationproblemJSON400
+}
+
+// GetApplicationproblemJSON401 returns the response for an HTTP 401 `application/problem+json` response
+func (r GetWebhookResponse) GetApplicationproblemJSON401() *Problem {
+	return r.ApplicationproblemJSON401
+}
+
+// GetApplicationproblemJSON403 returns the response for an HTTP 403 `application/problem+json` response
+func (r GetWebhookResponse) GetApplicationproblemJSON403() *Problem {
+	return r.ApplicationproblemJSON403
+}
+
+// GetApplicationproblemJSON404 returns the response for an HTTP 404 `application/problem+json` response
+func (r GetWebhookResponse) GetApplicationproblemJSON404() *Problem {
+	return r.ApplicationproblemJSON404
+}
+
+// GetApplicationproblemJSON429 returns the response for an HTTP 429 `application/problem+json` response
+func (r GetWebhookResponse) GetApplicationproblemJSON429() *Problem {
+	return r.ApplicationproblemJSON429
+}
+
+// GetBody returns the raw response body bytes
+func (r GetWebhookResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r GetWebhookResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetWebhookResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r GetWebhookResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+// UpdateWebhookResponse429Headers the declared response headers of an HTTP 429 response for UpdateWebhook
+type UpdateWebhookResponse429Headers struct {
+	RetryAfter *int
+}
+
+type UpdateWebhookResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON200 the response for an HTTP 200 `application/json` response
+	JSON200 *WebhookEndpoint
+	// ApplicationproblemJSON400 the response for an HTTP 400 `application/problem+json` response
+	ApplicationproblemJSON400 *Problem
+	// ApplicationproblemJSON401 the response for an HTTP 401 `application/problem+json` response
+	ApplicationproblemJSON401 *Problem
+	// ApplicationproblemJSON403 the response for an HTTP 403 `application/problem+json` response
+	ApplicationproblemJSON403 *Problem
+	// ApplicationproblemJSON404 the response for an HTTP 404 `application/problem+json` response
+	ApplicationproblemJSON404 *Problem
+	// ApplicationproblemJSON422 the response for an HTTP 422 `application/problem+json` response
+	ApplicationproblemJSON422 *Problem
+	// ApplicationproblemJSON429 the response for an HTTP 429 `application/problem+json` response
+	ApplicationproblemJSON429 *Problem
+	// Headers429 the parsed response headers for an HTTP 429 response
+	Headers429 *UpdateWebhookResponse429Headers
+}
+
+// GetJSON200 returns the response for an HTTP 200 `application/json` response
+func (r UpdateWebhookResponse) GetJSON200() *WebhookEndpoint {
+	return r.JSON200
+}
+
+// GetApplicationproblemJSON400 returns the response for an HTTP 400 `application/problem+json` response
+func (r UpdateWebhookResponse) GetApplicationproblemJSON400() *Problem {
+	return r.ApplicationproblemJSON400
+}
+
+// GetApplicationproblemJSON401 returns the response for an HTTP 401 `application/problem+json` response
+func (r UpdateWebhookResponse) GetApplicationproblemJSON401() *Problem {
+	return r.ApplicationproblemJSON401
+}
+
+// GetApplicationproblemJSON403 returns the response for an HTTP 403 `application/problem+json` response
+func (r UpdateWebhookResponse) GetApplicationproblemJSON403() *Problem {
+	return r.ApplicationproblemJSON403
+}
+
+// GetApplicationproblemJSON404 returns the response for an HTTP 404 `application/problem+json` response
+func (r UpdateWebhookResponse) GetApplicationproblemJSON404() *Problem {
+	return r.ApplicationproblemJSON404
+}
+
+// GetApplicationproblemJSON422 returns the response for an HTTP 422 `application/problem+json` response
+func (r UpdateWebhookResponse) GetApplicationproblemJSON422() *Problem {
+	return r.ApplicationproblemJSON422
+}
+
+// GetApplicationproblemJSON429 returns the response for an HTTP 429 `application/problem+json` response
+func (r UpdateWebhookResponse) GetApplicationproblemJSON429() *Problem {
+	return r.ApplicationproblemJSON429
+}
+
+// GetBody returns the raw response body bytes
+func (r UpdateWebhookResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r UpdateWebhookResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r UpdateWebhookResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r UpdateWebhookResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+// ListWebhookDeliveriesResponse429Headers the declared response headers of an HTTP 429 response for ListWebhookDeliveries
+type ListWebhookDeliveriesResponse429Headers struct {
+	RetryAfter *int
+}
+
+type ListWebhookDeliveriesResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON200 the response for an HTTP 200 `application/json` response
+	JSON200 *[]WebhookDelivery
+	// ApplicationproblemJSON400 the response for an HTTP 400 `application/problem+json` response
+	ApplicationproblemJSON400 *Problem
+	// ApplicationproblemJSON401 the response for an HTTP 401 `application/problem+json` response
+	ApplicationproblemJSON401 *Problem
+	// ApplicationproblemJSON403 the response for an HTTP 403 `application/problem+json` response
+	ApplicationproblemJSON403 *Problem
+	// ApplicationproblemJSON404 the response for an HTTP 404 `application/problem+json` response
+	ApplicationproblemJSON404 *Problem
+	// ApplicationproblemJSON429 the response for an HTTP 429 `application/problem+json` response
+	ApplicationproblemJSON429 *Problem
+	// Headers429 the parsed response headers for an HTTP 429 response
+	Headers429 *ListWebhookDeliveriesResponse429Headers
+}
+
+// GetJSON200 returns the response for an HTTP 200 `application/json` response
+func (r ListWebhookDeliveriesResponse) GetJSON200() *[]WebhookDelivery {
+	return r.JSON200
+}
+
+// GetApplicationproblemJSON400 returns the response for an HTTP 400 `application/problem+json` response
+func (r ListWebhookDeliveriesResponse) GetApplicationproblemJSON400() *Problem {
+	return r.ApplicationproblemJSON400
+}
+
+// GetApplicationproblemJSON401 returns the response for an HTTP 401 `application/problem+json` response
+func (r ListWebhookDeliveriesResponse) GetApplicationproblemJSON401() *Problem {
+	return r.ApplicationproblemJSON401
+}
+
+// GetApplicationproblemJSON403 returns the response for an HTTP 403 `application/problem+json` response
+func (r ListWebhookDeliveriesResponse) GetApplicationproblemJSON403() *Problem {
+	return r.ApplicationproblemJSON403
+}
+
+// GetApplicationproblemJSON404 returns the response for an HTTP 404 `application/problem+json` response
+func (r ListWebhookDeliveriesResponse) GetApplicationproblemJSON404() *Problem {
+	return r.ApplicationproblemJSON404
+}
+
+// GetApplicationproblemJSON429 returns the response for an HTTP 429 `application/problem+json` response
+func (r ListWebhookDeliveriesResponse) GetApplicationproblemJSON429() *Problem {
+	return r.ApplicationproblemJSON429
+}
+
+// GetBody returns the raw response body bytes
+func (r ListWebhookDeliveriesResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r ListWebhookDeliveriesResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ListWebhookDeliveriesResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r ListWebhookDeliveriesResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+// RotateWebhookSecretResponse429Headers the declared response headers of an HTTP 429 response for RotateWebhookSecret
+type RotateWebhookSecretResponse429Headers struct {
+	RetryAfter *int
+}
+
+type RotateWebhookSecretResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON200 the response for an HTTP 200 `application/json` response
+	JSON200 *WebhookEndpoint
+	// ApplicationproblemJSON400 the response for an HTTP 400 `application/problem+json` response
+	ApplicationproblemJSON400 *Problem
+	// ApplicationproblemJSON401 the response for an HTTP 401 `application/problem+json` response
+	ApplicationproblemJSON401 *Problem
+	// ApplicationproblemJSON403 the response for an HTTP 403 `application/problem+json` response
+	ApplicationproblemJSON403 *Problem
+	// ApplicationproblemJSON404 the response for an HTTP 404 `application/problem+json` response
+	ApplicationproblemJSON404 *Problem
+	// ApplicationproblemJSON409 the response for an HTTP 409 `application/problem+json` response
+	ApplicationproblemJSON409 *Problem
+	// ApplicationproblemJSON422 the response for an HTTP 422 `application/problem+json` response
+	ApplicationproblemJSON422 *Problem
+	// ApplicationproblemJSON429 the response for an HTTP 429 `application/problem+json` response
+	ApplicationproblemJSON429 *Problem
+	// Headers429 the parsed response headers for an HTTP 429 response
+	Headers429 *RotateWebhookSecretResponse429Headers
+}
+
+// GetJSON200 returns the response for an HTTP 200 `application/json` response
+func (r RotateWebhookSecretResponse) GetJSON200() *WebhookEndpoint {
+	return r.JSON200
+}
+
+// GetApplicationproblemJSON400 returns the response for an HTTP 400 `application/problem+json` response
+func (r RotateWebhookSecretResponse) GetApplicationproblemJSON400() *Problem {
+	return r.ApplicationproblemJSON400
+}
+
+// GetApplicationproblemJSON401 returns the response for an HTTP 401 `application/problem+json` response
+func (r RotateWebhookSecretResponse) GetApplicationproblemJSON401() *Problem {
+	return r.ApplicationproblemJSON401
+}
+
+// GetApplicationproblemJSON403 returns the response for an HTTP 403 `application/problem+json` response
+func (r RotateWebhookSecretResponse) GetApplicationproblemJSON403() *Problem {
+	return r.ApplicationproblemJSON403
+}
+
+// GetApplicationproblemJSON404 returns the response for an HTTP 404 `application/problem+json` response
+func (r RotateWebhookSecretResponse) GetApplicationproblemJSON404() *Problem {
+	return r.ApplicationproblemJSON404
+}
+
+// GetApplicationproblemJSON409 returns the response for an HTTP 409 `application/problem+json` response
+func (r RotateWebhookSecretResponse) GetApplicationproblemJSON409() *Problem {
+	return r.ApplicationproblemJSON409
+}
+
+// GetApplicationproblemJSON422 returns the response for an HTTP 422 `application/problem+json` response
+func (r RotateWebhookSecretResponse) GetApplicationproblemJSON422() *Problem {
+	return r.ApplicationproblemJSON422
+}
+
+// GetApplicationproblemJSON429 returns the response for an HTTP 429 `application/problem+json` response
+func (r RotateWebhookSecretResponse) GetApplicationproblemJSON429() *Problem {
+	return r.ApplicationproblemJSON429
+}
+
+// GetBody returns the raw response body bytes
+func (r RotateWebhookSecretResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r RotateWebhookSecretResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r RotateWebhookSecretResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r RotateWebhookSecretResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
 }
 
 // GetCatalogResponse429Headers the declared response headers of an HTTP 429 response for GetCatalog
@@ -10032,6 +14804,454 @@ func (r DeleteAssignmentResponse) ContentType() string {
 	return ""
 }
 
+// CreateTokenResponse429Headers the declared response headers of an HTTP 429 response for CreateToken
+type CreateTokenResponse429Headers struct {
+	RetryAfter *int
+}
+
+type CreateTokenResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON201 the response for an HTTP 201 `application/json` response
+	JSON201 *TokenResponse
+	// ApplicationproblemJSON400 the response for an HTTP 400 `application/problem+json` response
+	ApplicationproblemJSON400 *Problem
+	// ApplicationproblemJSON401 the response for an HTTP 401 `application/problem+json` response
+	ApplicationproblemJSON401 *Problem
+	// ApplicationproblemJSON403 the response for an HTTP 403 `application/problem+json` response
+	ApplicationproblemJSON403 *Problem
+	// ApplicationproblemJSON422 the response for an HTTP 422 `application/problem+json` response
+	ApplicationproblemJSON422 *Problem
+	// ApplicationproblemJSON429 the response for an HTTP 429 `application/problem+json` response
+	ApplicationproblemJSON429 *Problem
+	// Headers429 the parsed response headers for an HTTP 429 response
+	Headers429 *CreateTokenResponse429Headers
+}
+
+// GetJSON201 returns the response for an HTTP 201 `application/json` response
+func (r CreateTokenResponse) GetJSON201() *TokenResponse {
+	return r.JSON201
+}
+
+// GetApplicationproblemJSON400 returns the response for an HTTP 400 `application/problem+json` response
+func (r CreateTokenResponse) GetApplicationproblemJSON400() *Problem {
+	return r.ApplicationproblemJSON400
+}
+
+// GetApplicationproblemJSON401 returns the response for an HTTP 401 `application/problem+json` response
+func (r CreateTokenResponse) GetApplicationproblemJSON401() *Problem {
+	return r.ApplicationproblemJSON401
+}
+
+// GetApplicationproblemJSON403 returns the response for an HTTP 403 `application/problem+json` response
+func (r CreateTokenResponse) GetApplicationproblemJSON403() *Problem {
+	return r.ApplicationproblemJSON403
+}
+
+// GetApplicationproblemJSON422 returns the response for an HTTP 422 `application/problem+json` response
+func (r CreateTokenResponse) GetApplicationproblemJSON422() *Problem {
+	return r.ApplicationproblemJSON422
+}
+
+// GetApplicationproblemJSON429 returns the response for an HTTP 429 `application/problem+json` response
+func (r CreateTokenResponse) GetApplicationproblemJSON429() *Problem {
+	return r.ApplicationproblemJSON429
+}
+
+// GetBody returns the raw response body bytes
+func (r CreateTokenResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r CreateTokenResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r CreateTokenResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r CreateTokenResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+// GetAccountWithResponse The caller's account
+//
+// Its name, contact, API clients, and registered browser origins. Account clients, and console owners and admins.
+//
+// Returns a wrapper object for the known response body format(s).
+//
+// Corresponds with GET /api/v1/account (the `GetAccount` operationId).
+func (c *ClientWithResponses) GetAccountWithResponse(ctx context.Context, params *GetAccountParams, reqEditors ...RequestEditorFn) (*GetAccountResponse, error) {
+	rsp, err := c.GetAccount(ctx, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetAccountResponse(rsp)
+}
+
+// ListHoldersWithResponse List the account's credential holders
+//
+// Account clients with account:credentials. A credential holder is the legal entity that holds Apple credentials (the push certificate, the Automated Device Enrollment token, the Apps and Books token). Every account has a default holder; a tenant uses it unless it names another.
+//
+// Returns a wrapper object for the known response body format(s).
+//
+// Corresponds with GET /api/v1/account/holders (the `ListHolders` operationId).
+func (c *ClientWithResponses) ListHoldersWithResponse(ctx context.Context, params *ListHoldersParams, reqEditors ...RequestEditorFn) (*ListHoldersResponse, error) {
+	rsp, err := c.ListHolders(ctx, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseListHoldersResponse(rsp)
+}
+
+// CreateHolderWithBodyWithResponse Add a credential holder
+//
+// Another legal entity the account serves, such as a managed service provider's customer.
+//
+// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
+//
+// Corresponds with POST /api/v1/account/holders (the `CreateHolder` operationId).
+func (c *ClientWithResponses) CreateHolderWithBodyWithResponse(ctx context.Context, params *CreateHolderParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateHolderResponse, error) {
+	rsp, err := c.CreateHolderWithBody(ctx, params, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateHolderResponse(rsp)
+}
+
+// CreateHolderWithResponse Add a credential holder
+//
+// Another legal entity the account serves, such as a managed service provider's customer.
+//
+// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
+//
+// Corresponds with POST /api/v1/account/holders (the `CreateHolder` operationId).
+func (c *ClientWithResponses) CreateHolderWithResponse(ctx context.Context, params *CreateHolderParams, body CreateHolderJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateHolderResponse, error) {
+	rsp, err := c.CreateHolder(ctx, params, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateHolderResponse(rsp)
+}
+
+// DeleteHolderWithResponse Delete a credential holder
+//
+// Not the default holder, nor one a tenant uses (409).
+//
+// Returns a wrapper object for the known response body format(s).
+//
+// Corresponds with DELETE /api/v1/account/holders/{holder} (the `DeleteHolder` operationId).
+func (c *ClientWithResponses) DeleteHolderWithResponse(ctx context.Context, holder openapi_types.UUID, params *DeleteHolderParams, reqEditors ...RequestEditorFn) (*DeleteHolderResponse, error) {
+	rsp, err := c.DeleteHolder(ctx, holder, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseDeleteHolderResponse(rsp)
+}
+
+// GetHolderWithResponse Get a credential holder
+//
+// Returns a wrapper object for the known response body format(s).
+//
+// Corresponds with GET /api/v1/account/holders/{holder} (the `GetHolder` operationId).
+func (c *ClientWithResponses) GetHolderWithResponse(ctx context.Context, holder openapi_types.UUID, params *GetHolderParams, reqEditors ...RequestEditorFn) (*GetHolderResponse, error) {
+	rsp, err := c.GetHolder(ctx, holder, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetHolderResponse(rsp)
+}
+
+// UpdateHolderWithBodyWithResponse Rename a credential holder
+//
+// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
+//
+// Corresponds with PATCH /api/v1/account/holders/{holder} (the `UpdateHolder` operationId).
+func (c *ClientWithResponses) UpdateHolderWithBodyWithResponse(ctx context.Context, holder openapi_types.UUID, params *UpdateHolderParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateHolderResponse, error) {
+	rsp, err := c.UpdateHolderWithBody(ctx, holder, params, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseUpdateHolderResponse(rsp)
+}
+
+// UpdateHolderWithResponse Rename a credential holder
+//
+// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
+//
+// Corresponds with PATCH /api/v1/account/holders/{holder} (the `UpdateHolder` operationId).
+func (c *ClientWithResponses) UpdateHolderWithResponse(ctx context.Context, holder openapi_types.UUID, params *UpdateHolderParams, body UpdateHolderJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateHolderResponse, error) {
+	rsp, err := c.UpdateHolder(ctx, holder, params, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseUpdateHolderResponse(rsp)
+}
+
+// GetADEPublicKeyWithResponse The holder's public key for Apple Business Manager
+//
+// The certificate to give Apple Business Manager when adding mdm as a device management service; made on first request. mdm keeps its private key to decrypt the server token.
+//
+// Returns a wrapper object for the known response body format(s).
+//
+// Corresponds with GET /api/v1/account/holders/{holder}/ade/public-key (the `GetADEPublicKey` operationId).
+func (c *ClientWithResponses) GetADEPublicKeyWithResponse(ctx context.Context, holder openapi_types.UUID, params *GetADEPublicKeyParams, reqEditors ...RequestEditorFn) (*GetADEPublicKeyResponse, error) {
+	rsp, err := c.GetADEPublicKey(ctx, holder, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetADEPublicKeyResponse(rsp)
+}
+
+// UploadADETokenWithBodyWithResponse Upload the holder's Automated Device Enrollment server token
+//
+// The .p7m Apple Business Manager offers for the device management service, base64. mdm decrypts and checks it. Renew it yearly the same way. Device assignment comes later.
+//
+// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
+//
+// Corresponds with PUT /api/v1/account/holders/{holder}/ade/token (the `UploadADEToken` operationId).
+func (c *ClientWithResponses) UploadADETokenWithBodyWithResponse(ctx context.Context, holder openapi_types.UUID, params *UploadADETokenParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UploadADETokenResponse, error) {
+	rsp, err := c.UploadADETokenWithBody(ctx, holder, params, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseUploadADETokenResponse(rsp)
+}
+
+// UploadADETokenWithResponse Upload the holder's Automated Device Enrollment server token
+//
+// The .p7m Apple Business Manager offers for the device management service, base64. mdm decrypts and checks it. Renew it yearly the same way. Device assignment comes later.
+//
+// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
+//
+// Corresponds with PUT /api/v1/account/holders/{holder}/ade/token (the `UploadADEToken` operationId).
+func (c *ClientWithResponses) UploadADETokenWithResponse(ctx context.Context, holder openapi_types.UUID, params *UploadADETokenParams, body UploadADETokenJSONRequestBody, reqEditors ...RequestEditorFn) (*UploadADETokenResponse, error) {
+	rsp, err := c.UploadADEToken(ctx, holder, params, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseUploadADETokenResponse(rsp)
+}
+
+// UploadPushCertificateWithBodyWithResponse Upload the holder's push certificate
+//
+// The certificate Apple issued for the holder's request, or one the holder obtained itself with its key. It must pair with the key, be unexpired, and name a com.apple.mgmt topic no other holder has. A certificate for a different topic is refused while devices are enrolled on the current one (they would all need enrolling again): renew the existing certificate in Apple's portal. The certificate then goes to the push service; devices are sent commands once it is there.
+//
+// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
+//
+// Corresponds with PUT /api/v1/account/holders/{holder}/push-certificate (the `UploadPushCertificate` operationId).
+func (c *ClientWithResponses) UploadPushCertificateWithBodyWithResponse(ctx context.Context, holder openapi_types.UUID, params *UploadPushCertificateParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UploadPushCertificateResponse, error) {
+	rsp, err := c.UploadPushCertificateWithBody(ctx, holder, params, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseUploadPushCertificateResponse(rsp)
+}
+
+// UploadPushCertificateWithResponse Upload the holder's push certificate
+//
+// The certificate Apple issued for the holder's request, or one the holder obtained itself with its key. It must pair with the key, be unexpired, and name a com.apple.mgmt topic no other holder has. A certificate for a different topic is refused while devices are enrolled on the current one (they would all need enrolling again): renew the existing certificate in Apple's portal. The certificate then goes to the push service; devices are sent commands once it is there.
+//
+// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
+//
+// Corresponds with PUT /api/v1/account/holders/{holder}/push-certificate (the `UploadPushCertificate` operationId).
+func (c *ClientWithResponses) UploadPushCertificateWithResponse(ctx context.Context, holder openapi_types.UUID, params *UploadPushCertificateParams, body UploadPushCertificateJSONRequestBody, reqEditors ...RequestEditorFn) (*UploadPushCertificateResponse, error) {
+	rsp, err := c.UploadPushCertificate(ctx, holder, params, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseUploadPushCertificateResponse(rsp)
+}
+
+// RequestPushCertificateWithResponse Request a push certificate
+//
+// mdm makes a key (kept, never returned) and returns the request, signed with mdm's vendor certificate, to upload at Apple's Push Certificates Portal (identity.apple.com) signed in with the organization's Apple Account: Create for a first certificate, Renew on the existing one to renew. Then upload the certificate Apple issues with PUT .../push-certificate. 409 until mdm has its vendor certificate: upload a certificate with its key instead.
+//
+// Returns a wrapper object for the known response body format(s).
+//
+// Corresponds with POST /api/v1/account/holders/{holder}/push-certificate/request (the `RequestPushCertificate` operationId).
+func (c *ClientWithResponses) RequestPushCertificateWithResponse(ctx context.Context, holder openapi_types.UUID, params *RequestPushCertificateParams, reqEditors ...RequestEditorFn) (*RequestPushCertificateResponse, error) {
+	rsp, err := c.RequestPushCertificate(ctx, holder, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseRequestPushCertificateResponse(rsp)
+}
+
+// UploadVPPTokenWithBodyWithResponse Upload the holder's Apps and Books content token
+//
+// The .vpptoken file's content. Using one token in a second MDM moves its licences away from the first. Renew it yearly; it also ends when the downloading account's password changes. Licence assignment comes later.
+//
+// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
+//
+// Corresponds with PUT /api/v1/account/holders/{holder}/vpp/token (the `UploadVPPToken` operationId).
+func (c *ClientWithResponses) UploadVPPTokenWithBodyWithResponse(ctx context.Context, holder openapi_types.UUID, params *UploadVPPTokenParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UploadVPPTokenResponse, error) {
+	rsp, err := c.UploadVPPTokenWithBody(ctx, holder, params, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseUploadVPPTokenResponse(rsp)
+}
+
+// UploadVPPTokenWithResponse Upload the holder's Apps and Books content token
+//
+// The .vpptoken file's content. Using one token in a second MDM moves its licences away from the first. Renew it yearly; it also ends when the downloading account's password changes. Licence assignment comes later.
+//
+// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
+//
+// Corresponds with PUT /api/v1/account/holders/{holder}/vpp/token (the `UploadVPPToken` operationId).
+func (c *ClientWithResponses) UploadVPPTokenWithResponse(ctx context.Context, holder openapi_types.UUID, params *UploadVPPTokenParams, body UploadVPPTokenJSONRequestBody, reqEditors ...RequestEditorFn) (*UploadVPPTokenResponse, error) {
+	rsp, err := c.UploadVPPToken(ctx, holder, params, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseUploadVPPTokenResponse(rsp)
+}
+
+// ListWebhooksWithResponse List the account's webhook endpoints
+//
+// Account clients with account:webhooks. Secrets are never listed.
+//
+// Returns a wrapper object for the known response body format(s).
+//
+// Corresponds with GET /api/v1/account/webhooks (the `ListWebhooks` operationId).
+func (c *ClientWithResponses) ListWebhooksWithResponse(ctx context.Context, params *ListWebhooksParams, reqEditors ...RequestEditorFn) (*ListWebhooksResponse, error) {
+	rsp, err := c.ListWebhooks(ctx, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseListWebhooksResponse(rsp)
+}
+
+// CreateWebhookWithBodyWithResponse Add a webhook endpoint
+//
+// An https URL that receives the account's events, signed per Standard Webhooks 1.0 (webhook-id, webhook-timestamp, webhook-signature v1 HMAC-SHA256 over id.timestamp.body) with the secret in this response, shown only here. events limits the subscription; empty takes every event. Deliveries go one at a time per endpoint, in order, retried at 5 s, 5 m, 30 m, 2 h, 5 h, 10 h, 14 h, 20 h, and 24 h; after the last, or on 410, the endpoint is disabled. Receivers dedupe on webhook-id. The address must resolve to a public IP; redirects are not followed.
+//
+// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
+//
+// Corresponds with POST /api/v1/account/webhooks (the `CreateWebhook` operationId).
+func (c *ClientWithResponses) CreateWebhookWithBodyWithResponse(ctx context.Context, params *CreateWebhookParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateWebhookResponse, error) {
+	rsp, err := c.CreateWebhookWithBody(ctx, params, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateWebhookResponse(rsp)
+}
+
+// CreateWebhookWithResponse Add a webhook endpoint
+//
+// An https URL that receives the account's events, signed per Standard Webhooks 1.0 (webhook-id, webhook-timestamp, webhook-signature v1 HMAC-SHA256 over id.timestamp.body) with the secret in this response, shown only here. events limits the subscription; empty takes every event. Deliveries go one at a time per endpoint, in order, retried at 5 s, 5 m, 30 m, 2 h, 5 h, 10 h, 14 h, 20 h, and 24 h; after the last, or on 410, the endpoint is disabled. Receivers dedupe on webhook-id. The address must resolve to a public IP; redirects are not followed.
+//
+// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
+//
+// Corresponds with POST /api/v1/account/webhooks (the `CreateWebhook` operationId).
+func (c *ClientWithResponses) CreateWebhookWithResponse(ctx context.Context, params *CreateWebhookParams, body CreateWebhookJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateWebhookResponse, error) {
+	rsp, err := c.CreateWebhook(ctx, params, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateWebhookResponse(rsp)
+}
+
+// DeleteWebhookWithResponse Delete a webhook endpoint and its deliveries
+//
+// Returns a wrapper object for the known response body format(s).
+//
+// Corresponds with DELETE /api/v1/account/webhooks/{webhook} (the `DeleteWebhook` operationId).
+func (c *ClientWithResponses) DeleteWebhookWithResponse(ctx context.Context, webhook openapi_types.UUID, params *DeleteWebhookParams, reqEditors ...RequestEditorFn) (*DeleteWebhookResponse, error) {
+	rsp, err := c.DeleteWebhook(ctx, webhook, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseDeleteWebhookResponse(rsp)
+}
+
+// GetWebhookWithResponse Get a webhook endpoint
+//
+// Returns a wrapper object for the known response body format(s).
+//
+// Corresponds with GET /api/v1/account/webhooks/{webhook} (the `GetWebhook` operationId).
+func (c *ClientWithResponses) GetWebhookWithResponse(ctx context.Context, webhook openapi_types.UUID, params *GetWebhookParams, reqEditors ...RequestEditorFn) (*GetWebhookResponse, error) {
+	rsp, err := c.GetWebhook(ctx, webhook, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetWebhookResponse(rsp)
+}
+
+// UpdateWebhookWithBodyWithResponse Change a webhook endpoint
+//
+// Enabling a disabled endpoint resumes its pending deliveries.
+//
+// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
+//
+// Corresponds with PATCH /api/v1/account/webhooks/{webhook} (the `UpdateWebhook` operationId).
+func (c *ClientWithResponses) UpdateWebhookWithBodyWithResponse(ctx context.Context, webhook openapi_types.UUID, params *UpdateWebhookParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateWebhookResponse, error) {
+	rsp, err := c.UpdateWebhookWithBody(ctx, webhook, params, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseUpdateWebhookResponse(rsp)
+}
+
+// UpdateWebhookWithResponse Change a webhook endpoint
+//
+// Enabling a disabled endpoint resumes its pending deliveries.
+//
+// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
+//
+// Corresponds with PATCH /api/v1/account/webhooks/{webhook} (the `UpdateWebhook` operationId).
+func (c *ClientWithResponses) UpdateWebhookWithResponse(ctx context.Context, webhook openapi_types.UUID, params *UpdateWebhookParams, body UpdateWebhookJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateWebhookResponse, error) {
+	rsp, err := c.UpdateWebhook(ctx, webhook, params, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseUpdateWebhookResponse(rsp)
+}
+
+// ListWebhookDeliveriesWithResponse An endpoint's latest deliveries
+//
+// The 50 latest, newest first.
+//
+// Returns a wrapper object for the known response body format(s).
+//
+// Corresponds with GET /api/v1/account/webhooks/{webhook}/deliveries (the `ListWebhookDeliveries` operationId).
+func (c *ClientWithResponses) ListWebhookDeliveriesWithResponse(ctx context.Context, webhook openapi_types.UUID, params *ListWebhookDeliveriesParams, reqEditors ...RequestEditorFn) (*ListWebhookDeliveriesResponse, error) {
+	rsp, err := c.ListWebhookDeliveries(ctx, webhook, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseListWebhookDeliveriesResponse(rsp)
+}
+
+// RotateWebhookSecretWithResponse Rotate a webhook endpoint's secret
+//
+// Issues a new secret, shown only here. For 24 hours every delivery carries signatures with both the new and the previous secret.
+//
+// Returns a wrapper object for the known response body format(s).
+//
+// Corresponds with POST /api/v1/account/webhooks/{webhook}/rotate-secret (the `RotateWebhookSecret` operationId).
+func (c *ClientWithResponses) RotateWebhookSecretWithResponse(ctx context.Context, webhook openapi_types.UUID, params *RotateWebhookSecretParams, reqEditors ...RequestEditorFn) (*RotateWebhookSecretResponse, error) {
+	rsp, err := c.RotateWebhookSecret(ctx, webhook, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseRotateWebhookSecretResponse(rsp)
+}
+
 // GetCatalogWithResponse Settings a device can take
 //
 // Every setting mdm can manage, from Apple's device-management schema (Release-v27.2). With level, only entries that level can take; with os too, only those that iOS version has. Keys carry their own level and version limits.
@@ -10853,6 +16073,1409 @@ func (c *ClientWithResponses) DeleteAssignmentWithResponse(ctx context.Context, 
 		return nil, err
 	}
 	return ParseDeleteAssignmentResponse(rsp)
+}
+
+// CreateTokenWithBodyWithResponse Issue a delegated token for one of the account's users
+//
+// Account clients with tokens:issue. The account's backend asks for a token for one of its users after applying its own rules; the user then calls the API directly with it. The token reaches one tenant of the account and, within it, the listed members (and their devices), the current members of the listed groups, or all of it, with the listed permissions (each one the client itself holds). It lasts ttl seconds, at most 900, and is never refreshed: ask again. Signed ES256 with mdm's keys (GET /api/.well-known/jwks.json).
+//
+// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
+//
+// Corresponds with POST /api/v1/tokens (the `CreateToken` operationId).
+func (c *ClientWithResponses) CreateTokenWithBodyWithResponse(ctx context.Context, params *CreateTokenParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateTokenResponse, error) {
+	rsp, err := c.CreateTokenWithBody(ctx, params, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateTokenResponse(rsp)
+}
+
+// CreateTokenWithResponse Issue a delegated token for one of the account's users
+//
+// Account clients with tokens:issue. The account's backend asks for a token for one of its users after applying its own rules; the user then calls the API directly with it. The token reaches one tenant of the account and, within it, the listed members (and their devices), the current members of the listed groups, or all of it, with the listed permissions (each one the client itself holds). It lasts ttl seconds, at most 900, and is never refreshed: ask again. Signed ES256 with mdm's keys (GET /api/.well-known/jwks.json).
+//
+// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
+//
+// Corresponds with POST /api/v1/tokens (the `CreateToken` operationId).
+func (c *ClientWithResponses) CreateTokenWithResponse(ctx context.Context, params *CreateTokenParams, body CreateTokenJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateTokenResponse, error) {
+	rsp, err := c.CreateToken(ctx, params, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateTokenResponse(rsp)
+}
+
+// ParseGetAccountResponse parses an HTTP response from a GetAccountWithResponse call
+func ParseGetAccountResponse(rsp *http.Response) (*GetAccountResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetAccountResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest Account
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 429:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON429 = &dest
+
+	}
+
+	switch {
+	case rsp.StatusCode == 429:
+		var headers GetAccountResponse429Headers
+		if values := rsp.Header.Values("Retry-After"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "Retry-After", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.RetryAfter = &value
+		}
+		response.Headers429 = &headers
+	}
+
+	return response, nil
+}
+
+// ParseListHoldersResponse parses an HTTP response from a ListHoldersWithResponse call
+func ParseListHoldersResponse(rsp *http.Response) (*ListHoldersResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ListHoldersResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest []Holder
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 429:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON429 = &dest
+
+	}
+
+	switch {
+	case rsp.StatusCode == 429:
+		var headers ListHoldersResponse429Headers
+		if values := rsp.Header.Values("Retry-After"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "Retry-After", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.RetryAfter = &value
+		}
+		response.Headers429 = &headers
+	}
+
+	return response, nil
+}
+
+// ParseCreateHolderResponse parses an HTTP response from a CreateHolderWithResponse call
+func ParseCreateHolderResponse(rsp *http.Response) (*CreateHolderResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &CreateHolderResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
+		var dest Holder
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON201 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON409 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON422 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 429:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON429 = &dest
+
+	}
+
+	switch {
+	case rsp.StatusCode == 429:
+		var headers CreateHolderResponse429Headers
+		if values := rsp.Header.Values("Retry-After"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "Retry-After", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.RetryAfter = &value
+		}
+		response.Headers429 = &headers
+	}
+
+	return response, nil
+}
+
+// ParseDeleteHolderResponse parses an HTTP response from a DeleteHolderWithResponse call
+func ParseDeleteHolderResponse(rsp *http.Response) (*DeleteHolderResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &DeleteHolderResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case rsp.StatusCode == 204:
+		break // No content-type
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON409 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 429:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON429 = &dest
+
+	}
+
+	switch {
+	case rsp.StatusCode == 429:
+		var headers DeleteHolderResponse429Headers
+		if values := rsp.Header.Values("Retry-After"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "Retry-After", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.RetryAfter = &value
+		}
+		response.Headers429 = &headers
+	}
+
+	return response, nil
+}
+
+// ParseGetHolderResponse parses an HTTP response from a GetHolderWithResponse call
+func ParseGetHolderResponse(rsp *http.Response) (*GetHolderResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetHolderResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest Holder
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 429:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON429 = &dest
+
+	}
+
+	switch {
+	case rsp.StatusCode == 429:
+		var headers GetHolderResponse429Headers
+		if values := rsp.Header.Values("Retry-After"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "Retry-After", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.RetryAfter = &value
+		}
+		response.Headers429 = &headers
+	}
+
+	return response, nil
+}
+
+// ParseUpdateHolderResponse parses an HTTP response from a UpdateHolderWithResponse call
+func ParseUpdateHolderResponse(rsp *http.Response) (*UpdateHolderResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &UpdateHolderResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest Holder
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON422 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 429:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON429 = &dest
+
+	}
+
+	switch {
+	case rsp.StatusCode == 429:
+		var headers UpdateHolderResponse429Headers
+		if values := rsp.Header.Values("Retry-After"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "Retry-After", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.RetryAfter = &value
+		}
+		response.Headers429 = &headers
+	}
+
+	return response, nil
+}
+
+// ParseGetADEPublicKeyResponse parses an HTTP response from a GetADEPublicKeyWithResponse call
+func ParseGetADEPublicKeyResponse(rsp *http.Response) (*GetADEPublicKeyResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetADEPublicKeyResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest ADEPublicKey
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 429:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON429 = &dest
+
+	}
+
+	switch {
+	case rsp.StatusCode == 429:
+		var headers GetADEPublicKeyResponse429Headers
+		if values := rsp.Header.Values("Retry-After"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "Retry-After", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.RetryAfter = &value
+		}
+		response.Headers429 = &headers
+	}
+
+	return response, nil
+}
+
+// ParseUploadADETokenResponse parses an HTTP response from a UploadADETokenWithResponse call
+func ParseUploadADETokenResponse(rsp *http.Response) (*UploadADETokenResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &UploadADETokenResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest Holder
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON422 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 429:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON429 = &dest
+
+	}
+
+	switch {
+	case rsp.StatusCode == 429:
+		var headers UploadADETokenResponse429Headers
+		if values := rsp.Header.Values("Retry-After"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "Retry-After", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.RetryAfter = &value
+		}
+		response.Headers429 = &headers
+	}
+
+	return response, nil
+}
+
+// ParseUploadPushCertificateResponse parses an HTTP response from a UploadPushCertificateWithResponse call
+func ParseUploadPushCertificateResponse(rsp *http.Response) (*UploadPushCertificateResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &UploadPushCertificateResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest Holder
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON409 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON422 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 429:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON429 = &dest
+
+	}
+
+	switch {
+	case rsp.StatusCode == 429:
+		var headers UploadPushCertificateResponse429Headers
+		if values := rsp.Header.Values("Retry-After"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "Retry-After", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.RetryAfter = &value
+		}
+		response.Headers429 = &headers
+	}
+
+	return response, nil
+}
+
+// ParseRequestPushCertificateResponse parses an HTTP response from a RequestPushCertificateWithResponse call
+func ParseRequestPushCertificateResponse(rsp *http.Response) (*RequestPushCertificateResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &RequestPushCertificateResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest PushCertificateRequest
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON409 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON422 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 429:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON429 = &dest
+
+	}
+
+	switch {
+	case rsp.StatusCode == 429:
+		var headers RequestPushCertificateResponse429Headers
+		if values := rsp.Header.Values("Retry-After"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "Retry-After", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.RetryAfter = &value
+		}
+		response.Headers429 = &headers
+	}
+
+	return response, nil
+}
+
+// ParseUploadVPPTokenResponse parses an HTTP response from a UploadVPPTokenWithResponse call
+func ParseUploadVPPTokenResponse(rsp *http.Response) (*UploadVPPTokenResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &UploadVPPTokenResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest Holder
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON422 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 429:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON429 = &dest
+
+	}
+
+	switch {
+	case rsp.StatusCode == 429:
+		var headers UploadVPPTokenResponse429Headers
+		if values := rsp.Header.Values("Retry-After"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "Retry-After", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.RetryAfter = &value
+		}
+		response.Headers429 = &headers
+	}
+
+	return response, nil
+}
+
+// ParseListWebhooksResponse parses an HTTP response from a ListWebhooksWithResponse call
+func ParseListWebhooksResponse(rsp *http.Response) (*ListWebhooksResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ListWebhooksResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest []WebhookEndpoint
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 429:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON429 = &dest
+
+	}
+
+	switch {
+	case rsp.StatusCode == 429:
+		var headers ListWebhooksResponse429Headers
+		if values := rsp.Header.Values("Retry-After"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "Retry-After", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.RetryAfter = &value
+		}
+		response.Headers429 = &headers
+	}
+
+	return response, nil
+}
+
+// ParseCreateWebhookResponse parses an HTTP response from a CreateWebhookWithResponse call
+func ParseCreateWebhookResponse(rsp *http.Response) (*CreateWebhookResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &CreateWebhookResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
+		var dest WebhookEndpoint
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON201 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON409 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON422 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 429:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON429 = &dest
+
+	}
+
+	switch {
+	case rsp.StatusCode == 429:
+		var headers CreateWebhookResponse429Headers
+		if values := rsp.Header.Values("Retry-After"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "Retry-After", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.RetryAfter = &value
+		}
+		response.Headers429 = &headers
+	}
+
+	return response, nil
+}
+
+// ParseDeleteWebhookResponse parses an HTTP response from a DeleteWebhookWithResponse call
+func ParseDeleteWebhookResponse(rsp *http.Response) (*DeleteWebhookResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &DeleteWebhookResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case rsp.StatusCode == 204:
+		break // No content-type
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 429:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON429 = &dest
+
+	}
+
+	switch {
+	case rsp.StatusCode == 429:
+		var headers DeleteWebhookResponse429Headers
+		if values := rsp.Header.Values("Retry-After"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "Retry-After", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.RetryAfter = &value
+		}
+		response.Headers429 = &headers
+	}
+
+	return response, nil
+}
+
+// ParseGetWebhookResponse parses an HTTP response from a GetWebhookWithResponse call
+func ParseGetWebhookResponse(rsp *http.Response) (*GetWebhookResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetWebhookResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest WebhookEndpoint
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 429:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON429 = &dest
+
+	}
+
+	switch {
+	case rsp.StatusCode == 429:
+		var headers GetWebhookResponse429Headers
+		if values := rsp.Header.Values("Retry-After"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "Retry-After", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.RetryAfter = &value
+		}
+		response.Headers429 = &headers
+	}
+
+	return response, nil
+}
+
+// ParseUpdateWebhookResponse parses an HTTP response from a UpdateWebhookWithResponse call
+func ParseUpdateWebhookResponse(rsp *http.Response) (*UpdateWebhookResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &UpdateWebhookResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest WebhookEndpoint
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON422 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 429:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON429 = &dest
+
+	}
+
+	switch {
+	case rsp.StatusCode == 429:
+		var headers UpdateWebhookResponse429Headers
+		if values := rsp.Header.Values("Retry-After"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "Retry-After", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.RetryAfter = &value
+		}
+		response.Headers429 = &headers
+	}
+
+	return response, nil
+}
+
+// ParseListWebhookDeliveriesResponse parses an HTTP response from a ListWebhookDeliveriesWithResponse call
+func ParseListWebhookDeliveriesResponse(rsp *http.Response) (*ListWebhookDeliveriesResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ListWebhookDeliveriesResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest []WebhookDelivery
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 429:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON429 = &dest
+
+	}
+
+	switch {
+	case rsp.StatusCode == 429:
+		var headers ListWebhookDeliveriesResponse429Headers
+		if values := rsp.Header.Values("Retry-After"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "Retry-After", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.RetryAfter = &value
+		}
+		response.Headers429 = &headers
+	}
+
+	return response, nil
+}
+
+// ParseRotateWebhookSecretResponse parses an HTTP response from a RotateWebhookSecretWithResponse call
+func ParseRotateWebhookSecretResponse(rsp *http.Response) (*RotateWebhookSecretResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &RotateWebhookSecretResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest WebhookEndpoint
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON409 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON422 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 429:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON429 = &dest
+
+	}
+
+	switch {
+	case rsp.StatusCode == 429:
+		var headers RotateWebhookSecretResponse429Headers
+		if values := rsp.Header.Values("Retry-After"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "Retry-After", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.RetryAfter = &value
+		}
+		response.Headers429 = &headers
+	}
+
+	return response, nil
 }
 
 // ParseGetCatalogResponse parses an HTTP response from a GetCatalogWithResponse call
@@ -14312,4 +20935,865 @@ func ParseDeleteAssignmentResponse(rsp *http.Response) (*DeleteAssignmentRespons
 	}
 
 	return response, nil
+}
+
+// ParseCreateTokenResponse parses an HTTP response from a CreateTokenWithResponse call
+func ParseCreateTokenResponse(rsp *http.Response) (*CreateTokenResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &CreateTokenResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
+		var dest TokenResponse
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON201 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON422 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 429:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON429 = &dest
+
+	}
+
+	switch {
+	case rsp.StatusCode == 429:
+		var headers CreateTokenResponse429Headers
+		if values := rsp.Header.Values("Retry-After"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "Retry-After", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.RetryAfter = &value
+		}
+		response.Headers429 = &headers
+	}
+
+	return response, nil
+}
+
+// WebhookInitiator sends OpenAPI 3.1 webhook requests to target URLs.
+// Modeled on the generated Client, but with no stored Server -- the full
+// target URL is provided per-call by the caller (typically discovered
+// from a subscription registration).
+type WebhookInitiator struct {
+	// Doer for performing requests, typically a *http.Client with any
+	// customized settings, such as certificate chains.
+	Client HttpRequestDoer
+
+	// A list of callbacks for modifying requests which are generated before sending over
+	// the network.
+	RequestEditors []RequestEditorFn
+}
+
+// WebhookInitiatorOption allows setting custom parameters during construction.
+type WebhookInitiatorOption func(*WebhookInitiator) error
+
+// NewWebhookInitiator creates a new WebhookInitiator with reasonable defaults.
+func NewWebhookInitiator(opts ...WebhookInitiatorOption) (*WebhookInitiator, error) {
+	initiator := WebhookInitiator{}
+	for _, o := range opts {
+		if err := o(&initiator); err != nil {
+			return nil, err
+		}
+	}
+	if initiator.Client == nil {
+		initiator.Client = &http.Client{}
+	}
+	return &initiator, nil
+}
+
+// WithWebhookHTTPClient allows overriding the default Doer, which is
+// automatically created using http.Client. This is useful for tests.
+func WithWebhookHTTPClient(doer HttpRequestDoer) WebhookInitiatorOption {
+	return func(p *WebhookInitiator) error {
+		p.Client = doer
+		return nil
+	}
+}
+
+// WithWebhookRequestEditorFn allows setting up a callback function, which
+// will be called right before sending the webhook request. This can be
+// used to mutate the request, e.g. to add signature headers.
+func WithWebhookRequestEditorFn(fn RequestEditorFn) WebhookInitiatorOption {
+	return func(p *WebhookInitiator) error {
+		p.RequestEditors = append(p.RequestEditors, fn)
+		return nil
+	}
+}
+
+func (p *WebhookInitiator) applyWebhookEditors(ctx context.Context, req *http.Request, additionalEditors []RequestEditorFn) error {
+	for _, r := range p.RequestEditors {
+		if err := r(ctx, req); err != nil {
+			return err
+		}
+	}
+	for _, r := range additionalEditors {
+		if err := r(ctx, req); err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
+// WebhookInitiatorInterface is the interface specification for the webhook initiator.
+type WebhookInitiatorInterface interface {
+	// OnCommandCompletedWithBody fires the command.completed webhook with any body
+	OnCommandCompletedWithBody(ctx context.Context, targetURL string, params *OnCommandCompletedParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	OnCommandCompleted(ctx context.Context, targetURL string, params *OnCommandCompletedParams, body OnCommandCompletedJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// OnDeviceEnrolledWithBody fires the device.enrolled webhook with any body
+	OnDeviceEnrolledWithBody(ctx context.Context, targetURL string, params *OnDeviceEnrolledParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	OnDeviceEnrolled(ctx context.Context, targetURL string, params *OnDeviceEnrolledParams, body OnDeviceEnrolledJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// OnDeviceOsBehindWithBody fires the device.os_behind webhook with any body
+	OnDeviceOsBehindWithBody(ctx context.Context, targetURL string, params *OnDeviceOsBehindParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	OnDeviceOsBehind(ctx context.Context, targetURL string, params *OnDeviceOsBehindParams, body OnDeviceOsBehindJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// OnDevicePolicyStatusWithBody fires the device.policy_status webhook with any body
+	OnDevicePolicyStatusWithBody(ctx context.Context, targetURL string, params *OnDevicePolicyStatusParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	OnDevicePolicyStatus(ctx context.Context, targetURL string, params *OnDevicePolicyStatusParams, body OnDevicePolicyStatusJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// OnDeviceUnenrolledWithBody fires the device.unenrolled webhook with any body
+	OnDeviceUnenrolledWithBody(ctx context.Context, targetURL string, params *OnDeviceUnenrolledParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	OnDeviceUnenrolled(ctx context.Context, targetURL string, params *OnDeviceUnenrolledParams, body OnDeviceUnenrolledJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// OnPushCertificateExpiringWithBody fires the push_certificate.expiring webhook with any body
+	OnPushCertificateExpiringWithBody(ctx context.Context, targetURL string, params *OnPushCertificateExpiringParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	OnPushCertificateExpiring(ctx context.Context, targetURL string, params *OnPushCertificateExpiringParams, body OnPushCertificateExpiringJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// OnTenantDeletedWithBody fires the tenant.deleted webhook with any body
+	OnTenantDeletedWithBody(ctx context.Context, targetURL string, params *OnTenantDeletedParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	OnTenantDeleted(ctx context.Context, targetURL string, params *OnTenantDeletedParams, body OnTenantDeletedJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// OnTenantDeletingWithBody fires the tenant.deleting webhook with any body
+	OnTenantDeletingWithBody(ctx context.Context, targetURL string, params *OnTenantDeletingParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	OnTenantDeleting(ctx context.Context, targetURL string, params *OnTenantDeletingParams, body OnTenantDeletingJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+}
+
+func (p *WebhookInitiator) OnCommandCompletedWithBody(ctx context.Context, targetURL string, params *OnCommandCompletedParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewOnCommandCompletedWebhookRequestWithBody(targetURL, params, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := p.applyWebhookEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return p.Client.Do(req)
+}
+
+func (p *WebhookInitiator) OnCommandCompleted(ctx context.Context, targetURL string, params *OnCommandCompletedParams, body OnCommandCompletedJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewOnCommandCompletedWebhookRequest(targetURL, params, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := p.applyWebhookEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return p.Client.Do(req)
+}
+
+func (p *WebhookInitiator) OnDeviceEnrolledWithBody(ctx context.Context, targetURL string, params *OnDeviceEnrolledParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewOnDeviceEnrolledWebhookRequestWithBody(targetURL, params, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := p.applyWebhookEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return p.Client.Do(req)
+}
+
+func (p *WebhookInitiator) OnDeviceEnrolled(ctx context.Context, targetURL string, params *OnDeviceEnrolledParams, body OnDeviceEnrolledJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewOnDeviceEnrolledWebhookRequest(targetURL, params, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := p.applyWebhookEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return p.Client.Do(req)
+}
+
+func (p *WebhookInitiator) OnDeviceOsBehindWithBody(ctx context.Context, targetURL string, params *OnDeviceOsBehindParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewOnDeviceOsBehindWebhookRequestWithBody(targetURL, params, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := p.applyWebhookEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return p.Client.Do(req)
+}
+
+func (p *WebhookInitiator) OnDeviceOsBehind(ctx context.Context, targetURL string, params *OnDeviceOsBehindParams, body OnDeviceOsBehindJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewOnDeviceOsBehindWebhookRequest(targetURL, params, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := p.applyWebhookEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return p.Client.Do(req)
+}
+
+func (p *WebhookInitiator) OnDevicePolicyStatusWithBody(ctx context.Context, targetURL string, params *OnDevicePolicyStatusParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewOnDevicePolicyStatusWebhookRequestWithBody(targetURL, params, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := p.applyWebhookEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return p.Client.Do(req)
+}
+
+func (p *WebhookInitiator) OnDevicePolicyStatus(ctx context.Context, targetURL string, params *OnDevicePolicyStatusParams, body OnDevicePolicyStatusJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewOnDevicePolicyStatusWebhookRequest(targetURL, params, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := p.applyWebhookEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return p.Client.Do(req)
+}
+
+func (p *WebhookInitiator) OnDeviceUnenrolledWithBody(ctx context.Context, targetURL string, params *OnDeviceUnenrolledParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewOnDeviceUnenrolledWebhookRequestWithBody(targetURL, params, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := p.applyWebhookEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return p.Client.Do(req)
+}
+
+func (p *WebhookInitiator) OnDeviceUnenrolled(ctx context.Context, targetURL string, params *OnDeviceUnenrolledParams, body OnDeviceUnenrolledJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewOnDeviceUnenrolledWebhookRequest(targetURL, params, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := p.applyWebhookEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return p.Client.Do(req)
+}
+
+func (p *WebhookInitiator) OnPushCertificateExpiringWithBody(ctx context.Context, targetURL string, params *OnPushCertificateExpiringParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewOnPushCertificateExpiringWebhookRequestWithBody(targetURL, params, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := p.applyWebhookEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return p.Client.Do(req)
+}
+
+func (p *WebhookInitiator) OnPushCertificateExpiring(ctx context.Context, targetURL string, params *OnPushCertificateExpiringParams, body OnPushCertificateExpiringJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewOnPushCertificateExpiringWebhookRequest(targetURL, params, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := p.applyWebhookEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return p.Client.Do(req)
+}
+
+func (p *WebhookInitiator) OnTenantDeletedWithBody(ctx context.Context, targetURL string, params *OnTenantDeletedParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewOnTenantDeletedWebhookRequestWithBody(targetURL, params, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := p.applyWebhookEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return p.Client.Do(req)
+}
+
+func (p *WebhookInitiator) OnTenantDeleted(ctx context.Context, targetURL string, params *OnTenantDeletedParams, body OnTenantDeletedJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewOnTenantDeletedWebhookRequest(targetURL, params, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := p.applyWebhookEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return p.Client.Do(req)
+}
+
+func (p *WebhookInitiator) OnTenantDeletingWithBody(ctx context.Context, targetURL string, params *OnTenantDeletingParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewOnTenantDeletingWebhookRequestWithBody(targetURL, params, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := p.applyWebhookEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return p.Client.Do(req)
+}
+
+func (p *WebhookInitiator) OnTenantDeleting(ctx context.Context, targetURL string, params *OnTenantDeletingParams, body OnTenantDeletingJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewOnTenantDeletingWebhookRequest(targetURL, params, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := p.applyWebhookEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return p.Client.Do(req)
+}
+
+// NewOnCommandCompletedWebhookRequest builds a application/json POST request for the command.completed webhook
+func NewOnCommandCompletedWebhookRequest(targetURL string, params *OnCommandCompletedParams, body OnCommandCompletedJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := runtime.JSONMarshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewOnCommandCompletedWebhookRequestWithBody(targetURL, params, "application/json", bodyReader)
+}
+
+// NewOnCommandCompletedWebhookRequestWithBody builds a POST request for the command.completed webhook with any body
+func NewOnCommandCompletedWebhookRequestWithBody(targetURL string, params *OnCommandCompletedParams, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+	_ = err
+
+	reqURL, err := url.Parse(targetURL)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, reqURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	if params != nil {
+
+		var headerParam0 string
+
+		headerParam0, err = runtime.StyleParamWithOptions("simple", false, "webhook-id", params.WebhookId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: "uuid"})
+		if err != nil {
+			return nil, err
+		}
+
+		req.Header.Set("webhook-id", headerParam0)
+
+		var headerParam1 string
+
+		headerParam1, err = runtime.StyleParamWithOptions("simple", false, "webhook-timestamp", params.WebhookTimestamp, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "integer", Format: "int64"})
+		if err != nil {
+			return nil, err
+		}
+
+		req.Header.Set("webhook-timestamp", headerParam1)
+
+		var headerParam2 string
+
+		headerParam2, err = runtime.StyleParamWithOptions("simple", false, "webhook-signature", params.WebhookSignature, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+		if err != nil {
+			return nil, err
+		}
+
+		req.Header.Set("webhook-signature", headerParam2)
+
+	}
+	return req, nil
+}
+
+// NewOnDeviceEnrolledWebhookRequest builds a application/json POST request for the device.enrolled webhook
+func NewOnDeviceEnrolledWebhookRequest(targetURL string, params *OnDeviceEnrolledParams, body OnDeviceEnrolledJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := runtime.JSONMarshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewOnDeviceEnrolledWebhookRequestWithBody(targetURL, params, "application/json", bodyReader)
+}
+
+// NewOnDeviceEnrolledWebhookRequestWithBody builds a POST request for the device.enrolled webhook with any body
+func NewOnDeviceEnrolledWebhookRequestWithBody(targetURL string, params *OnDeviceEnrolledParams, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+	_ = err
+
+	reqURL, err := url.Parse(targetURL)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, reqURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	if params != nil {
+
+		var headerParam0 string
+
+		headerParam0, err = runtime.StyleParamWithOptions("simple", false, "webhook-id", params.WebhookId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: "uuid"})
+		if err != nil {
+			return nil, err
+		}
+
+		req.Header.Set("webhook-id", headerParam0)
+
+		var headerParam1 string
+
+		headerParam1, err = runtime.StyleParamWithOptions("simple", false, "webhook-timestamp", params.WebhookTimestamp, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "integer", Format: "int64"})
+		if err != nil {
+			return nil, err
+		}
+
+		req.Header.Set("webhook-timestamp", headerParam1)
+
+		var headerParam2 string
+
+		headerParam2, err = runtime.StyleParamWithOptions("simple", false, "webhook-signature", params.WebhookSignature, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+		if err != nil {
+			return nil, err
+		}
+
+		req.Header.Set("webhook-signature", headerParam2)
+
+	}
+	return req, nil
+}
+
+// NewOnDeviceOsBehindWebhookRequest builds a application/json POST request for the device.os_behind webhook
+func NewOnDeviceOsBehindWebhookRequest(targetURL string, params *OnDeviceOsBehindParams, body OnDeviceOsBehindJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := runtime.JSONMarshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewOnDeviceOsBehindWebhookRequestWithBody(targetURL, params, "application/json", bodyReader)
+}
+
+// NewOnDeviceOsBehindWebhookRequestWithBody builds a POST request for the device.os_behind webhook with any body
+func NewOnDeviceOsBehindWebhookRequestWithBody(targetURL string, params *OnDeviceOsBehindParams, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+	_ = err
+
+	reqURL, err := url.Parse(targetURL)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, reqURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	if params != nil {
+
+		var headerParam0 string
+
+		headerParam0, err = runtime.StyleParamWithOptions("simple", false, "webhook-id", params.WebhookId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: "uuid"})
+		if err != nil {
+			return nil, err
+		}
+
+		req.Header.Set("webhook-id", headerParam0)
+
+		var headerParam1 string
+
+		headerParam1, err = runtime.StyleParamWithOptions("simple", false, "webhook-timestamp", params.WebhookTimestamp, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "integer", Format: "int64"})
+		if err != nil {
+			return nil, err
+		}
+
+		req.Header.Set("webhook-timestamp", headerParam1)
+
+		var headerParam2 string
+
+		headerParam2, err = runtime.StyleParamWithOptions("simple", false, "webhook-signature", params.WebhookSignature, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+		if err != nil {
+			return nil, err
+		}
+
+		req.Header.Set("webhook-signature", headerParam2)
+
+	}
+	return req, nil
+}
+
+// NewOnDevicePolicyStatusWebhookRequest builds a application/json POST request for the device.policy_status webhook
+func NewOnDevicePolicyStatusWebhookRequest(targetURL string, params *OnDevicePolicyStatusParams, body OnDevicePolicyStatusJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := runtime.JSONMarshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewOnDevicePolicyStatusWebhookRequestWithBody(targetURL, params, "application/json", bodyReader)
+}
+
+// NewOnDevicePolicyStatusWebhookRequestWithBody builds a POST request for the device.policy_status webhook with any body
+func NewOnDevicePolicyStatusWebhookRequestWithBody(targetURL string, params *OnDevicePolicyStatusParams, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+	_ = err
+
+	reqURL, err := url.Parse(targetURL)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, reqURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	if params != nil {
+
+		var headerParam0 string
+
+		headerParam0, err = runtime.StyleParamWithOptions("simple", false, "webhook-id", params.WebhookId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: "uuid"})
+		if err != nil {
+			return nil, err
+		}
+
+		req.Header.Set("webhook-id", headerParam0)
+
+		var headerParam1 string
+
+		headerParam1, err = runtime.StyleParamWithOptions("simple", false, "webhook-timestamp", params.WebhookTimestamp, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "integer", Format: "int64"})
+		if err != nil {
+			return nil, err
+		}
+
+		req.Header.Set("webhook-timestamp", headerParam1)
+
+		var headerParam2 string
+
+		headerParam2, err = runtime.StyleParamWithOptions("simple", false, "webhook-signature", params.WebhookSignature, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+		if err != nil {
+			return nil, err
+		}
+
+		req.Header.Set("webhook-signature", headerParam2)
+
+	}
+	return req, nil
+}
+
+// NewOnDeviceUnenrolledWebhookRequest builds a application/json POST request for the device.unenrolled webhook
+func NewOnDeviceUnenrolledWebhookRequest(targetURL string, params *OnDeviceUnenrolledParams, body OnDeviceUnenrolledJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := runtime.JSONMarshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewOnDeviceUnenrolledWebhookRequestWithBody(targetURL, params, "application/json", bodyReader)
+}
+
+// NewOnDeviceUnenrolledWebhookRequestWithBody builds a POST request for the device.unenrolled webhook with any body
+func NewOnDeviceUnenrolledWebhookRequestWithBody(targetURL string, params *OnDeviceUnenrolledParams, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+	_ = err
+
+	reqURL, err := url.Parse(targetURL)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, reqURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	if params != nil {
+
+		var headerParam0 string
+
+		headerParam0, err = runtime.StyleParamWithOptions("simple", false, "webhook-id", params.WebhookId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: "uuid"})
+		if err != nil {
+			return nil, err
+		}
+
+		req.Header.Set("webhook-id", headerParam0)
+
+		var headerParam1 string
+
+		headerParam1, err = runtime.StyleParamWithOptions("simple", false, "webhook-timestamp", params.WebhookTimestamp, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "integer", Format: "int64"})
+		if err != nil {
+			return nil, err
+		}
+
+		req.Header.Set("webhook-timestamp", headerParam1)
+
+		var headerParam2 string
+
+		headerParam2, err = runtime.StyleParamWithOptions("simple", false, "webhook-signature", params.WebhookSignature, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+		if err != nil {
+			return nil, err
+		}
+
+		req.Header.Set("webhook-signature", headerParam2)
+
+	}
+	return req, nil
+}
+
+// NewOnPushCertificateExpiringWebhookRequest builds a application/json POST request for the push_certificate.expiring webhook
+func NewOnPushCertificateExpiringWebhookRequest(targetURL string, params *OnPushCertificateExpiringParams, body OnPushCertificateExpiringJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := runtime.JSONMarshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewOnPushCertificateExpiringWebhookRequestWithBody(targetURL, params, "application/json", bodyReader)
+}
+
+// NewOnPushCertificateExpiringWebhookRequestWithBody builds a POST request for the push_certificate.expiring webhook with any body
+func NewOnPushCertificateExpiringWebhookRequestWithBody(targetURL string, params *OnPushCertificateExpiringParams, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+	_ = err
+
+	reqURL, err := url.Parse(targetURL)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, reqURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	if params != nil {
+
+		var headerParam0 string
+
+		headerParam0, err = runtime.StyleParamWithOptions("simple", false, "webhook-id", params.WebhookId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: "uuid"})
+		if err != nil {
+			return nil, err
+		}
+
+		req.Header.Set("webhook-id", headerParam0)
+
+		var headerParam1 string
+
+		headerParam1, err = runtime.StyleParamWithOptions("simple", false, "webhook-timestamp", params.WebhookTimestamp, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "integer", Format: "int64"})
+		if err != nil {
+			return nil, err
+		}
+
+		req.Header.Set("webhook-timestamp", headerParam1)
+
+		var headerParam2 string
+
+		headerParam2, err = runtime.StyleParamWithOptions("simple", false, "webhook-signature", params.WebhookSignature, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+		if err != nil {
+			return nil, err
+		}
+
+		req.Header.Set("webhook-signature", headerParam2)
+
+	}
+	return req, nil
+}
+
+// NewOnTenantDeletedWebhookRequest builds a application/json POST request for the tenant.deleted webhook
+func NewOnTenantDeletedWebhookRequest(targetURL string, params *OnTenantDeletedParams, body OnTenantDeletedJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := runtime.JSONMarshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewOnTenantDeletedWebhookRequestWithBody(targetURL, params, "application/json", bodyReader)
+}
+
+// NewOnTenantDeletedWebhookRequestWithBody builds a POST request for the tenant.deleted webhook with any body
+func NewOnTenantDeletedWebhookRequestWithBody(targetURL string, params *OnTenantDeletedParams, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+	_ = err
+
+	reqURL, err := url.Parse(targetURL)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, reqURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	if params != nil {
+
+		var headerParam0 string
+
+		headerParam0, err = runtime.StyleParamWithOptions("simple", false, "webhook-id", params.WebhookId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: "uuid"})
+		if err != nil {
+			return nil, err
+		}
+
+		req.Header.Set("webhook-id", headerParam0)
+
+		var headerParam1 string
+
+		headerParam1, err = runtime.StyleParamWithOptions("simple", false, "webhook-timestamp", params.WebhookTimestamp, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "integer", Format: "int64"})
+		if err != nil {
+			return nil, err
+		}
+
+		req.Header.Set("webhook-timestamp", headerParam1)
+
+		var headerParam2 string
+
+		headerParam2, err = runtime.StyleParamWithOptions("simple", false, "webhook-signature", params.WebhookSignature, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+		if err != nil {
+			return nil, err
+		}
+
+		req.Header.Set("webhook-signature", headerParam2)
+
+	}
+	return req, nil
+}
+
+// NewOnTenantDeletingWebhookRequest builds a application/json POST request for the tenant.deleting webhook
+func NewOnTenantDeletingWebhookRequest(targetURL string, params *OnTenantDeletingParams, body OnTenantDeletingJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := runtime.JSONMarshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewOnTenantDeletingWebhookRequestWithBody(targetURL, params, "application/json", bodyReader)
+}
+
+// NewOnTenantDeletingWebhookRequestWithBody builds a POST request for the tenant.deleting webhook with any body
+func NewOnTenantDeletingWebhookRequestWithBody(targetURL string, params *OnTenantDeletingParams, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+	_ = err
+
+	reqURL, err := url.Parse(targetURL)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, reqURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	if params != nil {
+
+		var headerParam0 string
+
+		headerParam0, err = runtime.StyleParamWithOptions("simple", false, "webhook-id", params.WebhookId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: "uuid"})
+		if err != nil {
+			return nil, err
+		}
+
+		req.Header.Set("webhook-id", headerParam0)
+
+		var headerParam1 string
+
+		headerParam1, err = runtime.StyleParamWithOptions("simple", false, "webhook-timestamp", params.WebhookTimestamp, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "integer", Format: "int64"})
+		if err != nil {
+			return nil, err
+		}
+
+		req.Header.Set("webhook-timestamp", headerParam1)
+
+		var headerParam2 string
+
+		headerParam2, err = runtime.StyleParamWithOptions("simple", false, "webhook-signature", params.WebhookSignature, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+		if err != nil {
+			return nil, err
+		}
+
+		req.Header.Set("webhook-signature", headerParam2)
+
+	}
+	return req, nil
 }
