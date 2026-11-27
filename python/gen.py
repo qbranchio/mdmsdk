@@ -33,6 +33,22 @@ def result_type(annotation: str) -> str:
     return " | ".join(parts) if parts else "None"
 
 
+def paged(contract: dict, op: dict) -> tuple[str, str] | None:
+    """A cursor-paged list: a query parameter cursor, and a response object of
+    next_cursor and one array. Returns the array's field and item model."""
+    if not any(p.get("in") == "query" and p.get("name") == "cursor" for p in op.get("parameters", [])):
+        return None
+    ok = next((v for k, v in op["responses"].items() if k.startswith("2")), {})
+    ref = ok.get("content", {}).get("application/json", {}).get("schema", {}).get("$ref", "")
+    props = contract["components"]["schemas"].get(ref.rsplit("/", 1)[-1], {}).get("properties", {})
+    if "next_cursor" not in props or len(props) != 2:
+        return None
+    field, schema = next((k, v) for k, v in props.items() if k != "next_cursor")
+    if schema.get("type") != "array" or "$ref" not in schema.get("items", {}):
+        return None
+    return snake(field), schema["items"]["$ref"].rsplit("/", 1)[-1]
+
+
 def main() -> None:
     # Importing the generated modules imports mdmsdk, which imports
     # _services: start from a stub so a broken previous output cannot block.
@@ -73,12 +89,34 @@ def main() -> None:
                 decl = (decl + ", " if decl else "") + "*, " + ", ".join(f"{p.name}: {ann(p)} = UNSET" for p in kw)
             args = ", ".join(f"{p.name}={p.name}" for p in params)
             idem = any(p.get("name") == "Idempotency-Key" for p in op.get("parameters", []))
-            info = f'OpInfo("{op_id}", idempotent={idem}, retry_transport={op_id == "createToken"})'
+            info = f'OpInfo("{op_id}", idempotent={idem}, retry_transport={op_id == "createToken"}, read={bool(methods[op_id].get("read"))})'
             summary = op.get("summary", "")
             ret = result_type(inspect.formatannotation(sig.return_annotation))
             call_kwargs = "{" + ", ".join(repr(p.name) + ": " + p.name for p in params) + "}"
             head = f"self{', ' + decl if decl else ''}"
-            if ret.startswith("list["):
+            page = paged(contract, op)
+            if page is not None:
+                # A cursor-paged list iterates every page; the caller never
+                # handles the cursor.
+                field, item = page
+                out += [f"    def {method_name}({head}) -> Iterator[{item}]:",
+                        f'        """{summary} ({op_id}), every page."""',
+                        "        while True:",
+                        f'            page = call(self._c, "{module}", {info}, {call_kwargs})',
+                        f"            yield from page.{field}",
+                        "            if not page.next_cursor:",
+                        "                return",
+                        "            cursor = page.next_cursor", ""]
+                out += [f"    async def {method_name}_async({head}) -> AsyncIterator[{item}]:",
+                        f'        """{summary} ({op_id}), every page, async."""',
+                        "        while True:",
+                        f'            page = await call_async(self._c, "{module}", {info}, {call_kwargs})',
+                        f"            for item in page.{field}:",
+                        "                yield item",
+                        "            if not page.next_cursor:",
+                        "                return",
+                        "            cursor = page.next_cursor", ""]
+            elif ret.startswith("list["):
                 # Lists are iterators, so paging can arrive without breaking callers.
                 item = ret.removeprefix("list[").removesuffix("]")
                 out += [f"    def {method_name}({head}) -> Iterator[{item}]:",

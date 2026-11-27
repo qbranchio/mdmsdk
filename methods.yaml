@@ -1,7 +1,8 @@
 # The SDK surface: each public operationId and the service and method it
 # becomes (Go exports the method name; Python uses it in snake_case). Both
 # SDKs generate their services from this file; CI fails when a public
-# operation has no entry or an entry names no operation.
+# operation has no entry or an entry names no operation. read: true marks a
+# POST that only reads (its body is the query): it is retried like a GET.
 getMe: {service: me, method: get}
 getCatalog: {service: catalog, method: get}
 
@@ -10,6 +11,8 @@ createTenant: {service: tenants, method: create}
 getTenant: {service: tenants, method: get}
 updateTenant: {service: tenants, method: update}
 deleteTenant: {service: tenants, method: delete}
+queryTenant: {service: tenants, method: query, read: true}
+listTenantAuditEvents: {service: activity, method: list}
 
 listMembers: {service: members, method: list}
 createMember: {service: members, method: create}

@@ -26,7 +26,7 @@ func main() {
 		Tenant:      "ext:family-7",
 		Subject:     "user-123",
 		Members:     &members,
-		Permissions: []api.TokenRequestPermissions{api.DevicesRead, api.CommandsWrite},
+		Permissions: []api.TokenRequestPermissions{api.TokenRequestPermissionsDevicesRead, api.TokenRequestPermissionsCommandsWrite},
 	})
 	if err != nil {
 		log.Fatal(err)

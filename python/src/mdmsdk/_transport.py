@@ -23,6 +23,8 @@ class OpInfo:
     id: str
     idempotent: bool = False
     retry_transport: bool = False
+    # A POST that only reads (its body is the query), retried as a GET.
+    read: bool = False
 
 
 current_op: contextvars.ContextVar[OpInfo | None] = contextvars.ContextVar("mdm_op", default=None)
@@ -46,6 +48,8 @@ def retryable(method: str, op: OpInfo | None, status: int, code: str) -> bool:
     if method in ("GET", "HEAD", "PUT", "DELETE"):
         return transient
     if method == "POST" and op is not None:
+        if op.read:
+            return transient
         if op.idempotent:
             return transient or (status == 409 and code == "idempotency_in_flight")
         if op.retry_transport:

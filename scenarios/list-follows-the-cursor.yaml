@@ -1,0 +1,21 @@
+name: a paged list follows next_cursor until it is null, and yields every page's items
+call: {operation: listTenantAuditEvents, args: {tenant: ext:family}}
+responses:
+  - status: 200
+    headers: {Content-Type: application/json}
+    body:
+      events:
+        - {id: "2", at: "2026-11-27T10:00:00Z", scope: tenant, actor_kind: user, actor_subject: "email|a", actor_display: Ada, action: createMember, summary: Added Sam}
+      next_cursor: c2
+  - status: 200
+    headers: {Content-Type: application/json}
+    body:
+      events:
+        - {id: "1", at: "2026-11-27T09:00:00Z", scope: tenant, actor_kind: user, actor_subject: "email|a", actor_display: Ada, action: createGroup, summary: Made Kids}
+      next_cursor: null
+expect:
+  attempts: 2
+  cursors: ["", c2]
+  result:
+    - {id: "2", at: "2026-11-27T10:00:00Z", scope: tenant, actor_kind: user, actor_subject: "email|a", actor_display: Ada, action: createMember, summary: Added Sam}
+    - {id: "1", at: "2026-11-27T09:00:00Z", scope: tenant, actor_kind: user, actor_subject: "email|a", actor_display: Ada, action: createGroup, summary: Made Kids}

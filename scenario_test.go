@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"errors"
 	"io"
+	"iter"
 	"net/http"
 	"path/filepath"
 	"sync"
@@ -33,6 +34,7 @@ type scenario struct {
 	Expect struct {
 		Attempts             int            `yaml:"attempts"`
 		SameIdempotencyKey   *bool          `yaml:"same_idempotency_key"`
+		Cursors              []string       `yaml:"cursors"`
 		WaitedAtLeastSeconds float64        `yaml:"waited_at_least_seconds"`
 		Result               any            `yaml:"result"`
 		Error                map[string]any `yaml:"error"`
@@ -103,6 +105,12 @@ var calls = map[string]func(ctx context.Context, c *Client, args map[string]any)
 		return nil, c.Devices.Delete(ctx, str(a, "tenant"), uid(a, "id"))
 	},
 	"getMe": func(ctx context.Context, c *Client, _ map[string]any) (any, error) { return c.Me.Get(ctx) },
+	"queryTenant": func(ctx context.Context, c *Client, a map[string]any) (any, error) {
+		return c.Tenants.Query(ctx, str(a, "tenant"), bodyOf[api.QueryTenantJSONRequestBody](a))
+	},
+	"listTenantAuditEvents": func(ctx context.Context, c *Client, a map[string]any) (any, error) {
+		return collect(c.Activity.List(ctx, str(a, "tenant"), nil))
+	},
 	"getCatalog": func(ctx context.Context, c *Client, args map[string]any) (any, error) {
 		p := &api.GetCatalogParams{}
 		if l, ok := args["level"].(string); ok {
@@ -111,6 +119,18 @@ var calls = map[string]func(ctx context.Context, c *Client, args map[string]any)
 		}
 		return c.Catalog.Get(ctx, p)
 	},
+}
+
+// collect drains a list's iterator, stopping at its first error.
+func collect[T any](seq iter.Seq2[T, error]) ([]T, error) {
+	out := []T{}
+	for v, err := range seq {
+		if err != nil {
+			return nil, err
+		}
+		out = append(out, v)
+	}
+	return out, nil
 }
 
 func TestScenarios(t *testing.T) {
@@ -141,6 +161,11 @@ func TestScenarios(t *testing.T) {
 			got, err := call(ctx, c, s.Call.Args)
 			if len(tr.reqs) != s.Expect.Attempts {
 				t.Errorf("attempts: got %d, want %d", len(tr.reqs), s.Expect.Attempts)
+			}
+			for i, want := range s.Expect.Cursors {
+				if i < len(tr.reqs) && tr.reqs[i].URL.Query().Get("cursor") != want {
+					t.Errorf("attempt %d: cursor %q, want %q", i+1, tr.reqs[i].URL.Query().Get("cursor"), want)
+				}
 			}
 			if s.Expect.WaitedAtLeastSeconds > 0 && waited < time.Duration(s.Expect.WaitedAtLeastSeconds*float64(time.Second)) {
 				t.Errorf("waited %v, want at least %vs", waited, s.Expect.WaitedAtLeastSeconds)
