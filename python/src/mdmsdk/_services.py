@@ -17,11 +17,11 @@ class CatalogService:
     def __init__(self, client: Any) -> None:
         self._c = client
 
-    def get(self, *, level: GetCatalogLevel | Unset = UNSET, os: str | Unset = UNSET) -> Any:
+    def get(self, *, level: GetCatalogLevel | Unset = UNSET, os: str | Unset = UNSET) -> CatalogResponse:
         """Settings a device can take (getCatalog)."""
         return call(self._c, "._gen.api.catalog.get_catalog", OpInfo("getCatalog", idempotent=False, retry_transport=False), {'level': level, 'os': os})
 
-    async def get_async(self, *, level: GetCatalogLevel | Unset = UNSET, os: str | Unset = UNSET) -> Any:
+    async def get_async(self, *, level: GetCatalogLevel | Unset = UNSET, os: str | Unset = UNSET) -> CatalogResponse:
         """Settings a device can take (getCatalog), async."""
         return await call_async(self._c, "._gen.api.catalog.get_catalog", OpInfo("getCatalog", idempotent=False, retry_transport=False), {'level': level, 'os': os})
 
@@ -32,11 +32,11 @@ class MeService:
     def __init__(self, client: Any) -> None:
         self._c = client
 
-    def get(self) -> Any:
+    def get(self) -> Me:
         """Who the caller is (getMe)."""
         return call(self._c, "._gen.api.session.get_me", OpInfo("getMe", idempotent=False, retry_transport=False), {})
 
-    async def get_async(self) -> Any:
+    async def get_async(self) -> Me:
         """Who the caller is (getMe), async."""
         return await call_async(self._c, "._gen.api.session.get_me", OpInfo("getMe", idempotent=False, retry_transport=False), {})
 
