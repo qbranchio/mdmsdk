@@ -1,0 +1,27 @@
+{
+  "name": "mdmsdk-site",
+  "private": true,
+  "type": "module",
+  "version": "0.0.0",
+  "engines": {
+    "node": ">=22.23.4"
+  },
+  "scripts": {
+    "sync": "node scripts/sync-contract.mjs",
+    "dev": "npm run sync && astro dev",
+    "check": "npm run sync && astro check",
+    "build": "npm run sync && astro check && astro build && node scripts/denylist.mjs",
+    "preview": "astro preview"
+  },
+  "dependencies": {
+    "@astrojs/starlight": "0.43.2",
+    "@fontsource-variable/atkinson-hyperlegible-mono": "5.3.0",
+    "@fontsource-variable/atkinson-hyperlegible-next": "5.3.0",
+    "@scalar/astro": "0.4.43",
+    "astro": "7.4.13",
+    "astro-mermaid": "2.2.0",
+    "mermaid": "12.3.0",
+    "sharp": "0.35.5",
+    "starlight-llms-txt": "0.12.0"
+  }
+}
