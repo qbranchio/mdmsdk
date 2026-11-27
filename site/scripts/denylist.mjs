@@ -13,7 +13,7 @@ const dist = resolve(dirname(fileURLToPath(import.meta.url)), '../dist');
 // not ours.
 const denied = [
   'docs/specs',
-  'jarrodb',
+  'jarrodb/mdm',
   'nanomdm',
   'x-go-',
   '.mdm.test',
