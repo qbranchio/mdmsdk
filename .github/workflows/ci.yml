@@ -20,6 +20,8 @@ jobs:
       - run: go vet ./...
       - uses: golangci/golangci-lint-action@v8
       - run: go test -race -count=1 ./...
+      - name: Generated Go is current
+        run: go generate ./api && go run ./internal/cmd/gen && git diff --exit-code
 
   python:
     runs-on: ubuntu-24.04
@@ -31,7 +33,12 @@ jobs:
       - uses: actions/setup-python@v6
         with:
           python-version: "3.11"
-      - run: pip install -e . ruff==0.17.6 pyright==1.1.414 pytest==9.2.0
+      - run: pip install -e . ruff==0.17.6 pyright==1.1.414 pytest==9.2.0 pyyaml==6.0.3 openapi-python-client==0.30.0
+      - name: Generated Python is current
+        run: |
+          openapi-python-client generate --path ../openapi/openapi.yaml --config openapi-python-client.yaml --meta none --output-path src/mdmsdk/_gen --overwrite
+          python gen.py
+          git diff --exit-code
       - run: ruff check .
       - run: pyright
-      - run: python -c "import mdmsdk; print(mdmsdk.__version__)"
+      - run: pytest -q
