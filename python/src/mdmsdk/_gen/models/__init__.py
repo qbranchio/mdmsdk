@@ -9,6 +9,8 @@ from .assignment_request import AssignmentRequest
 from .assignment_request_levels_item import AssignmentRequestLevelsItem
 from .assignment_request_target import AssignmentRequestTarget
 from .assignment_target import AssignmentTarget
+from .audit_event import AuditEvent
+from .audit_page import AuditPage
 from .catalog_cond import CatalogCond
 from .catalog_entry import CatalogEntry
 from .catalog_entry_group import CatalogEntryGroup
@@ -101,6 +103,18 @@ from .push_certificate_expiring_event import PushCertificateExpiringEvent
 from .push_certificate_expiring_event_type import PushCertificateExpiringEventType
 from .push_certificate_request import PushCertificateRequest
 from .push_certificate_upload import PushCertificateUpload
+from .query_column import QueryColumn
+from .query_column_type import QueryColumnType
+from .query_filters import QueryFilters
+from .query_filters_category_item import QueryFiltersCategoryItem
+from .query_filters_state_item import QueryFiltersStateItem
+from .query_filters_supervised_item import QueryFiltersSupervisedItem
+from .query_request import QueryRequest
+from .query_request_bucket import QueryRequestBucket
+from .query_request_dataset import QueryRequestDataset
+from .query_request_group_by_item import QueryRequestGroupByItem
+from .query_request_measure import QueryRequestMeasure
+from .query_result import QueryResult
 from .source import Source
 from .source_layer import SourceLayer
 from .tenant import Tenant
@@ -136,6 +150,8 @@ __all__ = (
     "AssignmentRequestLevelsItem",
     "AssignmentRequestTarget",
     "AssignmentTarget",
+    "AuditEvent",
+    "AuditPage",
     "CatalogCond",
     "CatalogEntry",
     "CatalogEntryGroup",
@@ -228,6 +244,18 @@ __all__ = (
     "PushCertificateExpiringEventType",
     "PushCertificateRequest",
     "PushCertificateUpload",
+    "QueryColumn",
+    "QueryColumnType",
+    "QueryFilters",
+    "QueryFiltersCategoryItem",
+    "QueryFiltersStateItem",
+    "QueryFiltersSupervisedItem",
+    "QueryRequest",
+    "QueryRequestBucket",
+    "QueryRequestDataset",
+    "QueryRequestGroupByItem",
+    "QueryRequestMeasure",
+    "QueryResult",
     "Source",
     "SourceLayer",
     "Tenant",

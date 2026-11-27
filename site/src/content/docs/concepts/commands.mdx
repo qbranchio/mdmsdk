@@ -47,7 +47,7 @@ The response is 202 with a `command_uuid`. Keep it: it names the command when yo
     tenant := "ext:crm-42"
 
     accepted, err := client.Commands.Send(ctx, tenant, deviceID, api.CommandRequest{
-    	Type:    api.DeviceLock,
+    	Type:    api.CommandRequestTypeDeviceLock,
     	Message: new("Lost phone."),
     })
     if err != nil {

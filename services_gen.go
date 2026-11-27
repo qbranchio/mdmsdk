@@ -18,7 +18,7 @@ var (
 
 // AddMember: Add a member to a group (addGroupMember).
 func (s *GroupsService) AddMember(ctx context.Context, tenant string, group openapi_types.UUID, member string) error {
-	resp, err := s.c.low.AddGroupMemberWithResponse(withOp(ctx, opInfo{id: "addGroupMember", idempotent: false, retryTransport: false}), tenant, group, member, &api.AddGroupMemberParams{})
+	resp, err := s.c.low.AddGroupMemberWithResponse(withOp(ctx, opInfo{id: "addGroupMember", idempotent: false, retryTransport: false, read: false}), tenant, group, member, &api.AddGroupMemberParams{})
 	if err != nil {
 		return err
 	}
@@ -30,7 +30,7 @@ func (s *GroupsService) AddMember(ctx context.Context, tenant string, group open
 
 // ClearMember: Give a device back to the tenant (clearDeviceMember).
 func (s *DevicesService) ClearMember(ctx context.Context, tenant string, id openapi_types.UUID) (*api.Device, error) {
-	resp, err := s.c.low.ClearDeviceMemberWithResponse(withOp(ctx, opInfo{id: "clearDeviceMember", idempotent: false, retryTransport: false}), tenant, id, &api.ClearDeviceMemberParams{})
+	resp, err := s.c.low.ClearDeviceMemberWithResponse(withOp(ctx, opInfo{id: "clearDeviceMember", idempotent: false, retryTransport: false, read: false}), tenant, id, &api.ClearDeviceMemberParams{})
 	if err != nil {
 		return nil, err
 	}
@@ -42,7 +42,7 @@ func (s *DevicesService) ClearMember(ctx context.Context, tenant string, id open
 
 // Create: Assign a profile (createAssignment).
 func (s *AssignmentsService) Create(ctx context.Context, tenant string, profile openapi_types.UUID, body api.CreateAssignmentJSONRequestBody) (*api.Assignment, error) {
-	resp, err := s.c.low.CreateAssignmentWithResponse(withOp(ctx, opInfo{id: "createAssignment", idempotent: true, retryTransport: false}), tenant, profile, &api.CreateAssignmentParams{}, body)
+	resp, err := s.c.low.CreateAssignmentWithResponse(withOp(ctx, opInfo{id: "createAssignment", idempotent: true, retryTransport: false, read: false}), tenant, profile, &api.CreateAssignmentParams{}, body)
 	if err != nil {
 		return nil, err
 	}
@@ -54,7 +54,7 @@ func (s *AssignmentsService) Create(ctx context.Context, tenant string, profile 
 
 // Send: Send a command (createCommand).
 func (s *CommandsService) Send(ctx context.Context, tenant string, id openapi_types.UUID, body api.CreateCommandJSONRequestBody) (*api.CommandAccepted, error) {
-	resp, err := s.c.low.CreateCommandWithResponse(withOp(ctx, opInfo{id: "createCommand", idempotent: true, retryTransport: false}), tenant, id, &api.CreateCommandParams{}, body)
+	resp, err := s.c.low.CreateCommandWithResponse(withOp(ctx, opInfo{id: "createCommand", idempotent: true, retryTransport: false, read: false}), tenant, id, &api.CreateCommandParams{}, body)
 	if err != nil {
 		return nil, err
 	}
@@ -66,7 +66,7 @@ func (s *CommandsService) Send(ctx context.Context, tenant string, id openapi_ty
 
 // Create: Register a device (createDevice).
 func (s *DevicesService) Create(ctx context.Context, tenant string, body api.CreateDeviceJSONRequestBody) (*api.EnrollmentResponse, error) {
-	resp, err := s.c.low.CreateDeviceWithResponse(withOp(ctx, opInfo{id: "createDevice", idempotent: true, retryTransport: false}), tenant, &api.CreateDeviceParams{}, body)
+	resp, err := s.c.low.CreateDeviceWithResponse(withOp(ctx, opInfo{id: "createDevice", idempotent: true, retryTransport: false, read: false}), tenant, &api.CreateDeviceParams{}, body)
 	if err != nil {
 		return nil, err
 	}
@@ -78,7 +78,7 @@ func (s *DevicesService) Create(ctx context.Context, tenant string, body api.Cre
 
 // CreateEnrollmentLink: Create a one-time enrollment link (createEnrollmentLink).
 func (s *DevicesService) CreateEnrollmentLink(ctx context.Context, tenant string, id openapi_types.UUID) (*api.EnrollmentLinkResponse, error) {
-	resp, err := s.c.low.CreateEnrollmentLinkWithResponse(withOp(ctx, opInfo{id: "createEnrollmentLink", idempotent: true, retryTransport: false}), tenant, id, &api.CreateEnrollmentLinkParams{})
+	resp, err := s.c.low.CreateEnrollmentLinkWithResponse(withOp(ctx, opInfo{id: "createEnrollmentLink", idempotent: true, retryTransport: false, read: false}), tenant, id, &api.CreateEnrollmentLinkParams{})
 	if err != nil {
 		return nil, err
 	}
@@ -90,7 +90,7 @@ func (s *DevicesService) CreateEnrollmentLink(ctx context.Context, tenant string
 
 // Create: Create a group (createGroup).
 func (s *GroupsService) Create(ctx context.Context, tenant string, body api.CreateGroupJSONRequestBody) (*api.Group, error) {
-	resp, err := s.c.low.CreateGroupWithResponse(withOp(ctx, opInfo{id: "createGroup", idempotent: true, retryTransport: false}), tenant, &api.CreateGroupParams{}, body)
+	resp, err := s.c.low.CreateGroupWithResponse(withOp(ctx, opInfo{id: "createGroup", idempotent: true, retryTransport: false, read: false}), tenant, &api.CreateGroupParams{}, body)
 	if err != nil {
 		return nil, err
 	}
@@ -102,7 +102,7 @@ func (s *GroupsService) Create(ctx context.Context, tenant string, body api.Crea
 
 // Create: Add a credential holder (createHolder).
 func (s *HoldersService) Create(ctx context.Context, body api.CreateHolderJSONRequestBody) (*api.Holder, error) {
-	resp, err := s.c.low.CreateHolderWithResponse(withOp(ctx, opInfo{id: "createHolder", idempotent: true, retryTransport: false}), &api.CreateHolderParams{}, body)
+	resp, err := s.c.low.CreateHolderWithResponse(withOp(ctx, opInfo{id: "createHolder", idempotent: true, retryTransport: false, read: false}), &api.CreateHolderParams{}, body)
 	if err != nil {
 		return nil, err
 	}
@@ -114,7 +114,7 @@ func (s *HoldersService) Create(ctx context.Context, body api.CreateHolderJSONRe
 
 // Create: Create a member (createMember).
 func (s *MembersService) Create(ctx context.Context, tenant string, body api.CreateMemberJSONRequestBody) (*api.Member, error) {
-	resp, err := s.c.low.CreateMemberWithResponse(withOp(ctx, opInfo{id: "createMember", idempotent: true, retryTransport: false}), tenant, &api.CreateMemberParams{}, body)
+	resp, err := s.c.low.CreateMemberWithResponse(withOp(ctx, opInfo{id: "createMember", idempotent: true, retryTransport: false, read: false}), tenant, &api.CreateMemberParams{}, body)
 	if err != nil {
 		return nil, err
 	}
@@ -126,7 +126,7 @@ func (s *MembersService) Create(ctx context.Context, tenant string, body api.Cre
 
 // Create: Create a profile (createProfile).
 func (s *ProfilesService) Create(ctx context.Context, tenant string, body api.CreateProfileJSONRequestBody) (*api.Profile, error) {
-	resp, err := s.c.low.CreateProfileWithResponse(withOp(ctx, opInfo{id: "createProfile", idempotent: true, retryTransport: false}), tenant, &api.CreateProfileParams{}, body)
+	resp, err := s.c.low.CreateProfileWithResponse(withOp(ctx, opInfo{id: "createProfile", idempotent: true, retryTransport: false, read: false}), tenant, &api.CreateProfileParams{}, body)
 	if err != nil {
 		return nil, err
 	}
@@ -138,7 +138,7 @@ func (s *ProfilesService) Create(ctx context.Context, tenant string, body api.Cr
 
 // Create: Create a tenant (createTenant).
 func (s *TenantsService) Create(ctx context.Context, body api.CreateTenantJSONRequestBody) (*api.Tenant, error) {
-	resp, err := s.c.low.CreateTenantWithResponse(withOp(ctx, opInfo{id: "createTenant", idempotent: true, retryTransport: false}), &api.CreateTenantParams{}, body)
+	resp, err := s.c.low.CreateTenantWithResponse(withOp(ctx, opInfo{id: "createTenant", idempotent: true, retryTransport: false, read: false}), &api.CreateTenantParams{}, body)
 	if err != nil {
 		return nil, err
 	}
@@ -150,7 +150,7 @@ func (s *TenantsService) Create(ctx context.Context, body api.CreateTenantJSONRe
 
 // Create: Issue a delegated token for one of the account's users (createToken).
 func (s *TokensService) Create(ctx context.Context, body api.CreateTokenJSONRequestBody) (*api.TokenResponse, error) {
-	resp, err := s.c.low.CreateTokenWithResponse(withOp(ctx, opInfo{id: "createToken", idempotent: false, retryTransport: true}), &api.CreateTokenParams{}, body)
+	resp, err := s.c.low.CreateTokenWithResponse(withOp(ctx, opInfo{id: "createToken", idempotent: false, retryTransport: true, read: false}), &api.CreateTokenParams{}, body)
 	if err != nil {
 		return nil, err
 	}
@@ -162,7 +162,7 @@ func (s *TokensService) Create(ctx context.Context, body api.CreateTokenJSONRequ
 
 // Create: Add a webhook endpoint (createWebhook).
 func (s *WebhooksService) Create(ctx context.Context, body api.CreateWebhookJSONRequestBody) (*api.WebhookEndpoint, error) {
-	resp, err := s.c.low.CreateWebhookWithResponse(withOp(ctx, opInfo{id: "createWebhook", idempotent: true, retryTransport: false}), &api.CreateWebhookParams{}, body)
+	resp, err := s.c.low.CreateWebhookWithResponse(withOp(ctx, opInfo{id: "createWebhook", idempotent: true, retryTransport: false, read: false}), &api.CreateWebhookParams{}, body)
 	if err != nil {
 		return nil, err
 	}
@@ -174,7 +174,7 @@ func (s *WebhooksService) Create(ctx context.Context, body api.CreateWebhookJSON
 
 // Delete: Remove an assignment (deleteAssignment).
 func (s *AssignmentsService) Delete(ctx context.Context, tenant string, profile openapi_types.UUID, assignment openapi_types.UUID) error {
-	resp, err := s.c.low.DeleteAssignmentWithResponse(withOp(ctx, opInfo{id: "deleteAssignment", idempotent: false, retryTransport: false}), tenant, profile, assignment, &api.DeleteAssignmentParams{})
+	resp, err := s.c.low.DeleteAssignmentWithResponse(withOp(ctx, opInfo{id: "deleteAssignment", idempotent: false, retryTransport: false, read: false}), tenant, profile, assignment, &api.DeleteAssignmentParams{})
 	if err != nil {
 		return err
 	}
@@ -186,7 +186,7 @@ func (s *AssignmentsService) Delete(ctx context.Context, tenant string, profile 
 
 // Delete: Remove a device (deleteDevice).
 func (s *DevicesService) Delete(ctx context.Context, tenant string, id openapi_types.UUID) error {
-	resp, err := s.c.low.DeleteDeviceWithResponse(withOp(ctx, opInfo{id: "deleteDevice", idempotent: false, retryTransport: false}), tenant, id, &api.DeleteDeviceParams{})
+	resp, err := s.c.low.DeleteDeviceWithResponse(withOp(ctx, opInfo{id: "deleteDevice", idempotent: false, retryTransport: false, read: false}), tenant, id, &api.DeleteDeviceParams{})
 	if err != nil {
 		return err
 	}
@@ -198,7 +198,7 @@ func (s *DevicesService) Delete(ctx context.Context, tenant string, id openapi_t
 
 // Delete: Remove the device's own settings (deleteDeviceSettings).
 func (s *SettingsService) Delete(ctx context.Context, tenant string, id openapi_types.UUID) (*api.Device, error) {
-	resp, err := s.c.low.DeleteDeviceSettingsWithResponse(withOp(ctx, opInfo{id: "deleteDeviceSettings", idempotent: false, retryTransport: false}), tenant, id, &api.DeleteDeviceSettingsParams{})
+	resp, err := s.c.low.DeleteDeviceSettingsWithResponse(withOp(ctx, opInfo{id: "deleteDeviceSettings", idempotent: false, retryTransport: false, read: false}), tenant, id, &api.DeleteDeviceSettingsParams{})
 	if err != nil {
 		return nil, err
 	}
@@ -210,7 +210,7 @@ func (s *SettingsService) Delete(ctx context.Context, tenant string, id openapi_
 
 // Delete: Delete a group (deleteGroup).
 func (s *GroupsService) Delete(ctx context.Context, tenant string, group openapi_types.UUID) error {
-	resp, err := s.c.low.DeleteGroupWithResponse(withOp(ctx, opInfo{id: "deleteGroup", idempotent: false, retryTransport: false}), tenant, group, &api.DeleteGroupParams{})
+	resp, err := s.c.low.DeleteGroupWithResponse(withOp(ctx, opInfo{id: "deleteGroup", idempotent: false, retryTransport: false, read: false}), tenant, group, &api.DeleteGroupParams{})
 	if err != nil {
 		return err
 	}
@@ -222,7 +222,7 @@ func (s *GroupsService) Delete(ctx context.Context, tenant string, group openapi
 
 // Delete: Delete a credential holder (deleteHolder).
 func (s *HoldersService) Delete(ctx context.Context, holder openapi_types.UUID) error {
-	resp, err := s.c.low.DeleteHolderWithResponse(withOp(ctx, opInfo{id: "deleteHolder", idempotent: false, retryTransport: false}), holder, &api.DeleteHolderParams{})
+	resp, err := s.c.low.DeleteHolderWithResponse(withOp(ctx, opInfo{id: "deleteHolder", idempotent: false, retryTransport: false, read: false}), holder, &api.DeleteHolderParams{})
 	if err != nil {
 		return err
 	}
@@ -234,7 +234,7 @@ func (s *HoldersService) Delete(ctx context.Context, holder openapi_types.UUID) 
 
 // Delete: Delete a member (deleteMember).
 func (s *MembersService) Delete(ctx context.Context, tenant string, member string) error {
-	resp, err := s.c.low.DeleteMemberWithResponse(withOp(ctx, opInfo{id: "deleteMember", idempotent: false, retryTransport: false}), tenant, member, &api.DeleteMemberParams{})
+	resp, err := s.c.low.DeleteMemberWithResponse(withOp(ctx, opInfo{id: "deleteMember", idempotent: false, retryTransport: false, read: false}), tenant, member, &api.DeleteMemberParams{})
 	if err != nil {
 		return err
 	}
@@ -246,7 +246,7 @@ func (s *MembersService) Delete(ctx context.Context, tenant string, member strin
 
 // Delete: Delete a profile (deleteProfile).
 func (s *ProfilesService) Delete(ctx context.Context, tenant string, profile openapi_types.UUID) error {
-	resp, err := s.c.low.DeleteProfileWithResponse(withOp(ctx, opInfo{id: "deleteProfile", idempotent: false, retryTransport: false}), tenant, profile, &api.DeleteProfileParams{})
+	resp, err := s.c.low.DeleteProfileWithResponse(withOp(ctx, opInfo{id: "deleteProfile", idempotent: false, retryTransport: false, read: false}), tenant, profile, &api.DeleteProfileParams{})
 	if err != nil {
 		return err
 	}
@@ -258,7 +258,7 @@ func (s *ProfilesService) Delete(ctx context.Context, tenant string, profile ope
 
 // Delete: Delete a tenant (deleteTenant).
 func (s *TenantsService) Delete(ctx context.Context, tenant string) (*api.Tenant, error) {
-	resp, err := s.c.low.DeleteTenantWithResponse(withOp(ctx, opInfo{id: "deleteTenant", idempotent: false, retryTransport: false}), tenant, &api.DeleteTenantParams{})
+	resp, err := s.c.low.DeleteTenantWithResponse(withOp(ctx, opInfo{id: "deleteTenant", idempotent: false, retryTransport: false, read: false}), tenant, &api.DeleteTenantParams{})
 	if err != nil {
 		return nil, err
 	}
@@ -270,7 +270,7 @@ func (s *TenantsService) Delete(ctx context.Context, tenant string) (*api.Tenant
 
 // Delete: Delete a webhook endpoint and its deliveries (deleteWebhook).
 func (s *WebhooksService) Delete(ctx context.Context, webhook openapi_types.UUID) error {
-	resp, err := s.c.low.DeleteWebhookWithResponse(withOp(ctx, opInfo{id: "deleteWebhook", idempotent: false, retryTransport: false}), webhook, &api.DeleteWebhookParams{})
+	resp, err := s.c.low.DeleteWebhookWithResponse(withOp(ctx, opInfo{id: "deleteWebhook", idempotent: false, retryTransport: false, read: false}), webhook, &api.DeleteWebhookParams{})
 	if err != nil {
 		return err
 	}
@@ -282,7 +282,7 @@ func (s *WebhooksService) Delete(ctx context.Context, webhook openapi_types.UUID
 
 // GetADEPublicKey: The holder's public key for Apple Business Manager (getADEPublicKey).
 func (s *HoldersService) GetADEPublicKey(ctx context.Context, holder openapi_types.UUID) (*api.ADEPublicKey, error) {
-	resp, err := s.c.low.GetADEPublicKeyWithResponse(withOp(ctx, opInfo{id: "getADEPublicKey", idempotent: false, retryTransport: false}), holder, &api.GetADEPublicKeyParams{})
+	resp, err := s.c.low.GetADEPublicKeyWithResponse(withOp(ctx, opInfo{id: "getADEPublicKey", idempotent: false, retryTransport: false, read: false}), holder, &api.GetADEPublicKeyParams{})
 	if err != nil {
 		return nil, err
 	}
@@ -294,7 +294,7 @@ func (s *HoldersService) GetADEPublicKey(ctx context.Context, holder openapi_typ
 
 // Get: The caller's account (getAccount).
 func (s *AccountService) Get(ctx context.Context) (*api.Account, error) {
-	resp, err := s.c.low.GetAccountWithResponse(withOp(ctx, opInfo{id: "getAccount", idempotent: false, retryTransport: false}), &api.GetAccountParams{})
+	resp, err := s.c.low.GetAccountWithResponse(withOp(ctx, opInfo{id: "getAccount", idempotent: false, retryTransport: false, read: false}), &api.GetAccountParams{})
 	if err != nil {
 		return nil, err
 	}
@@ -306,7 +306,7 @@ func (s *AccountService) Get(ctx context.Context) (*api.Account, error) {
 
 // Get: Settings a device can take (getCatalog).
 func (s *CatalogService) Get(ctx context.Context, params *api.GetCatalogParams) (*api.CatalogResponse, error) {
-	resp, err := s.c.low.GetCatalogWithResponse(withOp(ctx, opInfo{id: "getCatalog", idempotent: false, retryTransport: false}), orEmpty(params))
+	resp, err := s.c.low.GetCatalogWithResponse(withOp(ctx, opInfo{id: "getCatalog", idempotent: false, retryTransport: false, read: false}), orEmpty(params))
 	if err != nil {
 		return nil, err
 	}
@@ -318,7 +318,7 @@ func (s *CatalogService) Get(ctx context.Context, params *api.GetCatalogParams) 
 
 // Get: Get a command (getCommand).
 func (s *CommandsService) Get(ctx context.Context, tenant string, id openapi_types.UUID, command openapi_types.UUID) (*api.Command, error) {
-	resp, err := s.c.low.GetCommandWithResponse(withOp(ctx, opInfo{id: "getCommand", idempotent: false, retryTransport: false}), tenant, id, command, &api.GetCommandParams{})
+	resp, err := s.c.low.GetCommandWithResponse(withOp(ctx, opInfo{id: "getCommand", idempotent: false, retryTransport: false, read: false}), tenant, id, command, &api.GetCommandParams{})
 	if err != nil {
 		return nil, err
 	}
@@ -330,7 +330,7 @@ func (s *CommandsService) Get(ctx context.Context, tenant string, id openapi_typ
 
 // Get: Get a device (getDevice).
 func (s *DevicesService) Get(ctx context.Context, tenant string, id openapi_types.UUID) (*api.Device, error) {
-	resp, err := s.c.low.GetDeviceWithResponse(withOp(ctx, opInfo{id: "getDevice", idempotent: false, retryTransport: false}), tenant, id, &api.GetDeviceParams{})
+	resp, err := s.c.low.GetDeviceWithResponse(withOp(ctx, opInfo{id: "getDevice", idempotent: false, retryTransport: false, read: false}), tenant, id, &api.GetDeviceParams{})
 	if err != nil {
 		return nil, err
 	}
@@ -342,7 +342,7 @@ func (s *DevicesService) Get(ctx context.Context, tenant string, id openapi_type
 
 // GetDDM: Declarative management state (getDeviceDDM).
 func (s *DevicesService) GetDDM(ctx context.Context, tenant string, id openapi_types.UUID) (*api.DeviceDDM, error) {
-	resp, err := s.c.low.GetDeviceDDMWithResponse(withOp(ctx, opInfo{id: "getDeviceDDM", idempotent: false, retryTransport: false}), tenant, id, &api.GetDeviceDDMParams{})
+	resp, err := s.c.low.GetDeviceDDMWithResponse(withOp(ctx, opInfo{id: "getDeviceDDM", idempotent: false, retryTransport: false, read: false}), tenant, id, &api.GetDeviceDDMParams{})
 	if err != nil {
 		return nil, err
 	}
@@ -354,7 +354,7 @@ func (s *DevicesService) GetDDM(ctx context.Context, tenant string, id openapi_t
 
 // Get: Get the device's own settings (getDeviceSettings).
 func (s *SettingsService) Get(ctx context.Context, tenant string, id openapi_types.UUID) (*api.Policy, error) {
-	resp, err := s.c.low.GetDeviceSettingsWithResponse(withOp(ctx, opInfo{id: "getDeviceSettings", idempotent: false, retryTransport: false}), tenant, id, &api.GetDeviceSettingsParams{})
+	resp, err := s.c.low.GetDeviceSettingsWithResponse(withOp(ctx, opInfo{id: "getDeviceSettings", idempotent: false, retryTransport: false, read: false}), tenant, id, &api.GetDeviceSettingsParams{})
 	if err != nil {
 		return nil, err
 	}
@@ -366,7 +366,7 @@ func (s *SettingsService) Get(ctx context.Context, tenant string, id openapi_typ
 
 // EffectivePolicy: Get the device's effective policy with provenance (getEffectivePolicy).
 func (s *DevicesService) EffectivePolicy(ctx context.Context, tenant string, id openapi_types.UUID) (*api.EffectivePolicy, error) {
-	resp, err := s.c.low.GetEffectivePolicyWithResponse(withOp(ctx, opInfo{id: "getEffectivePolicy", idempotent: false, retryTransport: false}), tenant, id, &api.GetEffectivePolicyParams{})
+	resp, err := s.c.low.GetEffectivePolicyWithResponse(withOp(ctx, opInfo{id: "getEffectivePolicy", idempotent: false, retryTransport: false, read: false}), tenant, id, &api.GetEffectivePolicyParams{})
 	if err != nil {
 		return nil, err
 	}
@@ -378,7 +378,7 @@ func (s *DevicesService) EffectivePolicy(ctx context.Context, tenant string, id 
 
 // Get: Get a group (getGroup).
 func (s *GroupsService) Get(ctx context.Context, tenant string, group openapi_types.UUID) (*api.Group, error) {
-	resp, err := s.c.low.GetGroupWithResponse(withOp(ctx, opInfo{id: "getGroup", idempotent: false, retryTransport: false}), tenant, group, &api.GetGroupParams{})
+	resp, err := s.c.low.GetGroupWithResponse(withOp(ctx, opInfo{id: "getGroup", idempotent: false, retryTransport: false, read: false}), tenant, group, &api.GetGroupParams{})
 	if err != nil {
 		return nil, err
 	}
@@ -390,7 +390,7 @@ func (s *GroupsService) Get(ctx context.Context, tenant string, group openapi_ty
 
 // Get: Get a credential holder (getHolder).
 func (s *HoldersService) Get(ctx context.Context, holder openapi_types.UUID) (*api.Holder, error) {
-	resp, err := s.c.low.GetHolderWithResponse(withOp(ctx, opInfo{id: "getHolder", idempotent: false, retryTransport: false}), holder, &api.GetHolderParams{})
+	resp, err := s.c.low.GetHolderWithResponse(withOp(ctx, opInfo{id: "getHolder", idempotent: false, retryTransport: false, read: false}), holder, &api.GetHolderParams{})
 	if err != nil {
 		return nil, err
 	}
@@ -402,7 +402,7 @@ func (s *HoldersService) Get(ctx context.Context, holder openapi_types.UUID) (*a
 
 // Get: Who the caller is (getMe).
 func (s *MeService) Get(ctx context.Context) (*api.Me, error) {
-	resp, err := s.c.low.GetMeWithResponse(withOp(ctx, opInfo{id: "getMe", idempotent: false, retryTransport: false}), &api.GetMeParams{})
+	resp, err := s.c.low.GetMeWithResponse(withOp(ctx, opInfo{id: "getMe", idempotent: false, retryTransport: false, read: false}), &api.GetMeParams{})
 	if err != nil {
 		return nil, err
 	}
@@ -414,7 +414,7 @@ func (s *MeService) Get(ctx context.Context) (*api.Me, error) {
 
 // Get: Get a member (getMember).
 func (s *MembersService) Get(ctx context.Context, tenant string, member string) (*api.Member, error) {
-	resp, err := s.c.low.GetMemberWithResponse(withOp(ctx, opInfo{id: "getMember", idempotent: false, retryTransport: false}), tenant, member, &api.GetMemberParams{})
+	resp, err := s.c.low.GetMemberWithResponse(withOp(ctx, opInfo{id: "getMember", idempotent: false, retryTransport: false, read: false}), tenant, member, &api.GetMemberParams{})
 	if err != nil {
 		return nil, err
 	}
@@ -426,7 +426,7 @@ func (s *MembersService) Get(ctx context.Context, tenant string, member string) 
 
 // Get: Get a profile (getProfile).
 func (s *ProfilesService) Get(ctx context.Context, tenant string, profile openapi_types.UUID) (*api.Profile, error) {
-	resp, err := s.c.low.GetProfileWithResponse(withOp(ctx, opInfo{id: "getProfile", idempotent: false, retryTransport: false}), tenant, profile, &api.GetProfileParams{})
+	resp, err := s.c.low.GetProfileWithResponse(withOp(ctx, opInfo{id: "getProfile", idempotent: false, retryTransport: false, read: false}), tenant, profile, &api.GetProfileParams{})
 	if err != nil {
 		return nil, err
 	}
@@ -438,7 +438,7 @@ func (s *ProfilesService) Get(ctx context.Context, tenant string, profile openap
 
 // Get: Get a tenant (getTenant).
 func (s *TenantsService) Get(ctx context.Context, tenant string) (*api.Tenant, error) {
-	resp, err := s.c.low.GetTenantWithResponse(withOp(ctx, opInfo{id: "getTenant", idempotent: false, retryTransport: false}), tenant, &api.GetTenantParams{})
+	resp, err := s.c.low.GetTenantWithResponse(withOp(ctx, opInfo{id: "getTenant", idempotent: false, retryTransport: false, read: false}), tenant, &api.GetTenantParams{})
 	if err != nil {
 		return nil, err
 	}
@@ -450,7 +450,7 @@ func (s *TenantsService) Get(ctx context.Context, tenant string) (*api.Tenant, e
 
 // Get: Get a webhook endpoint (getWebhook).
 func (s *WebhooksService) Get(ctx context.Context, webhook openapi_types.UUID) (*api.WebhookEndpoint, error) {
-	resp, err := s.c.low.GetWebhookWithResponse(withOp(ctx, opInfo{id: "getWebhook", idempotent: false, retryTransport: false}), webhook, &api.GetWebhookParams{})
+	resp, err := s.c.low.GetWebhookWithResponse(withOp(ctx, opInfo{id: "getWebhook", idempotent: false, retryTransport: false, read: false}), webhook, &api.GetWebhookParams{})
 	if err != nil {
 		return nil, err
 	}
@@ -463,7 +463,7 @@ func (s *WebhooksService) Get(ctx context.Context, webhook openapi_types.UUID) (
 // List: List a profile's assignments (listAssignments).
 func (s *AssignmentsService) List(ctx context.Context, tenant string, profile openapi_types.UUID) iter.Seq2[api.Assignment, error] {
 	return func(yield func(api.Assignment, error) bool) {
-		resp, err := s.c.low.ListAssignmentsWithResponse(withOp(ctx, opInfo{id: "listAssignments", idempotent: false, retryTransport: false}), tenant, profile, &api.ListAssignmentsParams{})
+		resp, err := s.c.low.ListAssignmentsWithResponse(withOp(ctx, opInfo{id: "listAssignments", idempotent: false, retryTransport: false, read: false}), tenant, profile, &api.ListAssignmentsParams{})
 		if err == nil && resp.JSON200 == nil {
 			err = decodeError(resp.HTTPResponse, resp.Body)
 		}
@@ -483,7 +483,7 @@ func (s *AssignmentsService) List(ctx context.Context, tenant string, profile op
 // List: Command history (listCommands).
 func (s *CommandsService) List(ctx context.Context, tenant string, id openapi_types.UUID) iter.Seq2[api.Command, error] {
 	return func(yield func(api.Command, error) bool) {
-		resp, err := s.c.low.ListCommandsWithResponse(withOp(ctx, opInfo{id: "listCommands", idempotent: false, retryTransport: false}), tenant, id, &api.ListCommandsParams{})
+		resp, err := s.c.low.ListCommandsWithResponse(withOp(ctx, opInfo{id: "listCommands", idempotent: false, retryTransport: false, read: false}), tenant, id, &api.ListCommandsParams{})
 		if err == nil && resp.JSON200 == nil {
 			err = decodeError(resp.HTTPResponse, resp.Body)
 		}
@@ -503,7 +503,7 @@ func (s *CommandsService) List(ctx context.Context, tenant string, id openapi_ty
 // List: List devices (listDevices).
 func (s *DevicesService) List(ctx context.Context, tenant string, params *api.ListDevicesParams) iter.Seq2[api.Device, error] {
 	return func(yield func(api.Device, error) bool) {
-		resp, err := s.c.low.ListDevicesWithResponse(withOp(ctx, opInfo{id: "listDevices", idempotent: false, retryTransport: false}), tenant, orEmpty(params))
+		resp, err := s.c.low.ListDevicesWithResponse(withOp(ctx, opInfo{id: "listDevices", idempotent: false, retryTransport: false, read: false}), tenant, orEmpty(params))
 		if err == nil && resp.JSON200 == nil {
 			err = decodeError(resp.HTTPResponse, resp.Body)
 		}
@@ -523,7 +523,7 @@ func (s *DevicesService) List(ctx context.Context, tenant string, params *api.Li
 // ListMembers: List a group's members (listGroupMembers).
 func (s *GroupsService) ListMembers(ctx context.Context, tenant string, group openapi_types.UUID) iter.Seq2[api.Member, error] {
 	return func(yield func(api.Member, error) bool) {
-		resp, err := s.c.low.ListGroupMembersWithResponse(withOp(ctx, opInfo{id: "listGroupMembers", idempotent: false, retryTransport: false}), tenant, group, &api.ListGroupMembersParams{})
+		resp, err := s.c.low.ListGroupMembersWithResponse(withOp(ctx, opInfo{id: "listGroupMembers", idempotent: false, retryTransport: false, read: false}), tenant, group, &api.ListGroupMembersParams{})
 		if err == nil && resp.JSON200 == nil {
 			err = decodeError(resp.HTTPResponse, resp.Body)
 		}
@@ -543,7 +543,7 @@ func (s *GroupsService) ListMembers(ctx context.Context, tenant string, group op
 // List: List groups (listGroups).
 func (s *GroupsService) List(ctx context.Context, tenant string) iter.Seq2[api.Group, error] {
 	return func(yield func(api.Group, error) bool) {
-		resp, err := s.c.low.ListGroupsWithResponse(withOp(ctx, opInfo{id: "listGroups", idempotent: false, retryTransport: false}), tenant, &api.ListGroupsParams{})
+		resp, err := s.c.low.ListGroupsWithResponse(withOp(ctx, opInfo{id: "listGroups", idempotent: false, retryTransport: false, read: false}), tenant, &api.ListGroupsParams{})
 		if err == nil && resp.JSON200 == nil {
 			err = decodeError(resp.HTTPResponse, resp.Body)
 		}
@@ -563,7 +563,7 @@ func (s *GroupsService) List(ctx context.Context, tenant string) iter.Seq2[api.G
 // List: List the account's credential holders (listHolders).
 func (s *HoldersService) List(ctx context.Context) iter.Seq2[api.Holder, error] {
 	return func(yield func(api.Holder, error) bool) {
-		resp, err := s.c.low.ListHoldersWithResponse(withOp(ctx, opInfo{id: "listHolders", idempotent: false, retryTransport: false}), &api.ListHoldersParams{})
+		resp, err := s.c.low.ListHoldersWithResponse(withOp(ctx, opInfo{id: "listHolders", idempotent: false, retryTransport: false, read: false}), &api.ListHoldersParams{})
 		if err == nil && resp.JSON200 == nil {
 			err = decodeError(resp.HTTPResponse, resp.Body)
 		}
@@ -583,7 +583,7 @@ func (s *HoldersService) List(ctx context.Context) iter.Seq2[api.Holder, error] 
 // List: List members (listMembers).
 func (s *MembersService) List(ctx context.Context, tenant string) iter.Seq2[api.Member, error] {
 	return func(yield func(api.Member, error) bool) {
-		resp, err := s.c.low.ListMembersWithResponse(withOp(ctx, opInfo{id: "listMembers", idempotent: false, retryTransport: false}), tenant, &api.ListMembersParams{})
+		resp, err := s.c.low.ListMembersWithResponse(withOp(ctx, opInfo{id: "listMembers", idempotent: false, retryTransport: false, read: false}), tenant, &api.ListMembersParams{})
 		if err == nil && resp.JSON200 == nil {
 			err = decodeError(resp.HTTPResponse, resp.Body)
 		}
@@ -603,7 +603,7 @@ func (s *MembersService) List(ctx context.Context, tenant string) iter.Seq2[api.
 // List: List profiles (listProfiles).
 func (s *ProfilesService) List(ctx context.Context, tenant string) iter.Seq2[api.Profile, error] {
 	return func(yield func(api.Profile, error) bool) {
-		resp, err := s.c.low.ListProfilesWithResponse(withOp(ctx, opInfo{id: "listProfiles", idempotent: false, retryTransport: false}), tenant, &api.ListProfilesParams{})
+		resp, err := s.c.low.ListProfilesWithResponse(withOp(ctx, opInfo{id: "listProfiles", idempotent: false, retryTransport: false, read: false}), tenant, &api.ListProfilesParams{})
 		if err == nil && resp.JSON200 == nil {
 			err = decodeError(resp.HTTPResponse, resp.Body)
 		}
@@ -620,10 +620,38 @@ func (s *ProfilesService) List(ctx context.Context, tenant string) iter.Seq2[api
 	}
 }
 
+// List: A tenant's activity (listTenantAuditEvents).
+func (s *ActivityService) List(ctx context.Context, tenant string, params *api.ListTenantAuditEventsParams) iter.Seq2[api.AuditEvent, error] {
+	return func(yield func(api.AuditEvent, error) bool) {
+		p := *orEmpty(params)
+		for {
+			resp, err := s.c.low.ListTenantAuditEventsWithResponse(withOp(ctx, opInfo{id: "listTenantAuditEvents", idempotent: false, retryTransport: false, read: false}), tenant, &p)
+			if err == nil && resp.JSON200 == nil {
+				err = decodeError(resp.HTTPResponse, resp.Body)
+			}
+			if err != nil {
+				var zero api.AuditEvent
+				yield(zero, err)
+				return
+			}
+			for _, v := range resp.JSON200.Events {
+				if !yield(v, nil) {
+					return
+				}
+			}
+			next := resp.JSON200.NextCursor
+			if next == nil || *next == "" {
+				return
+			}
+			p.Cursor = next
+		}
+	}
+}
+
 // List: Tenants the caller reaches (listTenants).
 func (s *TenantsService) List(ctx context.Context) iter.Seq2[api.Tenant, error] {
 	return func(yield func(api.Tenant, error) bool) {
-		resp, err := s.c.low.ListTenantsWithResponse(withOp(ctx, opInfo{id: "listTenants", idempotent: false, retryTransport: false}), &api.ListTenantsParams{})
+		resp, err := s.c.low.ListTenantsWithResponse(withOp(ctx, opInfo{id: "listTenants", idempotent: false, retryTransport: false, read: false}), &api.ListTenantsParams{})
 		if err == nil && resp.JSON200 == nil {
 			err = decodeError(resp.HTTPResponse, resp.Body)
 		}
@@ -643,7 +671,7 @@ func (s *TenantsService) List(ctx context.Context) iter.Seq2[api.Tenant, error] 
 // ListDeliveries: An endpoint's latest deliveries (listWebhookDeliveries).
 func (s *WebhooksService) ListDeliveries(ctx context.Context, webhook openapi_types.UUID) iter.Seq2[api.WebhookDelivery, error] {
 	return func(yield func(api.WebhookDelivery, error) bool) {
-		resp, err := s.c.low.ListWebhookDeliveriesWithResponse(withOp(ctx, opInfo{id: "listWebhookDeliveries", idempotent: false, retryTransport: false}), webhook, &api.ListWebhookDeliveriesParams{})
+		resp, err := s.c.low.ListWebhookDeliveriesWithResponse(withOp(ctx, opInfo{id: "listWebhookDeliveries", idempotent: false, retryTransport: false, read: false}), webhook, &api.ListWebhookDeliveriesParams{})
 		if err == nil && resp.JSON200 == nil {
 			err = decodeError(resp.HTTPResponse, resp.Body)
 		}
@@ -663,7 +691,7 @@ func (s *WebhooksService) ListDeliveries(ctx context.Context, webhook openapi_ty
 // List: List the account's webhook endpoints (listWebhooks).
 func (s *WebhooksService) List(ctx context.Context) iter.Seq2[api.WebhookEndpoint, error] {
 	return func(yield func(api.WebhookEndpoint, error) bool) {
-		resp, err := s.c.low.ListWebhooksWithResponse(withOp(ctx, opInfo{id: "listWebhooks", idempotent: false, retryTransport: false}), &api.ListWebhooksParams{})
+		resp, err := s.c.low.ListWebhooksWithResponse(withOp(ctx, opInfo{id: "listWebhooks", idempotent: false, retryTransport: false, read: false}), &api.ListWebhooksParams{})
 		if err == nil && resp.JSON200 == nil {
 			err = decodeError(resp.HTTPResponse, resp.Body)
 		}
@@ -682,7 +710,7 @@ func (s *WebhooksService) List(ctx context.Context) iter.Seq2[api.WebhookEndpoin
 
 // Put: Set the device's own settings (putDeviceSettings).
 func (s *SettingsService) Put(ctx context.Context, tenant string, id openapi_types.UUID, body api.PutDeviceSettingsJSONRequestBody) (*api.Device, error) {
-	resp, err := s.c.low.PutDeviceSettingsWithResponse(withOp(ctx, opInfo{id: "putDeviceSettings", idempotent: false, retryTransport: false}), tenant, id, &api.PutDeviceSettingsParams{}, body)
+	resp, err := s.c.low.PutDeviceSettingsWithResponse(withOp(ctx, opInfo{id: "putDeviceSettings", idempotent: false, retryTransport: false, read: false}), tenant, id, &api.PutDeviceSettingsParams{}, body)
 	if err != nil {
 		return nil, err
 	}
@@ -692,9 +720,21 @@ func (s *SettingsService) Put(ctx context.Context, tenant string, id openapi_typ
 	return nil, decodeError(resp.HTTPResponse, resp.Body)
 }
 
+// Query: Query a tenant's data (queryTenant).
+func (s *TenantsService) Query(ctx context.Context, tenant string, body api.QueryTenantJSONRequestBody) (*api.QueryResult, error) {
+	resp, err := s.c.low.QueryTenantWithResponse(withOp(ctx, opInfo{id: "queryTenant", idempotent: false, retryTransport: false, read: true}), tenant, &api.QueryTenantParams{}, body)
+	if err != nil {
+		return nil, err
+	}
+	if resp.JSON200 != nil {
+		return resp.JSON200, nil
+	}
+	return nil, decodeError(resp.HTTPResponse, resp.Body)
+}
+
 // ReissueEnrollmentProfile: Issue a fresh enrollment profile (reissueEnrollmentProfile).
 func (s *DevicesService) ReissueEnrollmentProfile(ctx context.Context, tenant string, id openapi_types.UUID) (*api.EnrollmentResponse, error) {
-	resp, err := s.c.low.ReissueEnrollmentProfileWithResponse(withOp(ctx, opInfo{id: "reissueEnrollmentProfile", idempotent: true, retryTransport: false}), tenant, id, &api.ReissueEnrollmentProfileParams{})
+	resp, err := s.c.low.ReissueEnrollmentProfileWithResponse(withOp(ctx, opInfo{id: "reissueEnrollmentProfile", idempotent: true, retryTransport: false, read: false}), tenant, id, &api.ReissueEnrollmentProfileParams{})
 	if err != nil {
 		return nil, err
 	}
@@ -706,7 +746,7 @@ func (s *DevicesService) ReissueEnrollmentProfile(ctx context.Context, tenant st
 
 // RemoveMember: Remove a member from a group (removeGroupMember).
 func (s *GroupsService) RemoveMember(ctx context.Context, tenant string, group openapi_types.UUID, member string) error {
-	resp, err := s.c.low.RemoveGroupMemberWithResponse(withOp(ctx, opInfo{id: "removeGroupMember", idempotent: false, retryTransport: false}), tenant, group, member, &api.RemoveGroupMemberParams{})
+	resp, err := s.c.low.RemoveGroupMemberWithResponse(withOp(ctx, opInfo{id: "removeGroupMember", idempotent: false, retryTransport: false, read: false}), tenant, group, member, &api.RemoveGroupMemberParams{})
 	if err != nil {
 		return err
 	}
@@ -718,7 +758,7 @@ func (s *GroupsService) RemoveMember(ctx context.Context, tenant string, group o
 
 // RequestPushCertificate: Request a push certificate (requestPushCertificate).
 func (s *HoldersService) RequestPushCertificate(ctx context.Context, holder openapi_types.UUID) (*api.PushCertificateRequest, error) {
-	resp, err := s.c.low.RequestPushCertificateWithResponse(withOp(ctx, opInfo{id: "requestPushCertificate", idempotent: true, retryTransport: false}), holder, &api.RequestPushCertificateParams{})
+	resp, err := s.c.low.RequestPushCertificateWithResponse(withOp(ctx, opInfo{id: "requestPushCertificate", idempotent: true, retryTransport: false, read: false}), holder, &api.RequestPushCertificateParams{})
 	if err != nil {
 		return nil, err
 	}
@@ -730,7 +770,7 @@ func (s *HoldersService) RequestPushCertificate(ctx context.Context, holder open
 
 // RotateSecret: Rotate a webhook endpoint's secret (rotateWebhookSecret).
 func (s *WebhooksService) RotateSecret(ctx context.Context, webhook openapi_types.UUID) (*api.WebhookEndpoint, error) {
-	resp, err := s.c.low.RotateWebhookSecretWithResponse(withOp(ctx, opInfo{id: "rotateWebhookSecret", idempotent: true, retryTransport: false}), webhook, &api.RotateWebhookSecretParams{})
+	resp, err := s.c.low.RotateWebhookSecretWithResponse(withOp(ctx, opInfo{id: "rotateWebhookSecret", idempotent: true, retryTransport: false, read: false}), webhook, &api.RotateWebhookSecretParams{})
 	if err != nil {
 		return nil, err
 	}
@@ -742,7 +782,7 @@ func (s *WebhooksService) RotateSecret(ctx context.Context, webhook openapi_type
 
 // SetMember: Give a device to a member (setDeviceMember).
 func (s *DevicesService) SetMember(ctx context.Context, tenant string, id openapi_types.UUID, body api.SetDeviceMemberJSONRequestBody) (*api.Device, error) {
-	resp, err := s.c.low.SetDeviceMemberWithResponse(withOp(ctx, opInfo{id: "setDeviceMember", idempotent: false, retryTransport: false}), tenant, id, &api.SetDeviceMemberParams{}, body)
+	resp, err := s.c.low.SetDeviceMemberWithResponse(withOp(ctx, opInfo{id: "setDeviceMember", idempotent: false, retryTransport: false, read: false}), tenant, id, &api.SetDeviceMemberParams{}, body)
 	if err != nil {
 		return nil, err
 	}
@@ -754,7 +794,7 @@ func (s *DevicesService) SetMember(ctx context.Context, tenant string, id openap
 
 // Update: Update a group (updateGroup).
 func (s *GroupsService) Update(ctx context.Context, tenant string, group openapi_types.UUID, body api.UpdateGroupJSONRequestBody) (*api.Group, error) {
-	resp, err := s.c.low.UpdateGroupWithResponse(withOp(ctx, opInfo{id: "updateGroup", idempotent: false, retryTransport: false}), tenant, group, &api.UpdateGroupParams{}, body)
+	resp, err := s.c.low.UpdateGroupWithResponse(withOp(ctx, opInfo{id: "updateGroup", idempotent: false, retryTransport: false, read: false}), tenant, group, &api.UpdateGroupParams{}, body)
 	if err != nil {
 		return nil, err
 	}
@@ -766,7 +806,7 @@ func (s *GroupsService) Update(ctx context.Context, tenant string, group openapi
 
 // Update: Rename a credential holder (updateHolder).
 func (s *HoldersService) Update(ctx context.Context, holder openapi_types.UUID, body api.UpdateHolderJSONRequestBody) (*api.Holder, error) {
-	resp, err := s.c.low.UpdateHolderWithResponse(withOp(ctx, opInfo{id: "updateHolder", idempotent: false, retryTransport: false}), holder, &api.UpdateHolderParams{}, body)
+	resp, err := s.c.low.UpdateHolderWithResponse(withOp(ctx, opInfo{id: "updateHolder", idempotent: false, retryTransport: false, read: false}), holder, &api.UpdateHolderParams{}, body)
 	if err != nil {
 		return nil, err
 	}
@@ -778,7 +818,7 @@ func (s *HoldersService) Update(ctx context.Context, holder openapi_types.UUID, 
 
 // Update: Update a member (updateMember).
 func (s *MembersService) Update(ctx context.Context, tenant string, member string, body api.UpdateMemberJSONRequestBody) (*api.Member, error) {
-	resp, err := s.c.low.UpdateMemberWithResponse(withOp(ctx, opInfo{id: "updateMember", idempotent: false, retryTransport: false}), tenant, member, &api.UpdateMemberParams{}, body)
+	resp, err := s.c.low.UpdateMemberWithResponse(withOp(ctx, opInfo{id: "updateMember", idempotent: false, retryTransport: false, read: false}), tenant, member, &api.UpdateMemberParams{}, body)
 	if err != nil {
 		return nil, err
 	}
@@ -790,7 +830,7 @@ func (s *MembersService) Update(ctx context.Context, tenant string, member strin
 
 // Update: Replace a profile (updateProfile).
 func (s *ProfilesService) Update(ctx context.Context, tenant string, profile openapi_types.UUID, body api.UpdateProfileJSONRequestBody) (*api.Profile, error) {
-	resp, err := s.c.low.UpdateProfileWithResponse(withOp(ctx, opInfo{id: "updateProfile", idempotent: false, retryTransport: false}), tenant, profile, &api.UpdateProfileParams{}, body)
+	resp, err := s.c.low.UpdateProfileWithResponse(withOp(ctx, opInfo{id: "updateProfile", idempotent: false, retryTransport: false, read: false}), tenant, profile, &api.UpdateProfileParams{}, body)
 	if err != nil {
 		return nil, err
 	}
@@ -802,7 +842,7 @@ func (s *ProfilesService) Update(ctx context.Context, tenant string, profile ope
 
 // Update: Rename a tenant or change its credential holder (updateTenant).
 func (s *TenantsService) Update(ctx context.Context, tenant string, body api.UpdateTenantJSONRequestBody) (*api.Tenant, error) {
-	resp, err := s.c.low.UpdateTenantWithResponse(withOp(ctx, opInfo{id: "updateTenant", idempotent: false, retryTransport: false}), tenant, &api.UpdateTenantParams{}, body)
+	resp, err := s.c.low.UpdateTenantWithResponse(withOp(ctx, opInfo{id: "updateTenant", idempotent: false, retryTransport: false, read: false}), tenant, &api.UpdateTenantParams{}, body)
 	if err != nil {
 		return nil, err
 	}
@@ -814,7 +854,7 @@ func (s *TenantsService) Update(ctx context.Context, tenant string, body api.Upd
 
 // Update: Change a webhook endpoint (updateWebhook).
 func (s *WebhooksService) Update(ctx context.Context, webhook openapi_types.UUID, body api.UpdateWebhookJSONRequestBody) (*api.WebhookEndpoint, error) {
-	resp, err := s.c.low.UpdateWebhookWithResponse(withOp(ctx, opInfo{id: "updateWebhook", idempotent: false, retryTransport: false}), webhook, &api.UpdateWebhookParams{}, body)
+	resp, err := s.c.low.UpdateWebhookWithResponse(withOp(ctx, opInfo{id: "updateWebhook", idempotent: false, retryTransport: false, read: false}), webhook, &api.UpdateWebhookParams{}, body)
 	if err != nil {
 		return nil, err
 	}
@@ -826,7 +866,7 @@ func (s *WebhooksService) Update(ctx context.Context, webhook openapi_types.UUID
 
 // UploadADEToken: Upload the holder's Automated Device Enrollment server token (uploadADEToken).
 func (s *HoldersService) UploadADEToken(ctx context.Context, holder openapi_types.UUID, body api.UploadADETokenJSONRequestBody) (*api.Holder, error) {
-	resp, err := s.c.low.UploadADETokenWithResponse(withOp(ctx, opInfo{id: "uploadADEToken", idempotent: false, retryTransport: false}), holder, &api.UploadADETokenParams{}, body)
+	resp, err := s.c.low.UploadADETokenWithResponse(withOp(ctx, opInfo{id: "uploadADEToken", idempotent: false, retryTransport: false, read: false}), holder, &api.UploadADETokenParams{}, body)
 	if err != nil {
 		return nil, err
 	}
@@ -838,7 +878,7 @@ func (s *HoldersService) UploadADEToken(ctx context.Context, holder openapi_type
 
 // UploadPushCertificate: Upload the holder's push certificate (uploadPushCertificate).
 func (s *HoldersService) UploadPushCertificate(ctx context.Context, holder openapi_types.UUID, body api.UploadPushCertificateJSONRequestBody) (*api.Holder, error) {
-	resp, err := s.c.low.UploadPushCertificateWithResponse(withOp(ctx, opInfo{id: "uploadPushCertificate", idempotent: false, retryTransport: false}), holder, &api.UploadPushCertificateParams{}, body)
+	resp, err := s.c.low.UploadPushCertificateWithResponse(withOp(ctx, opInfo{id: "uploadPushCertificate", idempotent: false, retryTransport: false, read: false}), holder, &api.UploadPushCertificateParams{}, body)
 	if err != nil {
 		return nil, err
 	}
@@ -850,7 +890,7 @@ func (s *HoldersService) UploadPushCertificate(ctx context.Context, holder opena
 
 // UploadVPPToken: Upload the holder's Apps and Books content token (uploadVPPToken).
 func (s *HoldersService) UploadVPPToken(ctx context.Context, holder openapi_types.UUID, body api.UploadVPPTokenJSONRequestBody) (*api.Holder, error) {
-	resp, err := s.c.low.UploadVPPTokenWithResponse(withOp(ctx, opInfo{id: "uploadVPPToken", idempotent: false, retryTransport: false}), holder, &api.UploadVPPTokenParams{}, body)
+	resp, err := s.c.low.UploadVPPTokenWithResponse(withOp(ctx, opInfo{id: "uploadVPPToken", idempotent: false, retryTransport: false, read: false}), holder, &api.UploadVPPTokenParams{}, body)
 	if err != nil {
 		return nil, err
 	}
@@ -863,6 +903,7 @@ func (s *HoldersService) UploadVPPToken(ctx context.Context, holder openapi_type
 // services are the API's resources, as fields of Client.
 type services struct {
 	Account     *AccountService
+	Activity    *ActivityService
 	Assignments *AssignmentsService
 	Catalog     *CatalogService
 	Commands    *CommandsService
@@ -881,6 +922,7 @@ type services struct {
 func newServices(c *Client) services {
 	return services{
 		Account:     &AccountService{c: c},
+		Activity:    &ActivityService{c: c},
 		Assignments: &AssignmentsService{c: c},
 		Catalog:     &CatalogService{c: c},
 		Commands:    &CommandsService{c: c},
@@ -899,6 +941,9 @@ func newServices(c *Client) services {
 
 // AccountService is the account resource.
 type AccountService struct{ c *Client }
+
+// ActivityService is the activity resource.
+type ActivityService struct{ c *Client }
 
 // AssignmentsService is the assignments resource.
 type AssignmentsService struct{ c *Client }

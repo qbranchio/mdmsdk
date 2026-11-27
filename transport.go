@@ -23,6 +23,8 @@ type opInfo struct {
 	idempotent bool
 	// retryTransport: a POST that may be retried on transport errors and 429 (createToken).
 	retryTransport bool
+	// read: a POST that only reads (its body is the query), retried as a GET.
+	read bool
 }
 
 type opKey struct{}
@@ -166,6 +168,9 @@ func retryable(method string, op opInfo, status int, code string) bool {
 	case http.MethodGet, http.MethodHead, http.MethodPut, http.MethodDelete:
 		return transient
 	case http.MethodPost:
+		if op.read {
+			return transient
+		}
 		if op.idempotent {
 			return transient || (status == http.StatusConflict && code == "idempotency_in_flight")
 		}

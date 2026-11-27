@@ -182,16 +182,16 @@ func (e CatalogEntryLevels) Valid() bool {
 
 // Defines values for CatalogKeyFormat.
 const (
-	Hostname CatalogKeyFormat = "hostname"
-	Url      CatalogKeyFormat = "url"
+	CatalogKeyFormatHostname CatalogKeyFormat = "hostname"
+	CatalogKeyFormatUrl      CatalogKeyFormat = "url"
 )
 
 // Valid indicates whether the value is a known member of the CatalogKeyFormat enum.
 func (e CatalogKeyFormat) Valid() bool {
 	switch e {
-	case Hostname:
+	case CatalogKeyFormatHostname:
 		return true
-	case Url:
+	case CatalogKeyFormatUrl:
 		return true
 	default:
 		return false
@@ -218,37 +218,37 @@ func (e CatalogKeyLevels) Valid() bool {
 
 // Defines values for CatalogKeyType.
 const (
-	Any        CatalogKeyType = "any"
-	Array      CatalogKeyType = "array"
-	Boolean    CatalogKeyType = "boolean"
-	Data       CatalogKeyType = "data"
-	Date       CatalogKeyType = "date"
-	Dictionary CatalogKeyType = "dictionary"
-	Integer    CatalogKeyType = "integer"
-	Real       CatalogKeyType = "real"
-	String     CatalogKeyType = "string"
+	CatalogKeyTypeAny        CatalogKeyType = "any"
+	CatalogKeyTypeArray      CatalogKeyType = "array"
+	CatalogKeyTypeBoolean    CatalogKeyType = "boolean"
+	CatalogKeyTypeData       CatalogKeyType = "data"
+	CatalogKeyTypeDate       CatalogKeyType = "date"
+	CatalogKeyTypeDictionary CatalogKeyType = "dictionary"
+	CatalogKeyTypeInteger    CatalogKeyType = "integer"
+	CatalogKeyTypeReal       CatalogKeyType = "real"
+	CatalogKeyTypeString     CatalogKeyType = "string"
 )
 
 // Valid indicates whether the value is a known member of the CatalogKeyType enum.
 func (e CatalogKeyType) Valid() bool {
 	switch e {
-	case Any:
+	case CatalogKeyTypeAny:
 		return true
-	case Array:
+	case CatalogKeyTypeArray:
 		return true
-	case Boolean:
+	case CatalogKeyTypeBoolean:
 		return true
-	case Data:
+	case CatalogKeyTypeData:
 		return true
-	case Date:
+	case CatalogKeyTypeDate:
 		return true
-	case Dictionary:
+	case CatalogKeyTypeDictionary:
 		return true
-	case Integer:
+	case CatalogKeyTypeInteger:
 		return true
-	case Real:
+	case CatalogKeyTypeReal:
 		return true
-	case String:
+	case CatalogKeyTypeString:
 		return true
 	default:
 		return false
@@ -326,16 +326,16 @@ func (e CommandCompletedEventType) Valid() bool {
 
 // Defines values for CommandRequestType.
 const (
-	DeviceInformation CommandRequestType = "DeviceInformation"
-	DeviceLock        CommandRequestType = "DeviceLock"
+	CommandRequestTypeDeviceInformation CommandRequestType = "DeviceInformation"
+	CommandRequestTypeDeviceLock        CommandRequestType = "DeviceLock"
 )
 
 // Valid indicates whether the value is a known member of the CommandRequestType enum.
 func (e CommandRequestType) Valid() bool {
 	switch e {
-	case DeviceInformation:
+	case CommandRequestTypeDeviceInformation:
 		return true
-	case DeviceLock:
+	case CommandRequestTypeDeviceLock:
 		return true
 	default:
 		return false
@@ -368,22 +368,22 @@ func (e DeviceStatus) Valid() bool {
 
 // Defines values for DeviceDDMStage.
 const (
-	Enabled    DeviceDDMStage = "enabled"
-	Enabling   DeviceDDMStage = "enabling"
-	None       DeviceDDMStage = "none"
-	TakingOver DeviceDDMStage = "taking_over"
+	DeviceDDMStageEnabled    DeviceDDMStage = "enabled"
+	DeviceDDMStageEnabling   DeviceDDMStage = "enabling"
+	DeviceDDMStageNone       DeviceDDMStage = "none"
+	DeviceDDMStageTakingOver DeviceDDMStage = "taking_over"
 )
 
 // Valid indicates whether the value is a known member of the DeviceDDMStage enum.
 func (e DeviceDDMStage) Valid() bool {
 	switch e {
-	case Enabled:
+	case DeviceDDMStageEnabled:
 		return true
-	case Enabling:
+	case DeviceDDMStageEnabling:
 		return true
-	case None:
+	case DeviceDDMStageNone:
 		return true
-	case TakingOver:
+	case DeviceDDMStageTakingOver:
 		return true
 	default:
 		return false
@@ -614,25 +614,25 @@ func (e ItemStatusStatus) Valid() bool {
 
 // Defines values for MeKind.
 const (
-	AccountAdmin  MeKind = "account_admin"
-	AccountClient MeKind = "account_client"
-	Delegated     MeKind = "delegated"
-	PlatformAdmin MeKind = "platform_admin"
-	TenantAdmin   MeKind = "tenant_admin"
+	MeKindAccountAdmin  MeKind = "account_admin"
+	MeKindAccountClient MeKind = "account_client"
+	MeKindDelegated     MeKind = "delegated"
+	MeKindPlatformAdmin MeKind = "platform_admin"
+	MeKindTenantAdmin   MeKind = "tenant_admin"
 )
 
 // Valid indicates whether the value is a known member of the MeKind enum.
 func (e MeKind) Valid() bool {
 	switch e {
-	case AccountAdmin:
+	case MeKindAccountAdmin:
 		return true
-	case AccountClient:
+	case MeKindAccountClient:
 		return true
-	case Delegated:
+	case MeKindDelegated:
 		return true
-	case PlatformAdmin:
+	case MeKindPlatformAdmin:
 		return true
-	case TenantAdmin:
+	case MeKindTenantAdmin:
 		return true
 	default:
 		return false
@@ -669,6 +669,189 @@ const (
 func (e PushCertificateExpiringEventType) Valid() bool {
 	switch e {
 	case PushCertificateExpiringEventTypePushCertificateExpiring:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for QueryColumnType.
+const (
+	QueryColumnTypeNumber QueryColumnType = "number"
+	QueryColumnTypeString QueryColumnType = "string"
+	QueryColumnTypeTime   QueryColumnType = "time"
+)
+
+// Valid indicates whether the value is a known member of the QueryColumnType enum.
+func (e QueryColumnType) Valid() bool {
+	switch e {
+	case QueryColumnTypeNumber:
+		return true
+	case QueryColumnTypeString:
+		return true
+	case QueryColumnTypeTime:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for QueryFiltersCategory.
+const (
+	QueryFiltersCategoryCommands QueryFiltersCategory = "commands"
+	QueryFiltersCategoryDevices  QueryFiltersCategory = "devices"
+	QueryFiltersCategoryOther    QueryFiltersCategory = "other"
+	QueryFiltersCategorySettings QueryFiltersCategory = "settings"
+	QueryFiltersCategoryTeam     QueryFiltersCategory = "team"
+)
+
+// Valid indicates whether the value is a known member of the QueryFiltersCategory enum.
+func (e QueryFiltersCategory) Valid() bool {
+	switch e {
+	case QueryFiltersCategoryCommands:
+		return true
+	case QueryFiltersCategoryDevices:
+		return true
+	case QueryFiltersCategoryOther:
+		return true
+	case QueryFiltersCategorySettings:
+		return true
+	case QueryFiltersCategoryTeam:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for QueryFiltersState.
+const (
+	QueryFiltersStateEnrolled QueryFiltersState = "enrolled"
+	QueryFiltersStateRemoved  QueryFiltersState = "removed"
+	QueryFiltersStateWaiting  QueryFiltersState = "waiting"
+)
+
+// Valid indicates whether the value is a known member of the QueryFiltersState enum.
+func (e QueryFiltersState) Valid() bool {
+	switch e {
+	case QueryFiltersStateEnrolled:
+		return true
+	case QueryFiltersStateRemoved:
+		return true
+	case QueryFiltersStateWaiting:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for QueryFiltersSupervised.
+const (
+	QueryFiltersSupervisedNo      QueryFiltersSupervised = "no"
+	QueryFiltersSupervisedUnknown QueryFiltersSupervised = "unknown"
+	QueryFiltersSupervisedYes     QueryFiltersSupervised = "yes"
+)
+
+// Valid indicates whether the value is a known member of the QueryFiltersSupervised enum.
+func (e QueryFiltersSupervised) Valid() bool {
+	switch e {
+	case QueryFiltersSupervisedNo:
+		return true
+	case QueryFiltersSupervisedUnknown:
+		return true
+	case QueryFiltersSupervisedYes:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for QueryRequestBucket.
+const (
+	QueryRequestBucketDay  QueryRequestBucket = "day"
+	QueryRequestBucketHour QueryRequestBucket = "hour"
+	QueryRequestBucketWeek QueryRequestBucket = "week"
+)
+
+// Valid indicates whether the value is a known member of the QueryRequestBucket enum.
+func (e QueryRequestBucket) Valid() bool {
+	switch e {
+	case QueryRequestBucketDay:
+		return true
+	case QueryRequestBucketHour:
+		return true
+	case QueryRequestBucketWeek:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for QueryRequestDataset.
+const (
+	QueryRequestDatasetActivity QueryRequestDataset = "activity"
+	QueryRequestDatasetDevices  QueryRequestDataset = "devices"
+)
+
+// Valid indicates whether the value is a known member of the QueryRequestDataset enum.
+func (e QueryRequestDataset) Valid() bool {
+	switch e {
+	case QueryRequestDatasetActivity:
+		return true
+	case QueryRequestDatasetDevices:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for QueryRequestGroupBy.
+const (
+	QueryRequestGroupByActor      QueryRequestGroupBy = "actor"
+	QueryRequestGroupByCategory   QueryRequestGroupBy = "category"
+	QueryRequestGroupByModel      QueryRequestGroupBy = "model"
+	QueryRequestGroupByOsBehind   QueryRequestGroupBy = "os_behind"
+	QueryRequestGroupByOsVersion  QueryRequestGroupBy = "os_version"
+	QueryRequestGroupByState      QueryRequestGroupBy = "state"
+	QueryRequestGroupBySupervised QueryRequestGroupBy = "supervised"
+	QueryRequestGroupByTenant     QueryRequestGroupBy = "tenant"
+	QueryRequestGroupByTime       QueryRequestGroupBy = "time"
+)
+
+// Valid indicates whether the value is a known member of the QueryRequestGroupBy enum.
+func (e QueryRequestGroupBy) Valid() bool {
+	switch e {
+	case QueryRequestGroupByActor:
+		return true
+	case QueryRequestGroupByCategory:
+		return true
+	case QueryRequestGroupByModel:
+		return true
+	case QueryRequestGroupByOsBehind:
+		return true
+	case QueryRequestGroupByOsVersion:
+		return true
+	case QueryRequestGroupByState:
+		return true
+	case QueryRequestGroupBySupervised:
+		return true
+	case QueryRequestGroupByTenant:
+		return true
+	case QueryRequestGroupByTime:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for QueryRequestMeasure.
+const (
+	QueryRequestMeasureCount QueryRequestMeasure = "count"
+)
+
+// Valid indicates whether the value is a known member of the QueryRequestMeasure enum.
+func (e QueryRequestMeasure) Valid() bool {
+	switch e {
+	case QueryRequestMeasureCount:
 		return true
 	default:
 		return false
@@ -755,28 +938,28 @@ func (e TenantDeletingEventType) Valid() bool {
 
 // Defines values for TokenRequestPermissions.
 const (
-	CommandsWrite TokenRequestPermissions = "commands:write"
-	DevicesRead   TokenRequestPermissions = "devices:read"
-	DevicesWrite  TokenRequestPermissions = "devices:write"
-	MembersRead   TokenRequestPermissions = "members:read"
-	ProfilesRead  TokenRequestPermissions = "profiles:read"
-	ProfilesWrite TokenRequestPermissions = "profiles:write"
+	TokenRequestPermissionsCommandsWrite TokenRequestPermissions = "commands:write"
+	TokenRequestPermissionsDevicesRead   TokenRequestPermissions = "devices:read"
+	TokenRequestPermissionsDevicesWrite  TokenRequestPermissions = "devices:write"
+	TokenRequestPermissionsMembersRead   TokenRequestPermissions = "members:read"
+	TokenRequestPermissionsProfilesRead  TokenRequestPermissions = "profiles:read"
+	TokenRequestPermissionsProfilesWrite TokenRequestPermissions = "profiles:write"
 )
 
 // Valid indicates whether the value is a known member of the TokenRequestPermissions enum.
 func (e TokenRequestPermissions) Valid() bool {
 	switch e {
-	case CommandsWrite:
+	case TokenRequestPermissionsCommandsWrite:
 		return true
-	case DevicesRead:
+	case TokenRequestPermissionsDevicesRead:
 		return true
-	case DevicesWrite:
+	case TokenRequestPermissionsDevicesWrite:
 		return true
-	case MembersRead:
+	case TokenRequestPermissionsMembersRead:
 		return true
-	case ProfilesRead:
+	case TokenRequestPermissionsProfilesRead:
 		return true
-	case ProfilesWrite:
+	case TokenRequestPermissionsProfilesWrite:
 		return true
 	default:
 		return false
@@ -785,13 +968,13 @@ func (e TokenRequestPermissions) Valid() bool {
 
 // Defines values for TokenResponseTokenType.
 const (
-	Bearer TokenResponseTokenType = "Bearer"
+	TokenResponseTokenTypeBearer TokenResponseTokenType = "Bearer"
 )
 
 // Valid indicates whether the value is a known member of the TokenResponseTokenType enum.
 func (e TokenResponseTokenType) Valid() bool {
 	switch e {
-	case Bearer:
+	case TokenResponseTokenTypeBearer:
 		return true
 	default:
 		return false
@@ -965,6 +1148,44 @@ type AssignmentRequestLevels string
 
 // AssignmentRequestTarget defines model for AssignmentRequest.Target.
 type AssignmentRequestTarget string
+
+// AuditEvent defines model for AuditEvent.
+type AuditEvent struct {
+	AccountId *openapi_types.UUID `json:"account_id,omitempty"`
+
+	// Action The operation id; filter with `action`.
+	Action string `json:"action"`
+
+	// ActorDisplay A person's name (read from Auth0, else their subject), an account client's name or id, "Platform" (a platform admin's name for platform admins), "CLI", or an invitee's invited name.
+	ActorDisplay string `json:"actor_display"`
+
+	// ActorKind admin, console, account, delegated, platform_admin, cli, or invitee.
+	ActorKind string `json:"actor_kind"`
+
+	// ActorSubject The token's subject; filter with `actor`.
+	ActorSubject string    `json:"actor_subject"`
+	At           time.Time `json:"at"`
+
+	// Id The event's id, stable.
+	Id           string  `json:"id"`
+	ResourceId   *string `json:"resource_id,omitempty"`
+	ResourceType *string `json:"resource_type,omitempty"`
+
+	// Scope platform, account, or tenant.
+	Scope string `json:"scope"`
+
+	// Summary What was done, without who ("Sent Lock to Front desk iPad 2").
+	Summary  string              `json:"summary"`
+	TenantId *openapi_types.UUID `json:"tenant_id,omitempty"`
+}
+
+// AuditPage defines model for AuditPage.
+type AuditPage struct {
+	Events []AuditEvent `json:"events"`
+
+	// NextCursor Pass as `cursor` for the next page; null on the last.
+	NextCursor *string `json:"next_cursor"`
+}
 
 // CatalogCond A condition on another key of the payload. key is relative to the constrained key's dictionary: "Name", "../Name" one level up, or "/Name" at the payload root. An unset key is compared by its default. Every field present must hold.
 type CatalogCond struct {
@@ -1657,6 +1878,76 @@ type PushCertificateUpload struct {
 	Key *string `json:"key,omitempty"`
 }
 
+// QueryColumn defines model for QueryColumn.
+type QueryColumn struct {
+	// Name The dimension (`time`, `category`, `actor`, `tenant`, ...), then `actor_name` after `actor` and `tenant_name` after `tenant`, and last the measure (`count`).
+	Name string          `json:"name"`
+	Type QueryColumnType `json:"type"`
+}
+
+// QueryColumnType defines model for QueryColumn.Type.
+type QueryColumnType string
+
+// QueryFilters Each filter is a list the value must be in. activity takes `category` and `actor`; devices takes `state` and `supervised`.
+type QueryFilters struct {
+	// Actor Actor subjects.
+	Actor      *[]string                 `json:"actor,omitempty"`
+	Category   *[]QueryFiltersCategory   `json:"category,omitempty"`
+	State      *[]QueryFiltersState      `json:"state,omitempty"`
+	Supervised *[]QueryFiltersSupervised `json:"supervised,omitempty"`
+}
+
+// QueryFiltersCategory defines model for QueryFilters.Category.
+type QueryFiltersCategory string
+
+// QueryFiltersState defines model for QueryFilters.State.
+type QueryFiltersState string
+
+// QueryFiltersSupervised defines model for QueryFilters.Supervised.
+type QueryFiltersSupervised string
+
+// QueryRequest defines model for QueryRequest.
+type QueryRequest struct {
+	// Bucket For a query with a time dimension, in UTC. Left out: hour up to 2 days, day up to 90 days, week beyond. At most 1000 buckets.
+	Bucket  *QueryRequestBucket `json:"bucket,omitempty"`
+	Dataset QueryRequestDataset `json:"dataset"`
+
+	// Filters Each filter is a list the value must be in. activity takes `category` and `actor`; devices takes `state` and `supervised`.
+	Filters *QueryFilters `json:"filters,omitempty"`
+
+	// From Start of the range (inclusive); `to` minus 7 days when left out. Bounds the events of activity, and the creation of the devices of a query grouped by time; a devices query without time is the state now.
+	From    *time.Time             `json:"from,omitempty"`
+	GroupBy *[]QueryRequestGroupBy `json:"group_by,omitempty"`
+
+	// Limit Rows, or with a time dimension series; 100 when left out. With a time dimension every bucket has a row for every series, zero where nothing happened.
+	Limit   *int                `json:"limit,omitempty"`
+	Measure QueryRequestMeasure `json:"measure"`
+
+	// Series Group by time bucket first.
+	Series *bool `json:"series,omitempty"`
+
+	// To End of the range (exclusive); now when left out.
+	To *time.Time `json:"to,omitempty"`
+}
+
+// QueryRequestBucket For a query with a time dimension, in UTC. Left out: hour up to 2 days, day up to 90 days, week beyond. At most 1000 buckets.
+type QueryRequestBucket string
+
+// QueryRequestDataset defines model for QueryRequest.Dataset.
+type QueryRequestDataset string
+
+// QueryRequestGroupBy defines model for QueryRequest.GroupBy.
+type QueryRequestGroupBy string
+
+// QueryRequestMeasure defines model for QueryRequest.Measure.
+type QueryRequestMeasure string
+
+// QueryResult A table. Rows hold one value per column: a time as RFC 3339 UTC, text (null for no tenant), or a number.
+type QueryResult struct {
+	Columns []QueryColumn `json:"columns"`
+	Rows    [][]any       `json:"rows"`
+}
+
 // Source defines model for Source.
 type Source struct {
 	// GroupId The group the profile reached the device through, for the group layer.
@@ -2022,6 +2313,32 @@ type UpdateTenantParams struct {
 	MdmActor *string `json:"Mdm-Actor,omitempty"`
 }
 
+// ListTenantAuditEventsParams defines parameters for ListTenantAuditEvents.
+type ListTenantAuditEventsParams struct {
+	// From Events at or after this time (RFC 3339).
+	From *time.Time `form:"from,omitempty" json:"from,omitempty"`
+
+	// To Events before this time (RFC 3339).
+	To *time.Time `form:"to,omitempty" json:"to,omitempty"`
+
+	// Actor The actor's subject (see `actor_subject`).
+	Actor *string `form:"actor,omitempty" json:"actor,omitempty"`
+
+	// Action An operation id, or the start of one (`createInvitation`, `create`); case does not matter.
+	Action       *string `form:"action,omitempty" json:"action,omitempty"`
+	ResourceType *string `form:"resource_type,omitempty" json:"resource_type,omitempty"`
+	ResourceId   *string `form:"resource_id,omitempty" json:"resource_id,omitempty"`
+
+	// Limit Events per page, 1 to 200; 50 when left out.
+	Limit *int `form:"limit,omitempty" json:"limit,omitempty"`
+
+	// Cursor The `next_cursor` of the previous page, for the same filters and scope (400 invalid_cursor otherwise).
+	Cursor *string `form:"cursor,omitempty" json:"cursor,omitempty"`
+
+	// MdmActor For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.
+	MdmActor *string `json:"Mdm-Actor,omitempty"`
+}
+
 // ListDevicesParams defines parameters for ListDevices.
 type ListDevicesParams struct {
 	// Member A member id, or `ext:` and the account's id for the member.
@@ -2271,6 +2588,12 @@ type DeleteAssignmentParams struct {
 	MdmActor *string `json:"Mdm-Actor,omitempty"`
 }
 
+// QueryTenantParams defines parameters for QueryTenant.
+type QueryTenantParams struct {
+	// MdmActor For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.
+	MdmActor *string `json:"Mdm-Actor,omitempty"`
+}
+
 // CreateTokenParams defines parameters for CreateToken.
 type CreateTokenParams struct {
 	// MdmActor For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.
@@ -2432,6 +2755,9 @@ type UpdateProfileJSONRequestBody = ProfileRequest
 
 // CreateAssignmentJSONRequestBody defines body for CreateAssignment for application/json ContentType.
 type CreateAssignmentJSONRequestBody = AssignmentRequest
+
+// QueryTenantJSONRequestBody defines body for QueryTenant for application/json ContentType.
+type QueryTenantJSONRequestBody = QueryRequest
 
 // CreateTokenJSONRequestBody defines body for CreateToken for application/json ContentType.
 type CreateTokenJSONRequestBody = TokenRequest
@@ -3113,6 +3439,13 @@ type ClientInterface interface {
 	// Corresponds with PATCH /api/v1/tenants/{tenant} (the `UpdateTenant` operationId).
 	UpdateTenant(ctx context.Context, tenant string, params *UpdateTenantParams, body UpdateTenantJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
+	// ListTenantAuditEvents A tenant's activity
+	//
+	// Who did what in the tenant, newest first, as sentences. Admin app owners and admins (not viewers) and account clients with `tenants:read`; never delegated tokens. Filters narrow the list; the cursor works only for the request that issued it.
+	//
+	// Corresponds with GET /api/v1/tenants/{tenant}/audit-events (the `ListTenantAuditEvents` operationId).
+	ListTenantAuditEvents(ctx context.Context, tenant string, params *ListTenantAuditEventsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
 	// ListDevices List devices
 	//
 	// Every device that has not been removed, oldest first; with member, that member's only (404 when the member is not in the tenant).
@@ -3462,6 +3795,24 @@ type ClientInterface interface {
 	//
 	// Corresponds with DELETE /api/v1/tenants/{tenant}/profiles/{profile}/assignments/{assignment} (the `DeleteAssignment` operationId).
 	DeleteAssignment(ctx context.Context, tenant string, profile openapi_types.UUID, assignment openapi_types.UUID, params *DeleteAssignmentParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// QueryTenantWithBody Query a tenant's data
+	//
+	// A read, though a POST because the query is its body. Admin app owners, admins, and viewers (the activity dataset for owners and admins only) and account clients with `devices:read` (activity also needs `tenants:read`); never delegated tokens. The query names a dataset (`activity` or `devices`), the measure `count`, what to group by (at most two dimensions; `series` adds time first), and filters, all from fixed allow-lists: no free SQL, and the caller's scope is always in the statement. The answer is a table.
+	//
+	// Takes any type of body and a specified content type.
+	//
+	// Corresponds with POST /api/v1/tenants/{tenant}/query (the `QueryTenant` operationId).
+	QueryTenantWithBody(ctx context.Context, tenant string, params *QueryTenantParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// QueryTenant Query a tenant's data
+	//
+	// A read, though a POST because the query is its body. Admin app owners, admins, and viewers (the activity dataset for owners and admins only) and account clients with `devices:read` (activity also needs `tenants:read`); never delegated tokens. The query names a dataset (`activity` or `devices`), the measure `count`, what to group by (at most two dimensions; `series` adds time first), and filters, all from fixed allow-lists: no free SQL, and the caller's scope is always in the statement. The answer is a table.
+	//
+	// Takes a body of the `application/json` content type.
+	//
+	// Corresponds with POST /api/v1/tenants/{tenant}/query (the `QueryTenant` operationId).
+	QueryTenant(ctx context.Context, tenant string, params *QueryTenantParams, body QueryTenantJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
 
 	// CreateTokenWithBody Issue a delegated token for one of the account's users
 	//
@@ -4074,6 +4425,23 @@ func (c *Client) UpdateTenantWithBody(ctx context.Context, tenant string, params
 // Corresponds with PATCH /api/v1/tenants/{tenant} (the `UpdateTenant` operationId).
 func (c *Client) UpdateTenant(ctx context.Context, tenant string, params *UpdateTenantParams, body UpdateTenantJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewUpdateTenantRequest(c.Server, tenant, params, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// ListTenantAuditEvents A tenant's activity
+//
+// Who did what in the tenant, newest first, as sentences. Admin app owners and admins (not viewers) and account clients with `tenants:read`; never delegated tokens. Filters narrow the list; the cursor works only for the request that issued it.
+//
+// Corresponds with GET /api/v1/tenants/{tenant}/audit-events (the `ListTenantAuditEvents` operationId).
+func (c *Client) ListTenantAuditEvents(ctx context.Context, tenant string, params *ListTenantAuditEventsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListTenantAuditEventsRequest(c.Server, tenant, params)
 	if err != nil {
 		return nil, err
 	}
@@ -4904,6 +5272,44 @@ func (c *Client) CreateAssignment(ctx context.Context, tenant string, profile op
 // Corresponds with DELETE /api/v1/tenants/{tenant}/profiles/{profile}/assignments/{assignment} (the `DeleteAssignment` operationId).
 func (c *Client) DeleteAssignment(ctx context.Context, tenant string, profile openapi_types.UUID, assignment openapi_types.UUID, params *DeleteAssignmentParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewDeleteAssignmentRequest(c.Server, tenant, profile, assignment, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// QueryTenantWithBody Query a tenant's data
+//
+// A read, though a POST because the query is its body. Admin app owners, admins, and viewers (the activity dataset for owners and admins only) and account clients with `devices:read` (activity also needs `tenants:read`); never delegated tokens. The query names a dataset (`activity` or `devices`), the measure `count`, what to group by (at most two dimensions; `series` adds time first), and filters, all from fixed allow-lists: no free SQL, and the caller's scope is always in the statement. The answer is a table.
+//
+// Takes any type of body and a specified content type.
+//
+// Corresponds with POST /api/v1/tenants/{tenant}/query (the `QueryTenant` operationId).
+func (c *Client) QueryTenantWithBody(ctx context.Context, tenant string, params *QueryTenantParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewQueryTenantRequestWithBody(c.Server, tenant, params, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// QueryTenant Query a tenant's data
+//
+// A read, though a POST because the query is its body. Admin app owners, admins, and viewers (the activity dataset for owners and admins only) and account clients with `devices:read` (activity also needs `tenants:read`); never delegated tokens. The query names a dataset (`activity` or `devices`), the measure `count`, what to group by (at most two dimensions; `series` adds time first), and filters, all from fixed allow-lists: no free SQL, and the caller's scope is always in the statement. The answer is a table.
+//
+// Takes a body of the `application/json` content type.
+//
+// Corresponds with POST /api/v1/tenants/{tenant}/query (the `QueryTenant` operationId).
+func (c *Client) QueryTenant(ctx context.Context, tenant string, params *QueryTenantParams, body QueryTenantJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewQueryTenantRequest(c.Server, tenant, params, body)
 	if err != nil {
 		return nil, err
 	}
@@ -6306,6 +6712,166 @@ func NewUpdateTenantRequestWithBody(server string, tenant string, params *Update
 	}
 
 	req.Header.Add("Content-Type", contentType)
+
+	if params != nil {
+
+		if params.MdmActor != nil {
+			var headerParam0 string
+
+			headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Mdm-Actor", *params.MdmActor, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Mdm-Actor", headerParam0)
+		}
+
+	}
+
+	return req, nil
+}
+
+// NewListTenantAuditEventsRequest constructs an http.Request for the ListTenantAuditEvents method
+func NewListTenantAuditEventsRequest(server string, tenant string, params *ListTenantAuditEventsParams) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "tenant", tenant, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := "/api/v1/tenants/" + pathParam0 + "/audit-events"
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		// queryValues collects non-styled parameters (passthrough, JSON)
+		// that are safe to round-trip through url.Values.Encode().
+		queryValues := queryURL.Query()
+		// rawQueryFragments collects pre-encoded query fragments from
+		// styled parameters, preserving literal commas as delimiters
+		// per the OpenAPI spec (e.g. "color=blue,black,brown").
+		var rawQueryFragments []string
+
+		if params.From != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "from", *params.From, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: "date-time"}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.To != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "to", *params.To, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: "date-time"}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.Actor != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "actor", *params.Actor, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.Action != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "action", *params.Action, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.ResourceType != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "resource_type", *params.ResourceType, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.ResourceId != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "resource_id", *params.ResourceId, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.Limit != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "limit", *params.Limit, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if params.Cursor != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "cursor", *params.Cursor, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if encoded := queryValues.Encode(); encoded != "" {
+			rawQueryFragments = append(rawQueryFragments, encoded)
+		}
+		queryURL.RawQuery = strings.Join(rawQueryFragments, "&")
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
 
 	if params != nil {
 
@@ -8627,6 +9193,68 @@ func NewDeleteAssignmentRequest(server string, tenant string, profile openapi_ty
 	return req, nil
 }
 
+// NewQueryTenantRequest calls the generic QueryTenant builder with application/json body
+func NewQueryTenantRequest(server string, tenant string, params *QueryTenantParams, body QueryTenantJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := runtime.JSONMarshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewQueryTenantRequestWithBody(server, tenant, params, "application/json", bodyReader)
+}
+
+// NewQueryTenantRequestWithBody constructs an http.Request for the QueryTenant method, with any body, and a specified content type
+func NewQueryTenantRequestWithBody(server string, tenant string, params *QueryTenantParams, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "tenant", tenant, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := "/api/v1/tenants/" + pathParam0 + "/query"
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	if params != nil {
+
+		if params.MdmActor != nil {
+			var headerParam0 string
+
+			headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Mdm-Actor", *params.MdmActor, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Mdm-Actor", headerParam0)
+		}
+
+	}
+
+	return req, nil
+}
+
 // NewCreateTokenRequest calls the generic CreateToken builder with application/json body
 func NewCreateTokenRequest(server string, params *CreateTokenParams, body CreateTokenJSONRequestBody) (*http.Request, error) {
 	var bodyReader io.Reader
@@ -9019,6 +9647,15 @@ type ClientWithResponsesInterface interface {
 	//
 	// Corresponds with PATCH /api/v1/tenants/{tenant} (the `UpdateTenant` operationId).
 	UpdateTenantWithResponse(ctx context.Context, tenant string, params *UpdateTenantParams, body UpdateTenantJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateTenantResponse, error)
+
+	// ListTenantAuditEventsWithResponse A tenant's activity
+	//
+	// Who did what in the tenant, newest first, as sentences. Admin app owners and admins (not viewers) and account clients with `tenants:read`; never delegated tokens. Filters narrow the list; the cursor works only for the request that issued it.
+	//
+	// Returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with GET /api/v1/tenants/{tenant}/audit-events (the `ListTenantAuditEvents` operationId).
+	ListTenantAuditEventsWithResponse(ctx context.Context, tenant string, params *ListTenantAuditEventsParams, reqEditors ...RequestEditorFn) (*ListTenantAuditEventsResponse, error)
 
 	// ListDevicesWithResponse List devices
 	//
@@ -9421,6 +10058,24 @@ type ClientWithResponsesInterface interface {
 	//
 	// Corresponds with DELETE /api/v1/tenants/{tenant}/profiles/{profile}/assignments/{assignment} (the `DeleteAssignment` operationId).
 	DeleteAssignmentWithResponse(ctx context.Context, tenant string, profile openapi_types.UUID, assignment openapi_types.UUID, params *DeleteAssignmentParams, reqEditors ...RequestEditorFn) (*DeleteAssignmentResponse, error)
+
+	// QueryTenantWithBodyWithResponse Query a tenant's data
+	//
+	// A read, though a POST because the query is its body. Admin app owners, admins, and viewers (the activity dataset for owners and admins only) and account clients with `devices:read` (activity also needs `tenants:read`); never delegated tokens. The query names a dataset (`activity` or `devices`), the measure `count`, what to group by (at most two dimensions; `series` adds time first), and filters, all from fixed allow-lists: no free SQL, and the caller's scope is always in the statement. The answer is a table.
+	//
+	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with POST /api/v1/tenants/{tenant}/query (the `QueryTenant` operationId).
+	QueryTenantWithBodyWithResponse(ctx context.Context, tenant string, params *QueryTenantParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*QueryTenantResponse, error)
+
+	// QueryTenantWithResponse Query a tenant's data
+	//
+	// A read, though a POST because the query is its body. Admin app owners, admins, and viewers (the activity dataset for owners and admins only) and account clients with `devices:read` (activity also needs `tenants:read`); never delegated tokens. The query names a dataset (`activity` or `devices`), the measure `count`, what to group by (at most two dimensions; `series` adds time first), and filters, all from fixed allow-lists: no free SQL, and the caller's scope is always in the statement. The answer is a table.
+	//
+	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with POST /api/v1/tenants/{tenant}/query (the `QueryTenant` operationId).
+	QueryTenantWithResponse(ctx context.Context, tenant string, params *QueryTenantParams, body QueryTenantJSONRequestBody, reqEditors ...RequestEditorFn) (*QueryTenantResponse, error)
 
 	// CreateTokenWithBodyWithResponse Issue a delegated token for one of the account's users
 	//
@@ -11531,6 +12186,89 @@ func (r UpdateTenantResponse) StatusCode() int {
 
 // ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
 func (r UpdateTenantResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+// ListTenantAuditEventsResponse429Headers the declared response headers of an HTTP 429 response for ListTenantAuditEvents
+type ListTenantAuditEventsResponse429Headers struct {
+	RetryAfter *int
+}
+
+type ListTenantAuditEventsResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON200 the response for an HTTP 200 `application/json` response
+	JSON200 *AuditPage
+	// ApplicationproblemJSON400 the response for an HTTP 400 `application/problem+json` response
+	ApplicationproblemJSON400 *Problem
+	// ApplicationproblemJSON401 the response for an HTTP 401 `application/problem+json` response
+	ApplicationproblemJSON401 *Problem
+	// ApplicationproblemJSON403 the response for an HTTP 403 `application/problem+json` response
+	ApplicationproblemJSON403 *Problem
+	// ApplicationproblemJSON404 the response for an HTTP 404 `application/problem+json` response
+	ApplicationproblemJSON404 *Problem
+	// ApplicationproblemJSON429 the response for an HTTP 429 `application/problem+json` response
+	ApplicationproblemJSON429 *Problem
+	// Headers429 the parsed response headers for an HTTP 429 response
+	Headers429 *ListTenantAuditEventsResponse429Headers
+}
+
+// GetJSON200 returns the response for an HTTP 200 `application/json` response
+func (r ListTenantAuditEventsResponse) GetJSON200() *AuditPage {
+	return r.JSON200
+}
+
+// GetApplicationproblemJSON400 returns the response for an HTTP 400 `application/problem+json` response
+func (r ListTenantAuditEventsResponse) GetApplicationproblemJSON400() *Problem {
+	return r.ApplicationproblemJSON400
+}
+
+// GetApplicationproblemJSON401 returns the response for an HTTP 401 `application/problem+json` response
+func (r ListTenantAuditEventsResponse) GetApplicationproblemJSON401() *Problem {
+	return r.ApplicationproblemJSON401
+}
+
+// GetApplicationproblemJSON403 returns the response for an HTTP 403 `application/problem+json` response
+func (r ListTenantAuditEventsResponse) GetApplicationproblemJSON403() *Problem {
+	return r.ApplicationproblemJSON403
+}
+
+// GetApplicationproblemJSON404 returns the response for an HTTP 404 `application/problem+json` response
+func (r ListTenantAuditEventsResponse) GetApplicationproblemJSON404() *Problem {
+	return r.ApplicationproblemJSON404
+}
+
+// GetApplicationproblemJSON429 returns the response for an HTTP 429 `application/problem+json` response
+func (r ListTenantAuditEventsResponse) GetApplicationproblemJSON429() *Problem {
+	return r.ApplicationproblemJSON429
+}
+
+// GetBody returns the raw response body bytes
+func (r ListTenantAuditEventsResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r ListTenantAuditEventsResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ListTenantAuditEventsResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r ListTenantAuditEventsResponse) ContentType() string {
 	if r.HTTPResponse != nil {
 		return r.HTTPResponse.Header.Get("Content-Type")
 	}
@@ -14804,6 +15542,96 @@ func (r DeleteAssignmentResponse) ContentType() string {
 	return ""
 }
 
+// QueryTenantResponse429Headers the declared response headers of an HTTP 429 response for QueryTenant
+type QueryTenantResponse429Headers struct {
+	RetryAfter *int
+}
+
+type QueryTenantResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON200 the response for an HTTP 200 `application/json` response
+	JSON200 *QueryResult
+	// ApplicationproblemJSON400 the response for an HTTP 400 `application/problem+json` response
+	ApplicationproblemJSON400 *Problem
+	// ApplicationproblemJSON401 the response for an HTTP 401 `application/problem+json` response
+	ApplicationproblemJSON401 *Problem
+	// ApplicationproblemJSON403 the response for an HTTP 403 `application/problem+json` response
+	ApplicationproblemJSON403 *Problem
+	// ApplicationproblemJSON404 the response for an HTTP 404 `application/problem+json` response
+	ApplicationproblemJSON404 *Problem
+	// ApplicationproblemJSON422 the response for an HTTP 422 `application/problem+json` response
+	ApplicationproblemJSON422 *Problem
+	// ApplicationproblemJSON429 the response for an HTTP 429 `application/problem+json` response
+	ApplicationproblemJSON429 *Problem
+	// Headers429 the parsed response headers for an HTTP 429 response
+	Headers429 *QueryTenantResponse429Headers
+}
+
+// GetJSON200 returns the response for an HTTP 200 `application/json` response
+func (r QueryTenantResponse) GetJSON200() *QueryResult {
+	return r.JSON200
+}
+
+// GetApplicationproblemJSON400 returns the response for an HTTP 400 `application/problem+json` response
+func (r QueryTenantResponse) GetApplicationproblemJSON400() *Problem {
+	return r.ApplicationproblemJSON400
+}
+
+// GetApplicationproblemJSON401 returns the response for an HTTP 401 `application/problem+json` response
+func (r QueryTenantResponse) GetApplicationproblemJSON401() *Problem {
+	return r.ApplicationproblemJSON401
+}
+
+// GetApplicationproblemJSON403 returns the response for an HTTP 403 `application/problem+json` response
+func (r QueryTenantResponse) GetApplicationproblemJSON403() *Problem {
+	return r.ApplicationproblemJSON403
+}
+
+// GetApplicationproblemJSON404 returns the response for an HTTP 404 `application/problem+json` response
+func (r QueryTenantResponse) GetApplicationproblemJSON404() *Problem {
+	return r.ApplicationproblemJSON404
+}
+
+// GetApplicationproblemJSON422 returns the response for an HTTP 422 `application/problem+json` response
+func (r QueryTenantResponse) GetApplicationproblemJSON422() *Problem {
+	return r.ApplicationproblemJSON422
+}
+
+// GetApplicationproblemJSON429 returns the response for an HTTP 429 `application/problem+json` response
+func (r QueryTenantResponse) GetApplicationproblemJSON429() *Problem {
+	return r.ApplicationproblemJSON429
+}
+
+// GetBody returns the raw response body bytes
+func (r QueryTenantResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r QueryTenantResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r QueryTenantResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r QueryTenantResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
 // CreateTokenResponse429Headers the declared response headers of an HTTP 429 response for CreateToken
 type CreateTokenResponse429Headers struct {
 	RetryAfter *int
@@ -15383,6 +16211,21 @@ func (c *ClientWithResponses) UpdateTenantWithResponse(ctx context.Context, tena
 		return nil, err
 	}
 	return ParseUpdateTenantResponse(rsp)
+}
+
+// ListTenantAuditEventsWithResponse A tenant's activity
+//
+// Who did what in the tenant, newest first, as sentences. Admin app owners and admins (not viewers) and account clients with `tenants:read`; never delegated tokens. Filters narrow the list; the cursor works only for the request that issued it.
+//
+// Returns a wrapper object for the known response body format(s).
+//
+// Corresponds with GET /api/v1/tenants/{tenant}/audit-events (the `ListTenantAuditEvents` operationId).
+func (c *ClientWithResponses) ListTenantAuditEventsWithResponse(ctx context.Context, tenant string, params *ListTenantAuditEventsParams, reqEditors ...RequestEditorFn) (*ListTenantAuditEventsResponse, error) {
+	rsp, err := c.ListTenantAuditEvents(ctx, tenant, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseListTenantAuditEventsResponse(rsp)
 }
 
 // ListDevicesWithResponse List devices
@@ -16073,6 +16916,36 @@ func (c *ClientWithResponses) DeleteAssignmentWithResponse(ctx context.Context, 
 		return nil, err
 	}
 	return ParseDeleteAssignmentResponse(rsp)
+}
+
+// QueryTenantWithBodyWithResponse Query a tenant's data
+//
+// A read, though a POST because the query is its body. Admin app owners, admins, and viewers (the activity dataset for owners and admins only) and account clients with `devices:read` (activity also needs `tenants:read`); never delegated tokens. The query names a dataset (`activity` or `devices`), the measure `count`, what to group by (at most two dimensions; `series` adds time first), and filters, all from fixed allow-lists: no free SQL, and the caller's scope is always in the statement. The answer is a table.
+//
+// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
+//
+// Corresponds with POST /api/v1/tenants/{tenant}/query (the `QueryTenant` operationId).
+func (c *ClientWithResponses) QueryTenantWithBodyWithResponse(ctx context.Context, tenant string, params *QueryTenantParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*QueryTenantResponse, error) {
+	rsp, err := c.QueryTenantWithBody(ctx, tenant, params, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseQueryTenantResponse(rsp)
+}
+
+// QueryTenantWithResponse Query a tenant's data
+//
+// A read, though a POST because the query is its body. Admin app owners, admins, and viewers (the activity dataset for owners and admins only) and account clients with `devices:read` (activity also needs `tenants:read`); never delegated tokens. The query names a dataset (`activity` or `devices`), the measure `count`, what to group by (at most two dimensions; `series` adds time first), and filters, all from fixed allow-lists: no free SQL, and the caller's scope is always in the statement. The answer is a table.
+//
+// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
+//
+// Corresponds with POST /api/v1/tenants/{tenant}/query (the `QueryTenant` operationId).
+func (c *ClientWithResponses) QueryTenantWithResponse(ctx context.Context, tenant string, params *QueryTenantParams, body QueryTenantJSONRequestBody, reqEditors ...RequestEditorFn) (*QueryTenantResponse, error) {
+	rsp, err := c.QueryTenant(ctx, tenant, params, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseQueryTenantResponse(rsp)
 }
 
 // CreateTokenWithBodyWithResponse Issue a delegated token for one of the account's users
@@ -17969,6 +18842,80 @@ func ParseUpdateTenantResponse(rsp *http.Response) (*UpdateTenantResponse, error
 	switch {
 	case rsp.StatusCode == 429:
 		var headers UpdateTenantResponse429Headers
+		if values := rsp.Header.Values("Retry-After"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "Retry-After", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.RetryAfter = &value
+		}
+		response.Headers429 = &headers
+	}
+
+	return response, nil
+}
+
+// ParseListTenantAuditEventsResponse parses an HTTP response from a ListTenantAuditEventsWithResponse call
+func ParseListTenantAuditEventsResponse(rsp *http.Response) (*ListTenantAuditEventsResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ListTenantAuditEventsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest AuditPage
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 429:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON429 = &dest
+
+	}
+
+	switch {
+	case rsp.StatusCode == 429:
+		var headers ListTenantAuditEventsResponse429Headers
 		if values := rsp.Header.Values("Retry-After"); len(values) > 0 {
 			var value int
 			if err := runtime.BindStyledParameterWithOptions("simple", "Retry-After", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
@@ -20924,6 +21871,87 @@ func ParseDeleteAssignmentResponse(rsp *http.Response) (*DeleteAssignmentRespons
 	switch {
 	case rsp.StatusCode == 429:
 		var headers DeleteAssignmentResponse429Headers
+		if values := rsp.Header.Values("Retry-After"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "Retry-After", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.RetryAfter = &value
+		}
+		response.Headers429 = &headers
+	}
+
+	return response, nil
+}
+
+// ParseQueryTenantResponse parses an HTTP response from a QueryTenantWithResponse call
+func ParseQueryTenantResponse(rsp *http.Response) (*QueryTenantResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &QueryTenantResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest QueryResult
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON422 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 429:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON429 = &dest
+
+	}
+
+	switch {
+	case rsp.StatusCode == 429:
+		var headers QueryTenantResponse429Headers
 		if values := rsp.Header.Values("Retry-After"); len(values) > 0 {
 			var value int
 			if err := runtime.BindStyledParameterWithOptions("simple", "Retry-After", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {

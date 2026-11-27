@@ -1,0 +1,14 @@
+name: a POST that only reads (a query) is retried like a GET
+call:
+  operation: queryTenant
+  args: {tenant: ext:family, body: {dataset: devices, measure: count, group_by: [state]}}
+responses:
+  - status: 503
+    headers: {Content-Type: application/problem+json, Retry-After: "0"}
+    body: {type: about:blank, title: Service Unavailable, status: 503}
+  - status: 200
+    headers: {Content-Type: application/json}
+    body: {columns: [{name: state, type: string}, {name: count, type: number}], rows: [[enrolled, 3]]}
+expect:
+  attempts: 2
+  result: {columns: [{name: state, type: string}, {name: count, type: number}], rows: [[enrolled, 3]]}

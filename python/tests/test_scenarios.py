@@ -54,6 +54,15 @@ def _calls(client: mdmsdk.Client, op: str, args: dict[str, Any], use_async: bool
     if op == "deleteDevice":
         did = uuid.UUID(args["id"])
         return _run(client.devices.delete_async(args["tenant"], did) if use_async else client.devices.delete(args["tenant"], did), use_async)
+    if op == "queryTenant":
+        body = m.QueryRequest.from_dict(args["body"])
+        return _run(client.tenants.query_async(args["tenant"], body) if use_async else client.tenants.query(args["tenant"], body), use_async)
+    if op == "listTenantAuditEvents":
+        if use_async:
+            async def drain() -> list[Any]:
+                return [e async for e in client.activity.list_async(args["tenant"])]
+            return asyncio.run(drain())
+        return list(client.activity.list(args["tenant"]))
     if op == "getMe":
         return asyncio.run(client.me.get_async()) if use_async else client.me.get()
     if op == "getCatalog":
@@ -94,7 +103,13 @@ def test_scenario(path: Path, use_async: bool) -> None:
             assert e.instance == want["instance"]
     else:
         got = _calls(client, call["operation"], call.get("args") or {}, use_async)
-        assert _norm(None if got is None else got.to_dict()) == _norm(expect["result"])
+        if isinstance(got, list):
+            got_dict: Any = [g.to_dict() for g in got]
+        else:
+            got_dict = None if got is None else got.to_dict()
+        assert _norm(got_dict) == _norm(expect["result"])
     assert len(requests) == expect["attempts"]
+    for i, want in enumerate(expect.get("cursors") or []):
+        assert requests[i].url.params.get("cursor", "") == want
     if expect.get("waited_at_least_seconds"):
         assert sum(waited) >= expect["waited_at_least_seconds"]

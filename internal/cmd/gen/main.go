@@ -19,6 +19,8 @@ import (
 type method struct {
 	Service string `yaml:"service"`
 	Method  string `yaml:"method"`
+	// Read marks a POST that only reads, retried as a GET.
+	Read bool `yaml:"read"`
 }
 
 type param struct {
@@ -41,11 +43,18 @@ type response struct {
 	} `yaml:"content"`
 }
 
+// schemas are the contract's components, for telling a paged response.
+var schemas map[string]map[string]any
+
 func main() {
 	var doc struct {
-		Paths map[string]map[string]yaml.Node `yaml:"paths"`
+		Paths      map[string]map[string]yaml.Node `yaml:"paths"`
+		Components struct {
+			Schemas map[string]map[string]any `yaml:"schemas"`
+		} `yaml:"components"`
 	}
 	load("openapi/openapi.yaml", &doc)
+	schemas = doc.Components.Schemas
 	var methods map[string]method
 	load("methods.yaml", &methods)
 
@@ -152,13 +161,25 @@ func emit(b *bytes.Buffer, m method, path string, op operation) {
 	}
 	status, result := success(op)
 	sig := strings.Join(append([]string{"ctx context.Context"}, args...), ", ")
-	opInfo := fmt.Sprintf("opInfo{id: %q, idempotent: %v, retryTransport: %v}", op.ID, idempotent, op.ID == "createToken")
+	opInfo := fmt.Sprintf("opInfo{id: %q, idempotent: %v, retryTransport: %v, read: %v}", op.ID, idempotent, op.ID == "createToken", m.Read)
 	callArgs := strings.Join(append([]string{"withOp(ctx, " + opInfo + ")"}, call...), ", ")
 	fmt.Fprintf(b, "// %s: %s (%s).\n", exported(m.Method), op.Summary, op.ID)
 	if result == "" {
 		fmt.Fprintf(b, "func (s *%sService) %s(%s) error {\n", exported(m.Service), exported(m.Method), sig)
 		fmt.Fprintf(b, "\tresp, err := s.c.low.%sWithResponse(%s)\n\tif err != nil {\n\t\treturn err\n\t}\n", goOp, callArgs)
 		fmt.Fprintf(b, "\tif resp.StatusCode() == %s {\n\t\treturn nil\n\t}\n\treturn decodeError(resp.HTTPResponse, resp.Body)\n}\n\n", status)
+		return
+	}
+	if field, item, ok := paged(op, result); ok {
+		// A cursor-paged list is an iterator over every page, so a caller
+		// never handles the cursor.
+		fmt.Fprintf(b, "func (s *%sService) %s(%s) iter.Seq2[%s, error] {\n", exported(m.Service), exported(m.Method), sig, item)
+		fmt.Fprintf(b, "\treturn func(yield func(%s, error) bool) {\n\t\tp := *orEmpty(params)\n\t\tfor {\n", item)
+		fmt.Fprintf(b, "\t\t\tresp, err := s.c.low.%sWithResponse(%s)\n", goOp, strings.Replace(callArgs, "orEmpty(params)", "&p", 1))
+		fmt.Fprintf(b, "\t\t\tif err == nil && resp.JSON%s == nil {\n\t\t\t\terr = decodeError(resp.HTTPResponse, resp.Body)\n\t\t\t}\n", status)
+		fmt.Fprintf(b, "\t\t\tif err != nil {\n\t\t\t\tvar zero %s\n\t\t\t\tyield(zero, err)\n\t\t\t\treturn\n\t\t\t}\n", item)
+		fmt.Fprintf(b, "\t\t\tfor _, v := range resp.JSON%s.%s {\n\t\t\t\tif !yield(v, nil) {\n\t\t\t\t\treturn\n\t\t\t\t}\n\t\t\t}\n", status, field)
+		fmt.Fprintf(b, "\t\t\tnext := resp.JSON%s.NextCursor\n\t\t\tif next == nil || *next == \"\" {\n\t\t\t\treturn\n\t\t\t}\n\t\t\tp.Cursor = next\n\t\t}\n\t}\n}\n\n", status)
 		return
 	}
 	if strings.HasPrefix(result, "*[]") {
@@ -175,6 +196,33 @@ func emit(b *bytes.Buffer, m method, path string, op operation) {
 	fmt.Fprintf(b, "func (s *%sService) %s(%s) (%s, error) {\n", exported(m.Service), exported(m.Method), sig, result)
 	fmt.Fprintf(b, "\tresp, err := s.c.low.%sWithResponse(%s)\n\tif err != nil {\n\t\treturn nil, err\n\t}\n", goOp, callArgs)
 	fmt.Fprintf(b, "\tif resp.JSON%s != nil {\n\t\treturn resp.JSON%s, nil\n\t}\n\treturn nil, decodeError(resp.HTTPResponse, resp.Body)\n}\n\n", status, status)
+}
+
+// paged reports a cursor-paged list: a query parameter cursor, and a
+// response object of next_cursor and one array. It returns the array's Go
+// field and item type.
+func paged(op operation, result string) (field, item string, ok bool) {
+	cursor := false
+	for _, p := range op.Parameters {
+		cursor = cursor || (p.In == "query" && p.Name == "cursor")
+	}
+	s := schemas[strings.TrimPrefix(result, "*api.")]
+	props, _ := s["properties"].(map[string]any)
+	if !cursor || props["next_cursor"] == nil || len(props) != 2 {
+		return "", "", false
+	}
+	for name, v := range props {
+		if name == "next_cursor" {
+			continue
+		}
+		vm, _ := v.(map[string]any)
+		if vm["type"] != "array" {
+			return "", "", false
+		}
+		items, _ := vm["items"].(map[string]any)
+		return exported(name), goType(items), true
+	}
+	return "", "", false
 }
 
 // success is the first 2xx status and its Go result type ("" for no body).
