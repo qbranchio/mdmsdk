@@ -1,0 +1,9 @@
+# The SDK surface: each public operationId and the service and method it
+# becomes. Both SDKs generate their services from this file; CI fails when
+# a public operation has no entry or an entry names no operation.
+getMe:
+  service: me
+  method: get
+getCatalog:
+  service: catalog
+  method: get

@@ -1,0 +1,9 @@
+name: a 404 problem decodes into a NotFound error with code and instance, and is not retried
+call: {operation: getMe, args: {}}
+responses:
+  - status: 404
+    headers: {Content-Type: application/problem+json}
+    body: {type: about:blank, title: Not Found, status: 404, detail: The resource does not exist., code: not_found, instance: "urn:request:3"}
+expect:
+  attempts: 1
+  error: {kind: NotFound, code: not_found, status: 404, instance: "urn:request:3"}

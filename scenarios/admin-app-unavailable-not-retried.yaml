@@ -1,0 +1,9 @@
+name: admin_app_unavailable is configuration, not transient, and is not retried
+call: {operation: getMe, args: {}}
+responses:
+  - status: 503
+    headers: {Content-Type: application/problem+json}
+    body: {type: about:blank, title: Service Unavailable, status: 503, code: admin_app_unavailable, instance: "urn:request:2"}
+expect:
+  attempts: 1
+  error: {kind: Unavailable, code: admin_app_unavailable, status: 503, instance: "urn:request:2"}
