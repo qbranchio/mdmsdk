@@ -11,6 +11,71 @@ components:
         - id
         - name
       type: object
+    Assignment:
+      properties:
+        created_at:
+          format: date-time
+          type: string
+        id:
+          format: uuid
+          type: string
+        levels:
+          items:
+            enum:
+              - supervised
+              - unsupervised
+            type: string
+          type: array
+        profile_id:
+          format: uuid
+          type: string
+        target:
+          enum:
+            - tenant
+            - group
+            - member
+            - device
+          type: string
+        target_id:
+          description: The group, member, or device id. Null for the tenant.
+          format: uuid
+          type:
+            - "null"
+            - string
+      required:
+        - id
+        - profile_id
+        - target
+        - target_id
+        - levels
+        - created_at
+      type: object
+    AssignmentRequest:
+      properties:
+        levels:
+          items:
+            enum:
+              - supervised
+              - unsupervised
+            type: string
+          minItems: 1
+          type: array
+        target:
+          enum:
+            - tenant
+            - group
+            - member
+            - device
+          type: string
+        target_id:
+          description: The group or device id, or the member id or `ext:` and the account's id for the member. Not set for the tenant.
+          maxLength: 260
+          minLength: 1
+          type: string
+      required:
+        - target
+        - levels
+      type: object
     CatalogCond:
       description: 'A condition on another key of the payload. key is relative to the constrained key''s dictionary: "Name", "../Name" one level up, or "/Name" at the payload root. An unset key is compared by its default. Every field present must hold.'
       properties:
@@ -183,6 +248,385 @@ components:
       required:
         - entries
       type: object
+    Command:
+      properties:
+        command_uuid:
+          format: uuid
+          type: string
+        created_at:
+          format: date-time
+          type: string
+        error:
+          description: The device's ErrorChain.
+          items:
+            additionalProperties: {}
+            type: object
+          type:
+            - "null"
+            - array
+        request_type:
+          type: string
+        result:
+          additionalProperties: {}
+          description: The device's report without UDID, Status, CommandUUID, and ErrorChain. For DeviceInformation it carries QueryResponses, for DeviceLock MessageResult when present.
+          type:
+            - "null"
+            - object
+        status:
+          description: 'A command starts in the first status listed and stays there until it is handed to the MDM server. cancelled: it was dropped without being sent, because its enrollment ended or a newer decision replaced it. It never reached the device.'
+          enum:
+            - outbox
+            - cancelled
+            - queued
+            - acknowledged
+            - error
+            - command_format_error
+            - notnow
+          type: string
+        updated_at:
+          format: date-time
+          type: string
+      required:
+        - command_uuid
+        - request_type
+        - status
+        - result
+        - error
+        - created_at
+        - updated_at
+      type: object
+    CommandAccepted:
+      properties:
+        command_uuid:
+          format: uuid
+          type: string
+      required:
+        - command_uuid
+      type: object
+    CommandRequest:
+      properties:
+        message:
+          description: DeviceLock only.
+          maxLength: 1000
+          type: string
+        phone_number:
+          description: DeviceLock only.
+          maxLength: 64
+          type: string
+        type:
+          enum:
+            - DeviceLock
+            - DeviceInformation
+          type: string
+      required:
+        - type
+      type: object
+    CreateDeviceRequest:
+      properties:
+        member:
+          description: 'The member who owns the device: a member id, or `ext:` and the account''s id for the member. Without it the device is the tenant''s.'
+          maxLength: 260
+          minLength: 1
+          type: string
+        name:
+          maxLength: 200
+          minLength: 1
+          type: string
+        settings:
+          $ref: '#/components/schemas/Policy'
+      required:
+        - name
+      type: object
+    DeclarationReason:
+      properties:
+        code:
+          type: string
+        description:
+          type: string
+      required:
+        - code
+      type: object
+    DeclarationState:
+      properties:
+        active:
+          type: boolean
+        identifier:
+          type: string
+        reasons:
+          items:
+            $ref: '#/components/schemas/DeclarationReason'
+          type: array
+        reported_token:
+          description: The version the device last reported. Null before it reports.
+          type:
+            - "null"
+            - string
+        server_token:
+          description: The current version.
+          type: string
+        valid:
+          description: Apple's value (valid, invalid, unknown), or unknown before a report.
+          type: string
+      required:
+        - identifier
+        - server_token
+        - reported_token
+        - active
+        - valid
+        - reasons
+      type: object
+    Device:
+      properties:
+        created_at:
+          format: date-time
+          type: string
+        enrollment_id:
+          description: The enrollment ID bound to this device.
+          type:
+            - "null"
+            - string
+        id:
+          format: uuid
+          type: string
+        last_seen_at:
+          format: date-time
+          type:
+            - "null"
+            - string
+        member_id:
+          description: The member who owns the device. Null when it is the tenant's.
+          format: uuid
+          type:
+            - "null"
+            - string
+        model:
+          type:
+            - "null"
+            - string
+        name:
+          type: string
+        os_behind:
+          description: Below its tenant's minimum, or below os_latest when the tenant sets none.
+          type: boolean
+        os_latest:
+          description: The newest iOS Apple publishes for its model, from the daily check.
+          type:
+            - "null"
+            - string
+        os_version:
+          type:
+            - "null"
+            - string
+        policy:
+          $ref: '#/components/schemas/DevicePolicy'
+        serial_number:
+          type:
+            - "null"
+            - string
+        settings:
+          description: One status per policy item, in policy order. Empty without a policy.
+          items:
+            $ref: '#/components/schemas/ItemStatus'
+          type: array
+        status:
+          enum:
+            - pending
+            - enrolling
+            - enrolled
+            - unenrolled
+          type: string
+        supervised:
+          description: The level, from the current DeviceInformation IsSupervised. Null until reported, and again on each new enrollment until reported.
+          type:
+            - "null"
+            - boolean
+        udid:
+          type:
+            - "null"
+            - string
+      required:
+        - id
+        - member_id
+        - name
+        - status
+        - enrollment_id
+        - udid
+        - serial_number
+        - model
+        - os_version
+        - supervised
+        - os_latest
+        - os_behind
+        - last_seen_at
+        - created_at
+        - policy
+        - settings
+      type: object
+    DeviceDDM:
+      properties:
+        declarations:
+          items:
+            $ref: '#/components/schemas/DeclarationState'
+          type: array
+        stage:
+          enum:
+            - none
+            - enabling
+            - taking_over
+            - enabled
+          type: string
+      required:
+        - stage
+        - declarations
+      type: object
+    DeviceMemberRequest:
+      properties:
+        member:
+          description: The member id, or `ext:` and the account's id for the member.
+          maxLength: 260
+          minLength: 1
+          type: string
+      required:
+        - member
+      type: object
+    DevicePolicy:
+      description: 'The deployment of the device''s effective policy. Its items are read with profiles:read: GET .../effective-policy (with provenance) and GET .../settings (the device''s own).'
+      properties:
+        applied_level:
+          description: The level of the declarations the device last reported active.
+          enum:
+            - supervised
+            - unsupervised
+            - null
+          type:
+            - "null"
+            - string
+        applied_revision:
+          description: The revision the device last reported active. Null before that.
+          format: int64
+          type:
+            - "null"
+            - integer
+        error:
+          description: The declarations the device reported invalid, with Apple's reason, when status is failed.
+          items:
+            additionalProperties: {}
+            type: object
+          type:
+            - "null"
+            - array
+        install_generation:
+          description: Increments on every deploy, including a rebuild for a changed level.
+          format: int64
+          type: integer
+        install_level:
+          description: The level the current declarations were built for. Null before the first deploy.
+          enum:
+            - supervised
+            - unsupervised
+            - null
+          type:
+            - "null"
+            - string
+        revision:
+          description: The effective policy's revision. Increments whenever the merged result changes.
+          format: int64
+          type: integer
+        status:
+          enum:
+            - pending
+            - applied
+            - failed
+            - removing
+          type: string
+      required:
+        - revision
+        - status
+        - install_level
+        - install_generation
+        - applied_revision
+        - applied_level
+        - error
+      type:
+        - object
+        - "null"
+    EffectiveItem:
+      properties:
+        conflicts:
+          description: Sources in the same layer that set the same item and lost to the lower profile id.
+          items:
+            $ref: '#/components/schemas/Source'
+          type: array
+        item:
+          $ref: '#/components/schemas/PolicyItem'
+        overridden:
+          description: Less specific sources (or lower priority groups) that set the same item.
+          items:
+            $ref: '#/components/schemas/Source'
+          type: array
+        source:
+          $ref: '#/components/schemas/Source'
+      required:
+        - item
+        - source
+        - overridden
+        - conflicts
+      type: object
+    EffectivePolicy:
+      properties:
+        items:
+          description: Empty while the policy is being removed.
+          items:
+            $ref: '#/components/schemas/EffectiveItem'
+          type: array
+        revision:
+          description: The effective policy's revision. Absent when the device has none.
+          format: int64
+          type: integer
+        status:
+          description: Absent when the device has no policy.
+          enum:
+            - pending
+            - applied
+            - failed
+            - removing
+          type: string
+      required:
+        - items
+      type: object
+    EnrollmentLinkResponse:
+      properties:
+        device:
+          $ref: '#/components/schemas/Device'
+        enrollment_profile:
+          description: The unsigned .mobileconfig the link serves, base64 encoded.
+          format: byte
+          type: string
+        expires_at:
+          format: date-time
+          type: string
+        url:
+          description: The public link. Treat it as a secret until it expires.
+          format: uri
+          type: string
+      required:
+        - device
+        - url
+        - expires_at
+        - enrollment_profile
+      type: object
+    EnrollmentResponse:
+      properties:
+        device:
+          $ref: '#/components/schemas/Device'
+        enrollment_profile:
+          description: The unsigned .mobileconfig, base64 encoded.
+          format: byte
+          type: string
+      required:
+        - device
+        - enrollment_profile
+      type: object
     FieldError:
       properties:
         detail:
@@ -192,6 +636,98 @@ components:
       required:
         - field
         - detail
+      type: object
+    Group:
+      properties:
+        created_at:
+          format: date-time
+          type: string
+        id:
+          format: uuid
+          type: string
+        name:
+          type: string
+        priority:
+          type: integer
+        updated_at:
+          format: date-time
+          type: string
+      required:
+        - id
+        - name
+        - priority
+        - created_at
+        - updated_at
+      type: object
+    GroupRequest:
+      properties:
+        name:
+          maxLength: 200
+          minLength: 1
+          type: string
+        priority:
+          description: Unique in the tenant. The higher priority wins between groups.
+          maximum: 10000
+          minimum: 0
+          type: integer
+      required:
+        - name
+        - priority
+      type: object
+    GroupUpdate:
+      minProperties: 1
+      properties:
+        name:
+          maxLength: 200
+          minLength: 1
+          type: string
+        priority:
+          maximum: 10000
+          minimum: 0
+          type: integer
+      type: object
+    ItemStatus:
+      properties:
+        id:
+          type: string
+        key:
+          type:
+            - "null"
+            - string
+        min_os:
+          description: The iOS version the item needs, with reason requires_os.
+          type:
+            - "null"
+            - string
+        reason:
+          description: Set when status is unsupported.
+          enum:
+            - requires_os
+            - requires_supervision
+            - not_supported_by_device
+            - null
+          type:
+            - "null"
+            - string
+        ref:
+          description: The item's id, or id#key for an item added more than once.
+          type: string
+        status:
+          description: 'Derived, first match wins: level or OS unknown, pending; OS below 17, unsupported; the item needs supervision or a newer OS, or every key it sets does, unsupported; policy removing, removing; the device''s capabilities lack its declaration type, unsupported; the item''s declarations reported for this revision, their state; policy applied for this revision and level, applied; otherwise pending.'
+          enum:
+            - pending
+            - applied
+            - failed
+            - removing
+            - unsupported
+          type: string
+      required:
+        - ref
+        - id
+        - key
+        - status
+        - reason
+        - min_os
       type: object
     Licence:
       properties:
@@ -260,6 +796,91 @@ components:
       required:
         - kind
       type: object
+    Member:
+      properties:
+        created_at:
+          format: date-time
+          type: string
+        external_id:
+          type: string
+        groups:
+          description: The ids of the member's groups.
+          items:
+            format: uuid
+            type: string
+          type: array
+        id:
+          format: uuid
+          type: string
+        name:
+          type: string
+        updated_at:
+          format: date-time
+          type: string
+      required:
+        - id
+        - name
+        - groups
+        - created_at
+        - updated_at
+      type: object
+    MemberRequest:
+      properties:
+        external_id:
+          description: 'The account''s own id for the person: letters, digits, and the characters . _ ~ @ : -'
+          maxLength: 255
+          minLength: 1
+          pattern: ^[A-Za-z0-9._~@:-]+$
+          type: string
+        name:
+          maxLength: 200
+          minLength: 1
+          type: string
+      required:
+        - name
+      type: object
+    MemberUpdate:
+      minProperties: 1
+      properties:
+        external_id:
+          maxLength: 255
+          minLength: 1
+          pattern: ^[A-Za-z0-9._~@:-]+$
+          type: string
+        name:
+          maxLength: 200
+          minLength: 1
+          type: string
+      type: object
+    Policy:
+      description: 'Settings: items from the catalog (GET /api/v1/catalog). Items a device''s level or OS cannot take are left out of its declarations and reported unsupported. Secret keys (marked in the catalog) are write-only: responses show {"secret": "set"}; a PUT that sends it keeps the stored value, a string replaces it, and leaving the key out clears it.'
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/PolicyItem'
+          maxItems: 500
+          type: array
+      required:
+        - items
+      type: object
+    PolicyItem:
+      properties:
+        id:
+          description: A catalog entry id, such as restriction:allowCamera.
+          type: string
+        key:
+          description: Names the instance of an entry that can be added more than once (multiple), such as one Wi-Fi network.
+          pattern: ^[a-z0-9][a-z0-9-]{0,39}$
+          type: string
+        payload:
+          additionalProperties: {}
+          description: A profile payload's or declaration's keys, as the catalog describes them. Data keys are base64.
+          type: object
+        value:
+          description: A restriction's value.
+      required:
+        - id
+      type: object
     Problem:
       description: RFC 9457 problem detail.
       properties:
@@ -285,6 +906,67 @@ components:
         - type
         - title
         - status
+      type: object
+    Profile:
+      properties:
+        created_at:
+          format: date-time
+          type: string
+        id:
+          description: A UUIDv7. Within one layer the lower id wins a conflict.
+          format: uuid
+          type: string
+        items:
+          items:
+            $ref: '#/components/schemas/PolicyItem'
+          type: array
+        name:
+          type: string
+        updated_at:
+          format: date-time
+          type: string
+      required:
+        - id
+        - name
+        - items
+        - created_at
+        - updated_at
+      type: object
+    ProfileRequest:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/PolicyItem'
+          maxItems: 500
+          type: array
+        name:
+          maxLength: 200
+          minLength: 1
+          type: string
+      required:
+        - name
+        - items
+      type: object
+    Source:
+      properties:
+        group_id:
+          description: The group the profile reached the device through, for the group layer.
+          format: uuid
+          type: string
+        layer:
+          description: Where the item came from; settings is the device's own items.
+          enum:
+            - tenant
+            - group
+            - member
+            - device
+            - settings
+          type: string
+        profile_id:
+          format: uuid
+          type: string
+      required:
+        - layer
       type: object
     Tenant:
       properties:
@@ -329,6 +1011,41 @@ components:
         - name
         - created_at
       type: object
+    TenantRequest:
+      properties:
+        external_id:
+          description: 'The account''s own id for the tenant: letters, digits, and the characters . _ ~ @ : -'
+          maxLength: 255
+          minLength: 1
+          pattern: ^[A-Za-z0-9._~@:-]+$
+          type: string
+        holder_id:
+          description: The credential holder whose Apple credentials the tenant uses; the account's default when absent.
+          format: uuid
+          type: string
+        name:
+          maxLength: 200
+          minLength: 1
+          type: string
+      required:
+        - name
+      type: object
+    TenantUpdate:
+      minProperties: 1
+      properties:
+        holder_id:
+          description: Moves the tenant to another credential holder of the account; enrolled devices keep their push topic.
+          format: uuid
+          type: string
+        min_os:
+          description: The iOS version its devices must reach (26.2); empty clears it. Without it a device is behind when Apple has a newer release for its model.
+          maxLength: 20
+          type: string
+        name:
+          maxLength: 200
+          minLength: 1
+          type: string
+      type: object
   securitySchemes:
     bearerAuth:
       description: A delegated token from POST /api/v1/tokens, or an admin app sign-in.
@@ -368,7 +1085,6 @@ paths:
           in: header
           name: Mdm-Actor
           schema:
-            description: 'For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.'
             maxLength: 255
             type: string
       responses:
@@ -423,7 +1139,6 @@ paths:
           in: header
           name: Mdm-Actor
           schema:
-            description: 'For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.'
             maxLength: 255
             type: string
       responses:
@@ -463,5 +1178,3370 @@ paths:
       summary: Who the caller is
       tags:
         - session
+  /api/v1/tenants:
+    get:
+      description: 'An account client: every tenant of its account (tenants:read), oldest first. An admin app token: its organization''s tenant, with the caller''s role.'
+      operationId: listTenants
+      parameters:
+        - description: 'For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.'
+          in: header
+          name: Mdm-Actor
+          schema:
+            maxLength: 255
+            type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/Tenant'
+                type: array
+          description: The tenants.
+        "401":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The bearer token is missing or wrong.
+        "403":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller reaches the resource but its scopes or role do not allow the operation.
+        "429":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller is over its rate limit.
+          headers:
+            Retry-After:
+              description: Seconds to wait.
+              schema:
+                type: integer
+              style: simple
+      security:
+        - clientCredentials: []
+        - bearerAuth: []
+      summary: Tenants the caller reaches
+      tags:
+        - tenants
+    post:
+      description: Account clients only (tenants:write). external_id is the account's own id for the tenant, unique in the account; 409 when it is taken.
+      operationId: createTenant
+      parameters:
+        - description: 'Makes a retry safe (IETF draft): the first response is stored for 24 hours and replayed, with Idempotent-Replayed, for a retry by the same caller with the same key, method, path, and body. The same key with another request answers 422; a retry while the first runs answers 409.'
+          in: header
+          name: Idempotency-Key
+          schema:
+            maxLength: 255
+            minLength: 1
+            type: string
+        - description: 'For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.'
+          in: header
+          name: Mdm-Actor
+          schema:
+            maxLength: 255
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TenantRequest'
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tenant'
+          description: The tenant.
+        "400":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The request could not be decoded or a parameter is malformed.
+        "401":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The bearer token is missing or wrong.
+        "403":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller reaches the resource but its scopes or role do not allow the operation.
+        "409":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: 'A unique value is taken (an external id, a group priority), the device is not in a state that allows this operation, a request with the same Idempotency-Key is still in progress, the tenant is being deleted (tenant_deleting), or a licence refuses the write (licence_exceeded: a device, tenant, or people limit; licence_expired: the tenant''s licence has ended).'
+        "422":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The body is well formed but fails validation.
+        "429":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller is over its rate limit.
+          headers:
+            Retry-After:
+              description: Seconds to wait.
+              schema:
+                type: integer
+              style: simple
+      security:
+        - clientCredentials: []
+      summary: Create a tenant
+      tags:
+        - tenants
+  /api/v1/tenants/{tenant}:
+    delete:
+      description: 'Account clients only (tenants:write). Starts the deletion and answers at once: tenant.deleting fires, writes to the tenant answer 409 from then on (reads keep working), delegated tokens are no longer issued for it, and every enrolled device is asked to remove its enrollment profile. Once each device has, checked out, or stayed silent for 30 days, the tenant and everything in it are deleted and tenant.deleted fires. Calling it again changes nothing.'
+      operationId: deleteTenant
+      parameters:
+        - description: The tenant id, or `ext:` and the account's external id for it.
+          in: path
+          name: tenant
+          required: true
+          schema:
+            maxLength: 260
+            minLength: 1
+            type: string
+        - description: 'For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.'
+          in: header
+          name: Mdm-Actor
+          schema:
+            maxLength: 255
+            type: string
+      responses:
+        "202":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tenant'
+          description: The tenant, being deleted.
+        "400":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The request could not be decoded or a parameter is malformed.
+        "401":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The bearer token is missing or wrong.
+        "403":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller reaches the resource but its scopes or role do not allow the operation.
+        "404":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The tenant, member, group, or device does not exist, was removed, or is outside the caller's reach.
+        "429":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller is over its rate limit.
+          headers:
+            Retry-After:
+              description: Seconds to wait.
+              schema:
+                type: integer
+              style: simple
+      security:
+        - clientCredentials: []
+      summary: Delete a tenant
+      tags:
+        - tenants
+    get:
+      operationId: getTenant
+      parameters:
+        - description: The tenant id, or `ext:` and the account's external id for it.
+          in: path
+          name: tenant
+          required: true
+          schema:
+            maxLength: 260
+            minLength: 1
+            type: string
+        - description: 'For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.'
+          in: header
+          name: Mdm-Actor
+          schema:
+            maxLength: 255
+            type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tenant'
+          description: The tenant.
+        "400":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The request could not be decoded or a parameter is malformed.
+        "401":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The bearer token is missing or wrong.
+        "403":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller reaches the resource but its scopes or role do not allow the operation.
+        "404":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The tenant, member, group, or device does not exist, was removed, or is outside the caller's reach.
+        "429":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller is over its rate limit.
+          headers:
+            Retry-After:
+              description: Seconds to wait.
+              schema:
+                type: integer
+              style: simple
+      security:
+        - clientCredentials: []
+        - bearerAuth: []
+      summary: Get a tenant
+      tags:
+        - tenants
+    patch:
+      description: Account clients only (tenants:write).
+      operationId: updateTenant
+      parameters:
+        - description: The tenant id, or `ext:` and the account's external id for it.
+          in: path
+          name: tenant
+          required: true
+          schema:
+            maxLength: 260
+            minLength: 1
+            type: string
+        - description: 'For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.'
+          in: header
+          name: Mdm-Actor
+          schema:
+            maxLength: 255
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TenantUpdate'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tenant'
+          description: The tenant.
+        "400":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The request could not be decoded or a parameter is malformed.
+        "401":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The bearer token is missing or wrong.
+        "403":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller reaches the resource but its scopes or role do not allow the operation.
+        "404":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The tenant, member, group, or device does not exist, was removed, or is outside the caller's reach.
+        "409":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: 'A unique value is taken (an external id, a group priority), the device is not in a state that allows this operation, a request with the same Idempotency-Key is still in progress, the tenant is being deleted (tenant_deleting), or a licence refuses the write (licence_exceeded: a device, tenant, or people limit; licence_expired: the tenant''s licence has ended).'
+        "422":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The body is well formed but fails validation.
+        "429":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller is over its rate limit.
+          headers:
+            Retry-After:
+              description: Seconds to wait.
+              schema:
+                type: integer
+              style: simple
+      security:
+        - clientCredentials: []
+      summary: Rename a tenant or change its credential holder
+      tags:
+        - tenants
+  /api/v1/tenants/{tenant}/devices:
+    get:
+      description: Every device that has not been removed, oldest first; with member, that member's only (404 when the member is not in the tenant).
+      operationId: listDevices
+      parameters:
+        - description: The tenant id, or `ext:` and the account's external id for it.
+          in: path
+          name: tenant
+          required: true
+          schema:
+            maxLength: 260
+            minLength: 1
+            type: string
+        - description: A member id, or `ext:` and the account's id for the member.
+          in: query
+          name: member
+          schema:
+            maxLength: 260
+            minLength: 1
+            type: string
+        - description: 'For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.'
+          in: header
+          name: Mdm-Actor
+          schema:
+            maxLength: 255
+            type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/Device'
+                type: array
+          description: The devices.
+        "400":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The request could not be decoded or a parameter is malformed.
+        "401":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The bearer token is missing or wrong.
+        "403":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller reaches the resource but its scopes or role do not allow the operation.
+        "404":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The tenant, member, group, or device does not exist, was removed, or is outside the caller's reach.
+        "429":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller is over its rate limit.
+          headers:
+            Retry-After:
+              description: Seconds to wait.
+              schema:
+                type: integer
+              style: simple
+      security:
+        - clientCredentials: []
+        - bearerAuth: []
+      summary: List devices
+      tags:
+        - devices
+    post:
+      description: Creates a device in status pending with a fresh enrollment token and SCEP challenge, both valid for 7 days, and returns its enrollment profile. settings are the device's own items (PUT .../settings); its effective policy is installed once the enrolled device reports its level and OS through DeviceInformation.
+      operationId: createDevice
+      parameters:
+        - description: The tenant id, or `ext:` and the account's external id for it.
+          in: path
+          name: tenant
+          required: true
+          schema:
+            maxLength: 260
+            minLength: 1
+            type: string
+        - description: 'Makes a retry safe (IETF draft): the first response is stored for 24 hours and replayed, with Idempotent-Replayed, for a retry by the same caller with the same key, method, path, and body. The same key with another request answers 422; a retry while the first runs answers 409.'
+          in: header
+          name: Idempotency-Key
+          schema:
+            maxLength: 255
+            minLength: 1
+            type: string
+        - description: 'For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.'
+          in: header
+          name: Mdm-Actor
+          schema:
+            maxLength: 255
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateDeviceRequest'
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EnrollmentResponse'
+          description: The device and its enrollment profile.
+        "400":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The request could not be decoded or a parameter is malformed.
+        "401":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The bearer token is missing or wrong.
+        "403":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller reaches the resource but its scopes or role do not allow the operation.
+        "404":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The tenant, member, group, or device does not exist, was removed, or is outside the caller's reach.
+        "409":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: 'A unique value is taken (an external id, a group priority), the device is not in a state that allows this operation, a request with the same Idempotency-Key is still in progress, the tenant is being deleted (tenant_deleting), or a licence refuses the write (licence_exceeded: a device, tenant, or people limit; licence_expired: the tenant''s licence has ended).'
+        "422":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The body is well formed but fails validation.
+        "429":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller is over its rate limit.
+          headers:
+            Retry-After:
+              description: Seconds to wait.
+              schema:
+                type: integer
+              style: simple
+      security:
+        - clientCredentials: []
+        - bearerAuth: []
+      summary: Register a device
+      tags:
+        - devices
+  /api/v1/tenants/{tenant}/devices/{id}:
+    delete:
+      description: Marks the device removed. Later webhooks for its enrollment are ignored and API calls on it return 404. The MDM server keeps the enrollment until the device is erased or its enrollment profile is removed.
+      operationId: deleteDevice
+      parameters:
+        - description: The tenant id, or `ext:` and the account's external id for it.
+          in: path
+          name: tenant
+          required: true
+          schema:
+            maxLength: 260
+            minLength: 1
+            type: string
+        - in: path
+          name: id
+          required: true
+          schema:
+            format: uuid
+            type: string
+        - description: 'For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.'
+          in: header
+          name: Mdm-Actor
+          schema:
+            maxLength: 255
+            type: string
+      responses:
+        "204":
+          description: The device was removed.
+        "400":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The request could not be decoded or a parameter is malformed.
+        "401":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The bearer token is missing or wrong.
+        "403":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller reaches the resource but its scopes or role do not allow the operation.
+        "404":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The tenant, member, group, or device does not exist, was removed, or is outside the caller's reach.
+        "409":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: 'A unique value is taken (an external id, a group priority), the device is not in a state that allows this operation, a request with the same Idempotency-Key is still in progress, the tenant is being deleted (tenant_deleting), or a licence refuses the write (licence_exceeded: a device, tenant, or people limit; licence_expired: the tenant''s licence has ended).'
+        "429":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller is over its rate limit.
+          headers:
+            Retry-After:
+              description: Seconds to wait.
+              schema:
+                type: integer
+              style: simple
+      security:
+        - clientCredentials: []
+        - bearerAuth: []
+      summary: Remove a device
+      tags:
+        - devices
+    get:
+      operationId: getDevice
+      parameters:
+        - description: The tenant id, or `ext:` and the account's external id for it.
+          in: path
+          name: tenant
+          required: true
+          schema:
+            maxLength: 260
+            minLength: 1
+            type: string
+        - in: path
+          name: id
+          required: true
+          schema:
+            format: uuid
+            type: string
+        - description: 'For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.'
+          in: header
+          name: Mdm-Actor
+          schema:
+            maxLength: 255
+            type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Device'
+          description: The device.
+        "400":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The request could not be decoded or a parameter is malformed.
+        "401":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The bearer token is missing or wrong.
+        "403":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller reaches the resource but its scopes or role do not allow the operation.
+        "404":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The tenant, member, group, or device does not exist, was removed, or is outside the caller's reach.
+        "429":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller is over its rate limit.
+          headers:
+            Retry-After:
+              description: Seconds to wait.
+              schema:
+                type: integer
+              style: simple
+      security:
+        - clientCredentials: []
+        - bearerAuth: []
+      summary: Get a device
+      tags:
+        - devices
+  /api/v1/tenants/{tenant}/devices/{id}/commands:
+    get:
+      description: Every command sent to the device, newest first.
+      operationId: listCommands
+      parameters:
+        - description: The tenant id, or `ext:` and the account's external id for it.
+          in: path
+          name: tenant
+          required: true
+          schema:
+            maxLength: 260
+            minLength: 1
+            type: string
+        - in: path
+          name: id
+          required: true
+          schema:
+            format: uuid
+            type: string
+        - description: 'For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.'
+          in: header
+          name: Mdm-Actor
+          schema:
+            maxLength: 255
+            type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/Command'
+                type: array
+          description: The commands.
+        "400":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The request could not be decoded or a parameter is malformed.
+        "401":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The bearer token is missing or wrong.
+        "403":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller reaches the resource but its scopes or role do not allow the operation.
+        "404":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The tenant, member, group, or device does not exist, was removed, or is outside the caller's reach.
+        "429":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller is over its rate limit.
+          headers:
+            Retry-After:
+              description: Seconds to wait.
+              schema:
+                type: integer
+              style: simple
+      security:
+        - clientCredentials: []
+        - bearerAuth: []
+      summary: Command history
+      tags:
+        - commands
+    post:
+      description: Accepts a command for an enrolled device. It is handed to the MDM server after the request commits; its status says where it is (GET .../commands/{command}). Returns 409 for any other device.
+      operationId: createCommand
+      parameters:
+        - description: The tenant id, or `ext:` and the account's external id for it.
+          in: path
+          name: tenant
+          required: true
+          schema:
+            maxLength: 260
+            minLength: 1
+            type: string
+        - in: path
+          name: id
+          required: true
+          schema:
+            format: uuid
+            type: string
+        - description: 'Makes a retry safe (IETF draft): the first response is stored for 24 hours and replayed, with Idempotent-Replayed, for a retry by the same caller with the same key, method, path, and body. The same key with another request answers 422; a retry while the first runs answers 409.'
+          in: header
+          name: Idempotency-Key
+          schema:
+            maxLength: 255
+            minLength: 1
+            type: string
+        - description: 'For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.'
+          in: header
+          name: Mdm-Actor
+          schema:
+            maxLength: 255
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CommandRequest'
+        required: true
+      responses:
+        "202":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CommandAccepted'
+          description: The command was queued.
+        "400":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The request could not be decoded or a parameter is malformed.
+        "401":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The bearer token is missing or wrong.
+        "403":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller reaches the resource but its scopes or role do not allow the operation.
+        "404":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The tenant, member, group, or device does not exist, was removed, or is outside the caller's reach.
+        "409":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: 'A unique value is taken (an external id, a group priority), the device is not in a state that allows this operation, a request with the same Idempotency-Key is still in progress, the tenant is being deleted (tenant_deleting), or a licence refuses the write (licence_exceeded: a device, tenant, or people limit; licence_expired: the tenant''s licence has ended).'
+        "422":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The body is well formed but fails validation.
+        "429":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller is over its rate limit.
+          headers:
+            Retry-After:
+              description: Seconds to wait.
+              schema:
+                type: integer
+              style: simple
+      security:
+        - clientCredentials: []
+        - bearerAuth: []
+      summary: Send a command
+      tags:
+        - commands
+  /api/v1/tenants/{tenant}/devices/{id}/commands/{command}:
+    get:
+      description: 'One command sent to the device, by the command_uuid it was accepted with: the same record the command history lists. 404 when the device has no such command.'
+      operationId: getCommand
+      parameters:
+        - description: The tenant id, or `ext:` and the account's external id for it.
+          in: path
+          name: tenant
+          required: true
+          schema:
+            maxLength: 260
+            minLength: 1
+            type: string
+        - in: path
+          name: id
+          required: true
+          schema:
+            format: uuid
+            type: string
+        - description: The command_uuid the command was accepted with.
+          in: path
+          name: command
+          required: true
+          schema:
+            format: uuid
+            type: string
+        - description: 'For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.'
+          in: header
+          name: Mdm-Actor
+          schema:
+            maxLength: 255
+            type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Command'
+          description: The command.
+        "400":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The request could not be decoded or a parameter is malformed.
+        "401":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The bearer token is missing or wrong.
+        "403":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller reaches the resource but its scopes or role do not allow the operation.
+        "404":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The tenant, member, group, or device does not exist, was removed, or is outside the caller's reach.
+        "429":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller is over its rate limit.
+          headers:
+            Retry-After:
+              description: Seconds to wait.
+              schema:
+                type: integer
+              style: simple
+      security:
+        - clientCredentials: []
+        - bearerAuth: []
+      summary: Get a command
+      tags:
+        - commands
+  /api/v1/tenants/{tenant}/devices/{id}/ddm:
+    get:
+      description: The device's declarative management stage and the state it reported for each current declaration (from management.declarations).
+      operationId: getDeviceDDM
+      parameters:
+        - description: The tenant id, or `ext:` and the account's external id for it.
+          in: path
+          name: tenant
+          required: true
+          schema:
+            maxLength: 260
+            minLength: 1
+            type: string
+        - in: path
+          name: id
+          required: true
+          schema:
+            format: uuid
+            type: string
+        - description: 'For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.'
+          in: header
+          name: Mdm-Actor
+          schema:
+            maxLength: 255
+            type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeviceDDM'
+          description: The state.
+        "400":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The request could not be decoded or a parameter is malformed.
+        "401":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The bearer token is missing or wrong.
+        "403":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller reaches the resource but its scopes or role do not allow the operation.
+        "404":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The tenant, member, group, or device does not exist, was removed, or is outside the caller's reach.
+        "429":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller is over its rate limit.
+          headers:
+            Retry-After:
+              description: Seconds to wait.
+              schema:
+                type: integer
+              style: simple
+      security:
+        - clientCredentials: []
+        - bearerAuth: []
+      summary: Declarative management state
+      tags:
+        - devices
+  /api/v1/tenants/{tenant}/devices/{id}/effective-policy:
+    get:
+      description: 'Each effective item with its source (a profile assigned to the tenant, a group, the member, or the device, or the device''s own settings), the sources it overrode, and the sources in its own layer that set the same item and lost (conflicts: the lower profile id wins). Profiles assigned to the tenant, the member''s groups (the higher priority wins between groups), the member, and the device merge in that order for the device''s level, then the device''s own settings. Until the level is known only the device''s own settings apply.'
+      operationId: getEffectivePolicy
+      parameters:
+        - description: The tenant id, or `ext:` and the account's external id for it.
+          in: path
+          name: tenant
+          required: true
+          schema:
+            maxLength: 260
+            minLength: 1
+            type: string
+        - in: path
+          name: id
+          required: true
+          schema:
+            format: uuid
+            type: string
+        - description: 'For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.'
+          in: header
+          name: Mdm-Actor
+          schema:
+            maxLength: 255
+            type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EffectivePolicy'
+          description: The effective policy.
+        "400":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The request could not be decoded or a parameter is malformed.
+        "401":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The bearer token is missing or wrong.
+        "403":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller reaches the resource but its scopes or role do not allow the operation.
+        "404":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The tenant, member, group, or device does not exist, was removed, or is outside the caller's reach.
+        "429":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller is over its rate limit.
+          headers:
+            Retry-After:
+              description: Seconds to wait.
+              schema:
+                type: integer
+              style: simple
+      security:
+        - clientCredentials: []
+        - bearerAuth: []
+      summary: Get the device's effective policy with provenance
+      tags:
+        - policy
+  /api/v1/tenants/{tenant}/devices/{id}/enrollment-link:
+    post:
+      description: Issues a new enrollment token and SCEP challenge, which invalidates earlier profiles and links, and returns a public link that serves the profile built from them, plus the same profile for a direct download. The link works for 24 hours, until the device enrolls, or until a new link or profile is issued. Open it on the iPhone (scan it as a QR code) to download the profile. Returns 409 once the device is bound to an enrollment.
+      operationId: createEnrollmentLink
+      parameters:
+        - description: The tenant id, or `ext:` and the account's external id for it.
+          in: path
+          name: tenant
+          required: true
+          schema:
+            maxLength: 260
+            minLength: 1
+            type: string
+        - in: path
+          name: id
+          required: true
+          schema:
+            format: uuid
+            type: string
+        - description: 'Makes a retry safe (IETF draft): the first response is stored for 24 hours and replayed, with Idempotent-Replayed, for a retry by the same caller with the same key, method, path, and body. The same key with another request answers 422; a retry while the first runs answers 409.'
+          in: header
+          name: Idempotency-Key
+          schema:
+            maxLength: 255
+            minLength: 1
+            type: string
+        - description: 'For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.'
+          in: header
+          name: Mdm-Actor
+          schema:
+            maxLength: 255
+            type: string
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EnrollmentLinkResponse'
+          description: The link and the profile it serves.
+        "400":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The request could not be decoded or a parameter is malformed.
+        "401":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The bearer token is missing or wrong.
+        "403":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller reaches the resource but its scopes or role do not allow the operation.
+        "404":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The tenant, member, group, or device does not exist, was removed, or is outside the caller's reach.
+        "409":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: 'A unique value is taken (an external id, a group priority), the device is not in a state that allows this operation, a request with the same Idempotency-Key is still in progress, the tenant is being deleted (tenant_deleting), or a licence refuses the write (licence_exceeded: a device, tenant, or people limit; licence_expired: the tenant''s licence has ended).'
+        "422":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The body is well formed but fails validation.
+        "429":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller is over its rate limit.
+          headers:
+            Retry-After:
+              description: Seconds to wait.
+              schema:
+                type: integer
+              style: simple
+      security:
+        - clientCredentials: []
+        - bearerAuth: []
+      summary: Create a one-time enrollment link
+      tags:
+        - devices
+  /api/v1/tenants/{tenant}/devices/{id}/enrollment-profile:
+    post:
+      description: Issues a new enrollment token and SCEP challenge, which invalidates the previous ones, and returns the new profile. Returns 409 once the device is bound to an enrollment.
+      operationId: reissueEnrollmentProfile
+      parameters:
+        - description: The tenant id, or `ext:` and the account's external id for it.
+          in: path
+          name: tenant
+          required: true
+          schema:
+            maxLength: 260
+            minLength: 1
+            type: string
+        - in: path
+          name: id
+          required: true
+          schema:
+            format: uuid
+            type: string
+        - description: 'Makes a retry safe (IETF draft): the first response is stored for 24 hours and replayed, with Idempotent-Replayed, for a retry by the same caller with the same key, method, path, and body. The same key with another request answers 422; a retry while the first runs answers 409.'
+          in: header
+          name: Idempotency-Key
+          schema:
+            maxLength: 255
+            minLength: 1
+            type: string
+        - description: 'For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.'
+          in: header
+          name: Mdm-Actor
+          schema:
+            maxLength: 255
+            type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EnrollmentResponse'
+          description: The device and its new enrollment profile.
+        "400":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The request could not be decoded or a parameter is malformed.
+        "401":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The bearer token is missing or wrong.
+        "403":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller reaches the resource but its scopes or role do not allow the operation.
+        "404":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The tenant, member, group, or device does not exist, was removed, or is outside the caller's reach.
+        "409":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: 'A unique value is taken (an external id, a group priority), the device is not in a state that allows this operation, a request with the same Idempotency-Key is still in progress, the tenant is being deleted (tenant_deleting), or a licence refuses the write (licence_exceeded: a device, tenant, or people limit; licence_expired: the tenant''s licence has ended).'
+        "422":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The body is well formed but fails validation.
+        "429":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller is over its rate limit.
+          headers:
+            Retry-After:
+              description: Seconds to wait.
+              schema:
+                type: integer
+              style: simple
+      security:
+        - clientCredentials: []
+        - bearerAuth: []
+      summary: Issue a fresh enrollment profile
+      tags:
+        - devices
+  /api/v1/tenants/{tenant}/devices/{id}/member:
+    delete:
+      operationId: clearDeviceMember
+      parameters:
+        - description: The tenant id, or `ext:` and the account's external id for it.
+          in: path
+          name: tenant
+          required: true
+          schema:
+            maxLength: 260
+            minLength: 1
+            type: string
+        - in: path
+          name: id
+          required: true
+          schema:
+            format: uuid
+            type: string
+        - description: 'For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.'
+          in: header
+          name: Mdm-Actor
+          schema:
+            maxLength: 255
+            type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Device'
+          description: The device.
+        "400":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The request could not be decoded or a parameter is malformed.
+        "401":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The bearer token is missing or wrong.
+        "403":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller reaches the resource but its scopes or role do not allow the operation.
+        "404":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The tenant, member, group, or device does not exist, was removed, or is outside the caller's reach.
+        "409":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: 'A unique value is taken (an external id, a group priority), the device is not in a state that allows this operation, a request with the same Idempotency-Key is still in progress, the tenant is being deleted (tenant_deleting), or a licence refuses the write (licence_exceeded: a device, tenant, or people limit; licence_expired: the tenant''s licence has ended).'
+        "429":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller is over its rate limit.
+          headers:
+            Retry-After:
+              description: Seconds to wait.
+              schema:
+                type: integer
+              style: simple
+      security:
+        - clientCredentials: []
+        - bearerAuth: []
+      summary: Give a device back to the tenant
+      tags:
+        - devices
+    put:
+      operationId: setDeviceMember
+      parameters:
+        - description: The tenant id, or `ext:` and the account's external id for it.
+          in: path
+          name: tenant
+          required: true
+          schema:
+            maxLength: 260
+            minLength: 1
+            type: string
+        - in: path
+          name: id
+          required: true
+          schema:
+            format: uuid
+            type: string
+        - description: 'For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.'
+          in: header
+          name: Mdm-Actor
+          schema:
+            maxLength: 255
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeviceMemberRequest'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Device'
+          description: The device.
+        "400":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The request could not be decoded or a parameter is malformed.
+        "401":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The bearer token is missing or wrong.
+        "403":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller reaches the resource but its scopes or role do not allow the operation.
+        "404":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The tenant, member, group, or device does not exist, was removed, or is outside the caller's reach.
+        "409":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: 'A unique value is taken (an external id, a group priority), the device is not in a state that allows this operation, a request with the same Idempotency-Key is still in progress, the tenant is being deleted (tenant_deleting), or a licence refuses the write (licence_exceeded: a device, tenant, or people limit; licence_expired: the tenant''s licence has ended).'
+        "422":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The body is well formed but fails validation.
+        "429":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller is over its rate limit.
+          headers:
+            Retry-After:
+              description: Seconds to wait.
+              schema:
+                type: integer
+              style: simple
+      security:
+        - clientCredentials: []
+        - bearerAuth: []
+      summary: Give a device to a member
+      tags:
+        - devices
+  /api/v1/tenants/{tenant}/devices/{id}/settings:
+    delete:
+      description: Removes the device's own items and rebuilds its effective policy. When nothing is left, the policy's revision increments, its status turns removing, and its declarations leave an enrolled device's set; the device removes what they installed, and the policy is deleted once the device reports them gone. A policy never deployed is deleted at once.
+      operationId: deleteDeviceSettings
+      parameters:
+        - description: The tenant id, or `ext:` and the account's external id for it.
+          in: path
+          name: tenant
+          required: true
+          schema:
+            maxLength: 260
+            minLength: 1
+            type: string
+        - in: path
+          name: id
+          required: true
+          schema:
+            format: uuid
+            type: string
+        - description: 'For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.'
+          in: header
+          name: Mdm-Actor
+          schema:
+            maxLength: 255
+            type: string
+      responses:
+        "202":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Device'
+          description: The device.
+        "400":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The request could not be decoded or a parameter is malformed.
+        "401":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The bearer token is missing or wrong.
+        "403":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller reaches the resource but its scopes or role do not allow the operation.
+        "404":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The tenant, member, group, or device does not exist, was removed, or is outside the caller's reach.
+        "409":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: 'A unique value is taken (an external id, a group priority), the device is not in a state that allows this operation, a request with the same Idempotency-Key is still in progress, the tenant is being deleted (tenant_deleting), or a licence refuses the write (licence_exceeded: a device, tenant, or people limit; licence_expired: the tenant''s licence has ended).'
+        "429":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller is over its rate limit.
+          headers:
+            Retry-After:
+              description: Seconds to wait.
+              schema:
+                type: integer
+              style: simple
+      security:
+        - clientCredentials: []
+        - bearerAuth: []
+      summary: Remove the device's own settings
+      tags:
+        - policy
+    get:
+      description: 'The device''s own items, the most specific layer of its effective policy. Secret values show as {"secret": "set"}.'
+      operationId: getDeviceSettings
+      parameters:
+        - description: The tenant id, or `ext:` and the account's external id for it.
+          in: path
+          name: tenant
+          required: true
+          schema:
+            maxLength: 260
+            minLength: 1
+            type: string
+        - in: path
+          name: id
+          required: true
+          schema:
+            format: uuid
+            type: string
+        - description: 'For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.'
+          in: header
+          name: Mdm-Actor
+          schema:
+            maxLength: 255
+            type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Policy'
+          description: The device's own items.
+        "400":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The request could not be decoded or a parameter is malformed.
+        "401":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The bearer token is missing or wrong.
+        "403":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller reaches the resource but its scopes or role do not allow the operation.
+        "404":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The tenant, member, group, or device does not exist, was removed, or is outside the caller's reach.
+        "429":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller is over its rate limit.
+          headers:
+            Retry-After:
+              description: Seconds to wait.
+              schema:
+                type: integer
+              style: simple
+      security:
+        - clientCredentials: []
+        - bearerAuth: []
+      summary: Get the device's own settings
+      tags:
+        - policy
+    put:
+      description: Replaces the device's own items and rebuilds its effective policy (its assigned profiles, then these items). When the result changes its revision increments and its status turns pending. An enrolled device whose level and OS are known gets it as declarations built for its level now, announced with a DeclarativeManagement command. Any other device gets them once DeviceInformation reports its level and OS. Devices below iOS and iPadOS 17 get none. The status turns applied when the device reports every declaration valid and active. An empty list removes the settings.
+      operationId: putDeviceSettings
+      parameters:
+        - description: The tenant id, or `ext:` and the account's external id for it.
+          in: path
+          name: tenant
+          required: true
+          schema:
+            maxLength: 260
+            minLength: 1
+            type: string
+        - in: path
+          name: id
+          required: true
+          schema:
+            format: uuid
+            type: string
+        - description: 'For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.'
+          in: header
+          name: Mdm-Actor
+          schema:
+            maxLength: 255
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Policy'
+        required: true
+      responses:
+        "202":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Device'
+          description: The device with its effective policy.
+        "400":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The request could not be decoded or a parameter is malformed.
+        "401":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The bearer token is missing or wrong.
+        "403":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller reaches the resource but its scopes or role do not allow the operation.
+        "404":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The tenant, member, group, or device does not exist, was removed, or is outside the caller's reach.
+        "409":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: 'A unique value is taken (an external id, a group priority), the device is not in a state that allows this operation, a request with the same Idempotency-Key is still in progress, the tenant is being deleted (tenant_deleting), or a licence refuses the write (licence_exceeded: a device, tenant, or people limit; licence_expired: the tenant''s licence has ended).'
+        "422":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The body is well formed but fails validation.
+        "429":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller is over its rate limit.
+          headers:
+            Retry-After:
+              description: Seconds to wait.
+              schema:
+                type: integer
+              style: simple
+      security:
+        - clientCredentials: []
+        - bearerAuth: []
+      summary: Set the device's own settings
+      tags:
+        - policy
+  /api/v1/tenants/{tenant}/groups:
+    get:
+      description: Every group of the tenant, highest priority first.
+      operationId: listGroups
+      parameters:
+        - description: The tenant id, or `ext:` and the account's external id for it.
+          in: path
+          name: tenant
+          required: true
+          schema:
+            maxLength: 260
+            minLength: 1
+            type: string
+        - description: 'For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.'
+          in: header
+          name: Mdm-Actor
+          schema:
+            maxLength: 255
+            type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/Group'
+                type: array
+          description: The groups.
+        "400":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The request could not be decoded or a parameter is malformed.
+        "401":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The bearer token is missing or wrong.
+        "403":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller reaches the resource but its scopes or role do not allow the operation.
+        "404":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The tenant, member, group, or device does not exist, was removed, or is outside the caller's reach.
+        "429":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller is over its rate limit.
+          headers:
+            Retry-After:
+              description: Seconds to wait.
+              schema:
+                type: integer
+              style: simple
+      security:
+        - clientCredentials: []
+        - bearerAuth: []
+      summary: List groups
+      tags:
+        - members
+    post:
+      description: A group is a flat set of members. When profiles assigned to two groups set the same item, the higher priority wins. Priorities are unique in the tenant; 409 when it is taken.
+      operationId: createGroup
+      parameters:
+        - description: The tenant id, or `ext:` and the account's external id for it.
+          in: path
+          name: tenant
+          required: true
+          schema:
+            maxLength: 260
+            minLength: 1
+            type: string
+        - description: 'Makes a retry safe (IETF draft): the first response is stored for 24 hours and replayed, with Idempotent-Replayed, for a retry by the same caller with the same key, method, path, and body. The same key with another request answers 422; a retry while the first runs answers 409.'
+          in: header
+          name: Idempotency-Key
+          schema:
+            maxLength: 255
+            minLength: 1
+            type: string
+        - description: 'For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.'
+          in: header
+          name: Mdm-Actor
+          schema:
+            maxLength: 255
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GroupRequest'
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Group'
+          description: The group.
+        "400":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The request could not be decoded or a parameter is malformed.
+        "401":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The bearer token is missing or wrong.
+        "403":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller reaches the resource but its scopes or role do not allow the operation.
+        "404":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The tenant, member, group, or device does not exist, was removed, or is outside the caller's reach.
+        "409":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: 'A unique value is taken (an external id, a group priority), the device is not in a state that allows this operation, a request with the same Idempotency-Key is still in progress, the tenant is being deleted (tenant_deleting), or a licence refuses the write (licence_exceeded: a device, tenant, or people limit; licence_expired: the tenant''s licence has ended).'
+        "422":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The body is well formed but fails validation.
+        "429":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller is over its rate limit.
+          headers:
+            Retry-After:
+              description: Seconds to wait.
+              schema:
+                type: integer
+              style: simple
+      security:
+        - clientCredentials: []
+        - bearerAuth: []
+      summary: Create a group
+      tags:
+        - members
+  /api/v1/tenants/{tenant}/groups/{group}:
+    delete:
+      description: Its members stay; only the memberships go.
+      operationId: deleteGroup
+      parameters:
+        - description: The tenant id, or `ext:` and the account's external id for it.
+          in: path
+          name: tenant
+          required: true
+          schema:
+            maxLength: 260
+            minLength: 1
+            type: string
+        - in: path
+          name: group
+          required: true
+          schema:
+            format: uuid
+            type: string
+        - description: 'For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.'
+          in: header
+          name: Mdm-Actor
+          schema:
+            maxLength: 255
+            type: string
+      responses:
+        "204":
+          description: The group was deleted.
+        "400":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The request could not be decoded or a parameter is malformed.
+        "401":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The bearer token is missing or wrong.
+        "403":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller reaches the resource but its scopes or role do not allow the operation.
+        "404":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The tenant, member, group, or device does not exist, was removed, or is outside the caller's reach.
+        "409":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: 'A unique value is taken (an external id, a group priority), the device is not in a state that allows this operation, a request with the same Idempotency-Key is still in progress, the tenant is being deleted (tenant_deleting), or a licence refuses the write (licence_exceeded: a device, tenant, or people limit; licence_expired: the tenant''s licence has ended).'
+        "429":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller is over its rate limit.
+          headers:
+            Retry-After:
+              description: Seconds to wait.
+              schema:
+                type: integer
+              style: simple
+      security:
+        - clientCredentials: []
+        - bearerAuth: []
+      summary: Delete a group
+      tags:
+        - members
+    get:
+      operationId: getGroup
+      parameters:
+        - description: The tenant id, or `ext:` and the account's external id for it.
+          in: path
+          name: tenant
+          required: true
+          schema:
+            maxLength: 260
+            minLength: 1
+            type: string
+        - in: path
+          name: group
+          required: true
+          schema:
+            format: uuid
+            type: string
+        - description: 'For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.'
+          in: header
+          name: Mdm-Actor
+          schema:
+            maxLength: 255
+            type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Group'
+          description: The group.
+        "400":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The request could not be decoded or a parameter is malformed.
+        "401":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The bearer token is missing or wrong.
+        "403":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller reaches the resource but its scopes or role do not allow the operation.
+        "404":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The tenant, member, group, or device does not exist, was removed, or is outside the caller's reach.
+        "429":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller is over its rate limit.
+          headers:
+            Retry-After:
+              description: Seconds to wait.
+              schema:
+                type: integer
+              style: simple
+      security:
+        - clientCredentials: []
+        - bearerAuth: []
+      summary: Get a group
+      tags:
+        - members
+    patch:
+      operationId: updateGroup
+      parameters:
+        - description: The tenant id, or `ext:` and the account's external id for it.
+          in: path
+          name: tenant
+          required: true
+          schema:
+            maxLength: 260
+            minLength: 1
+            type: string
+        - in: path
+          name: group
+          required: true
+          schema:
+            format: uuid
+            type: string
+        - description: 'For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.'
+          in: header
+          name: Mdm-Actor
+          schema:
+            maxLength: 255
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GroupUpdate'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Group'
+          description: The group.
+        "400":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The request could not be decoded or a parameter is malformed.
+        "401":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The bearer token is missing or wrong.
+        "403":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller reaches the resource but its scopes or role do not allow the operation.
+        "404":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The tenant, member, group, or device does not exist, was removed, or is outside the caller's reach.
+        "409":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: 'A unique value is taken (an external id, a group priority), the device is not in a state that allows this operation, a request with the same Idempotency-Key is still in progress, the tenant is being deleted (tenant_deleting), or a licence refuses the write (licence_exceeded: a device, tenant, or people limit; licence_expired: the tenant''s licence has ended).'
+        "422":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The body is well formed but fails validation.
+        "429":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller is over its rate limit.
+          headers:
+            Retry-After:
+              description: Seconds to wait.
+              schema:
+                type: integer
+              style: simple
+      security:
+        - clientCredentials: []
+        - bearerAuth: []
+      summary: Update a group
+      tags:
+        - members
+  /api/v1/tenants/{tenant}/groups/{group}/members:
+    get:
+      operationId: listGroupMembers
+      parameters:
+        - description: The tenant id, or `ext:` and the account's external id for it.
+          in: path
+          name: tenant
+          required: true
+          schema:
+            maxLength: 260
+            minLength: 1
+            type: string
+        - in: path
+          name: group
+          required: true
+          schema:
+            format: uuid
+            type: string
+        - description: 'For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.'
+          in: header
+          name: Mdm-Actor
+          schema:
+            maxLength: 255
+            type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/Member'
+                type: array
+          description: The members.
+        "400":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The request could not be decoded or a parameter is malformed.
+        "401":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The bearer token is missing or wrong.
+        "403":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller reaches the resource but its scopes or role do not allow the operation.
+        "404":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The tenant, member, group, or device does not exist, was removed, or is outside the caller's reach.
+        "429":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller is over its rate limit.
+          headers:
+            Retry-After:
+              description: Seconds to wait.
+              schema:
+                type: integer
+              style: simple
+      security:
+        - clientCredentials: []
+        - bearerAuth: []
+      summary: List a group's members
+      tags:
+        - members
+  /api/v1/tenants/{tenant}/groups/{group}/members/{member}:
+    delete:
+      operationId: removeGroupMember
+      parameters:
+        - description: The tenant id, or `ext:` and the account's external id for it.
+          in: path
+          name: tenant
+          required: true
+          schema:
+            maxLength: 260
+            minLength: 1
+            type: string
+        - in: path
+          name: group
+          required: true
+          schema:
+            format: uuid
+            type: string
+        - description: The member id, or `ext:` and the account's id for the member.
+          in: path
+          name: member
+          required: true
+          schema:
+            maxLength: 260
+            minLength: 1
+            type: string
+        - description: 'For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.'
+          in: header
+          name: Mdm-Actor
+          schema:
+            maxLength: 255
+            type: string
+      responses:
+        "204":
+          description: The member left the group.
+        "400":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The request could not be decoded or a parameter is malformed.
+        "401":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The bearer token is missing or wrong.
+        "403":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller reaches the resource but its scopes or role do not allow the operation.
+        "404":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The tenant, member, group, or device does not exist, was removed, or is outside the caller's reach.
+        "409":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: 'A unique value is taken (an external id, a group priority), the device is not in a state that allows this operation, a request with the same Idempotency-Key is still in progress, the tenant is being deleted (tenant_deleting), or a licence refuses the write (licence_exceeded: a device, tenant, or people limit; licence_expired: the tenant''s licence has ended).'
+        "429":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller is over its rate limit.
+          headers:
+            Retry-After:
+              description: Seconds to wait.
+              schema:
+                type: integer
+              style: simple
+      security:
+        - clientCredentials: []
+        - bearerAuth: []
+      summary: Remove a member from a group
+      tags:
+        - members
+    put:
+      description: Adding a member already in the group changes nothing.
+      operationId: addGroupMember
+      parameters:
+        - description: The tenant id, or `ext:` and the account's external id for it.
+          in: path
+          name: tenant
+          required: true
+          schema:
+            maxLength: 260
+            minLength: 1
+            type: string
+        - in: path
+          name: group
+          required: true
+          schema:
+            format: uuid
+            type: string
+        - description: The member id, or `ext:` and the account's id for the member.
+          in: path
+          name: member
+          required: true
+          schema:
+            maxLength: 260
+            minLength: 1
+            type: string
+        - description: 'For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.'
+          in: header
+          name: Mdm-Actor
+          schema:
+            maxLength: 255
+            type: string
+      responses:
+        "204":
+          description: The member is in the group.
+        "400":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The request could not be decoded or a parameter is malformed.
+        "401":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The bearer token is missing or wrong.
+        "403":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller reaches the resource but its scopes or role do not allow the operation.
+        "404":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The tenant, member, group, or device does not exist, was removed, or is outside the caller's reach.
+        "409":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: 'A unique value is taken (an external id, a group priority), the device is not in a state that allows this operation, a request with the same Idempotency-Key is still in progress, the tenant is being deleted (tenant_deleting), or a licence refuses the write (licence_exceeded: a device, tenant, or people limit; licence_expired: the tenant''s licence has ended).'
+        "429":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller is over its rate limit.
+          headers:
+            Retry-After:
+              description: Seconds to wait.
+              schema:
+                type: integer
+              style: simple
+      security:
+        - clientCredentials: []
+        - bearerAuth: []
+      summary: Add a member to a group
+      tags:
+        - members
+  /api/v1/tenants/{tenant}/members:
+    get:
+      description: Every member of the tenant, oldest first.
+      operationId: listMembers
+      parameters:
+        - description: The tenant id, or `ext:` and the account's external id for it.
+          in: path
+          name: tenant
+          required: true
+          schema:
+            maxLength: 260
+            minLength: 1
+            type: string
+        - description: 'For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.'
+          in: header
+          name: Mdm-Actor
+          schema:
+            maxLength: 255
+            type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/Member'
+                type: array
+          description: The members.
+        "400":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The request could not be decoded or a parameter is malformed.
+        "401":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The bearer token is missing or wrong.
+        "403":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller reaches the resource but its scopes or role do not allow the operation.
+        "404":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The tenant, member, group, or device does not exist, was removed, or is outside the caller's reach.
+        "429":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller is over its rate limit.
+          headers:
+            Retry-After:
+              description: Seconds to wait.
+              schema:
+                type: integer
+              style: simple
+      security:
+        - clientCredentials: []
+        - bearerAuth: []
+      summary: List members
+      tags:
+        - members
+    post:
+      description: A member is a person as an owner of devices. external_id is the account's own id for the person, unique in the tenant; 409 when it is taken.
+      operationId: createMember
+      parameters:
+        - description: The tenant id, or `ext:` and the account's external id for it.
+          in: path
+          name: tenant
+          required: true
+          schema:
+            maxLength: 260
+            minLength: 1
+            type: string
+        - description: 'Makes a retry safe (IETF draft): the first response is stored for 24 hours and replayed, with Idempotent-Replayed, for a retry by the same caller with the same key, method, path, and body. The same key with another request answers 422; a retry while the first runs answers 409.'
+          in: header
+          name: Idempotency-Key
+          schema:
+            maxLength: 255
+            minLength: 1
+            type: string
+        - description: 'For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.'
+          in: header
+          name: Mdm-Actor
+          schema:
+            maxLength: 255
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MemberRequest'
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Member'
+          description: The member.
+        "400":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The request could not be decoded or a parameter is malformed.
+        "401":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The bearer token is missing or wrong.
+        "403":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller reaches the resource but its scopes or role do not allow the operation.
+        "404":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The tenant, member, group, or device does not exist, was removed, or is outside the caller's reach.
+        "409":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: 'A unique value is taken (an external id, a group priority), the device is not in a state that allows this operation, a request with the same Idempotency-Key is still in progress, the tenant is being deleted (tenant_deleting), or a licence refuses the write (licence_exceeded: a device, tenant, or people limit; licence_expired: the tenant''s licence has ended).'
+        "422":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The body is well formed but fails validation.
+        "429":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller is over its rate limit.
+          headers:
+            Retry-After:
+              description: Seconds to wait.
+              schema:
+                type: integer
+              style: simple
+      security:
+        - clientCredentials: []
+        - bearerAuth: []
+      summary: Create a member
+      tags:
+        - members
+  /api/v1/tenants/{tenant}/members/{member}:
+    delete:
+      description: The member leaves its groups and its devices become the tenant's.
+      operationId: deleteMember
+      parameters:
+        - description: The tenant id, or `ext:` and the account's external id for it.
+          in: path
+          name: tenant
+          required: true
+          schema:
+            maxLength: 260
+            minLength: 1
+            type: string
+        - description: The member id, or `ext:` and the account's id for the member.
+          in: path
+          name: member
+          required: true
+          schema:
+            maxLength: 260
+            minLength: 1
+            type: string
+        - description: 'For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.'
+          in: header
+          name: Mdm-Actor
+          schema:
+            maxLength: 255
+            type: string
+      responses:
+        "204":
+          description: The member was deleted.
+        "400":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The request could not be decoded or a parameter is malformed.
+        "401":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The bearer token is missing or wrong.
+        "403":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller reaches the resource but its scopes or role do not allow the operation.
+        "404":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The tenant, member, group, or device does not exist, was removed, or is outside the caller's reach.
+        "409":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: 'A unique value is taken (an external id, a group priority), the device is not in a state that allows this operation, a request with the same Idempotency-Key is still in progress, the tenant is being deleted (tenant_deleting), or a licence refuses the write (licence_exceeded: a device, tenant, or people limit; licence_expired: the tenant''s licence has ended).'
+        "429":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller is over its rate limit.
+          headers:
+            Retry-After:
+              description: Seconds to wait.
+              schema:
+                type: integer
+              style: simple
+      security:
+        - clientCredentials: []
+        - bearerAuth: []
+      summary: Delete a member
+      tags:
+        - members
+    get:
+      operationId: getMember
+      parameters:
+        - description: The tenant id, or `ext:` and the account's external id for it.
+          in: path
+          name: tenant
+          required: true
+          schema:
+            maxLength: 260
+            minLength: 1
+            type: string
+        - description: The member id, or `ext:` and the account's id for the member.
+          in: path
+          name: member
+          required: true
+          schema:
+            maxLength: 260
+            minLength: 1
+            type: string
+        - description: 'For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.'
+          in: header
+          name: Mdm-Actor
+          schema:
+            maxLength: 255
+            type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Member'
+          description: The member.
+        "400":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The request could not be decoded or a parameter is malformed.
+        "401":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The bearer token is missing or wrong.
+        "403":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller reaches the resource but its scopes or role do not allow the operation.
+        "404":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The tenant, member, group, or device does not exist, was removed, or is outside the caller's reach.
+        "429":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller is over its rate limit.
+          headers:
+            Retry-After:
+              description: Seconds to wait.
+              schema:
+                type: integer
+              style: simple
+      security:
+        - clientCredentials: []
+        - bearerAuth: []
+      summary: Get a member
+      tags:
+        - members
+    patch:
+      operationId: updateMember
+      parameters:
+        - description: The tenant id, or `ext:` and the account's external id for it.
+          in: path
+          name: tenant
+          required: true
+          schema:
+            maxLength: 260
+            minLength: 1
+            type: string
+        - description: The member id, or `ext:` and the account's id for the member.
+          in: path
+          name: member
+          required: true
+          schema:
+            maxLength: 260
+            minLength: 1
+            type: string
+        - description: 'For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.'
+          in: header
+          name: Mdm-Actor
+          schema:
+            maxLength: 255
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MemberUpdate'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Member'
+          description: The member.
+        "400":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The request could not be decoded or a parameter is malformed.
+        "401":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The bearer token is missing or wrong.
+        "403":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller reaches the resource but its scopes or role do not allow the operation.
+        "404":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The tenant, member, group, or device does not exist, was removed, or is outside the caller's reach.
+        "409":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: 'A unique value is taken (an external id, a group priority), the device is not in a state that allows this operation, a request with the same Idempotency-Key is still in progress, the tenant is being deleted (tenant_deleting), or a licence refuses the write (licence_exceeded: a device, tenant, or people limit; licence_expired: the tenant''s licence has ended).'
+        "422":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The body is well formed but fails validation.
+        "429":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller is over its rate limit.
+          headers:
+            Retry-After:
+              description: Seconds to wait.
+              schema:
+                type: integer
+              style: simple
+      security:
+        - clientCredentials: []
+        - bearerAuth: []
+      summary: Update a member
+      tags:
+        - members
+  /api/v1/tenants/{tenant}/profiles:
+    get:
+      description: 'Every profile of the tenant, oldest first. Secret values show as {"secret": "set"}.'
+      operationId: listProfiles
+      parameters:
+        - description: The tenant id, or `ext:` and the account's external id for it.
+          in: path
+          name: tenant
+          required: true
+          schema:
+            maxLength: 260
+            minLength: 1
+            type: string
+        - description: 'For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.'
+          in: header
+          name: Mdm-Actor
+          schema:
+            maxLength: 255
+            type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/Profile'
+                type: array
+          description: The profiles.
+        "400":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The request could not be decoded or a parameter is malformed.
+        "401":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The bearer token is missing or wrong.
+        "403":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller reaches the resource but its scopes or role do not allow the operation.
+        "404":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The tenant, member, group, or device does not exist, was removed, or is outside the caller's reach.
+        "429":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller is over its rate limit.
+          headers:
+            Retry-After:
+              description: Seconds to wait.
+              schema:
+                type: integer
+              style: simple
+      security:
+        - clientCredentials: []
+        - bearerAuth: []
+      summary: List profiles
+      tags:
+        - profiles
+    post:
+      description: A profile is a named item list of the tenant. It reaches devices through assignments.
+      operationId: createProfile
+      parameters:
+        - description: The tenant id, or `ext:` and the account's external id for it.
+          in: path
+          name: tenant
+          required: true
+          schema:
+            maxLength: 260
+            minLength: 1
+            type: string
+        - description: 'Makes a retry safe (IETF draft): the first response is stored for 24 hours and replayed, with Idempotent-Replayed, for a retry by the same caller with the same key, method, path, and body. The same key with another request answers 422; a retry while the first runs answers 409.'
+          in: header
+          name: Idempotency-Key
+          schema:
+            maxLength: 255
+            minLength: 1
+            type: string
+        - description: 'For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.'
+          in: header
+          name: Mdm-Actor
+          schema:
+            maxLength: 255
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProfileRequest'
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Profile'
+          description: The profile.
+        "400":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The request could not be decoded or a parameter is malformed.
+        "401":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The bearer token is missing or wrong.
+        "403":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller reaches the resource but its scopes or role do not allow the operation.
+        "404":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The tenant, member, group, or device does not exist, was removed, or is outside the caller's reach.
+        "409":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: 'A unique value is taken (an external id, a group priority), the device is not in a state that allows this operation, a request with the same Idempotency-Key is still in progress, the tenant is being deleted (tenant_deleting), or a licence refuses the write (licence_exceeded: a device, tenant, or people limit; licence_expired: the tenant''s licence has ended).'
+        "422":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The body is well formed but fails validation.
+        "429":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller is over its rate limit.
+          headers:
+            Retry-After:
+              description: Seconds to wait.
+              schema:
+                type: integer
+              style: simple
+      security:
+        - clientCredentials: []
+        - bearerAuth: []
+      summary: Create a profile
+      tags:
+        - profiles
+  /api/v1/tenants/{tenant}/profiles/{profile}:
+    delete:
+      description: Deletes the profile and its assignments; the devices it reached rebuild their effective policies.
+      operationId: deleteProfile
+      parameters:
+        - description: The tenant id, or `ext:` and the account's external id for it.
+          in: path
+          name: tenant
+          required: true
+          schema:
+            maxLength: 260
+            minLength: 1
+            type: string
+        - in: path
+          name: profile
+          required: true
+          schema:
+            format: uuid
+            type: string
+        - description: 'For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.'
+          in: header
+          name: Mdm-Actor
+          schema:
+            maxLength: 255
+            type: string
+      responses:
+        "204":
+          description: The profile was deleted.
+        "400":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The request could not be decoded or a parameter is malformed.
+        "401":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The bearer token is missing or wrong.
+        "403":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller reaches the resource but its scopes or role do not allow the operation.
+        "404":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The tenant, member, group, or device does not exist, was removed, or is outside the caller's reach.
+        "409":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: 'A unique value is taken (an external id, a group priority), the device is not in a state that allows this operation, a request with the same Idempotency-Key is still in progress, the tenant is being deleted (tenant_deleting), or a licence refuses the write (licence_exceeded: a device, tenant, or people limit; licence_expired: the tenant''s licence has ended).'
+        "429":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller is over its rate limit.
+          headers:
+            Retry-After:
+              description: Seconds to wait.
+              schema:
+                type: integer
+              style: simple
+      security:
+        - clientCredentials: []
+        - bearerAuth: []
+      summary: Delete a profile
+      tags:
+        - profiles
+    get:
+      operationId: getProfile
+      parameters:
+        - description: The tenant id, or `ext:` and the account's external id for it.
+          in: path
+          name: tenant
+          required: true
+          schema:
+            maxLength: 260
+            minLength: 1
+            type: string
+        - in: path
+          name: profile
+          required: true
+          schema:
+            format: uuid
+            type: string
+        - description: 'For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.'
+          in: header
+          name: Mdm-Actor
+          schema:
+            maxLength: 255
+            type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Profile'
+          description: The profile.
+        "400":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The request could not be decoded or a parameter is malformed.
+        "401":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The bearer token is missing or wrong.
+        "403":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller reaches the resource but its scopes or role do not allow the operation.
+        "404":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The tenant, member, group, or device does not exist, was removed, or is outside the caller's reach.
+        "429":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller is over its rate limit.
+          headers:
+            Retry-After:
+              description: Seconds to wait.
+              schema:
+                type: integer
+              style: simple
+      security:
+        - clientCredentials: []
+        - bearerAuth: []
+      summary: Get a profile
+      tags:
+        - profiles
+    put:
+      description: 'Replaces the name and items. Every device the profile reaches rebuilds its effective policy. A secret sent as {"secret": "set"} keeps the stored value.'
+      operationId: updateProfile
+      parameters:
+        - description: The tenant id, or `ext:` and the account's external id for it.
+          in: path
+          name: tenant
+          required: true
+          schema:
+            maxLength: 260
+            minLength: 1
+            type: string
+        - in: path
+          name: profile
+          required: true
+          schema:
+            format: uuid
+            type: string
+        - description: 'For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.'
+          in: header
+          name: Mdm-Actor
+          schema:
+            maxLength: 255
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProfileRequest'
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Profile'
+          description: The profile.
+        "400":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The request could not be decoded or a parameter is malformed.
+        "401":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The bearer token is missing or wrong.
+        "403":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller reaches the resource but its scopes or role do not allow the operation.
+        "404":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The tenant, member, group, or device does not exist, was removed, or is outside the caller's reach.
+        "409":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: 'A unique value is taken (an external id, a group priority), the device is not in a state that allows this operation, a request with the same Idempotency-Key is still in progress, the tenant is being deleted (tenant_deleting), or a licence refuses the write (licence_exceeded: a device, tenant, or people limit; licence_expired: the tenant''s licence has ended).'
+        "422":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The body is well formed but fails validation.
+        "429":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller is over its rate limit.
+          headers:
+            Retry-After:
+              description: Seconds to wait.
+              schema:
+                type: integer
+              style: simple
+      security:
+        - clientCredentials: []
+        - bearerAuth: []
+      summary: Replace a profile
+      tags:
+        - profiles
+  /api/v1/tenants/{tenant}/profiles/{profile}/assignments:
+    get:
+      operationId: listAssignments
+      parameters:
+        - description: The tenant id, or `ext:` and the account's external id for it.
+          in: path
+          name: tenant
+          required: true
+          schema:
+            maxLength: 260
+            minLength: 1
+            type: string
+        - in: path
+          name: profile
+          required: true
+          schema:
+            format: uuid
+            type: string
+        - description: 'For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.'
+          in: header
+          name: Mdm-Actor
+          schema:
+            maxLength: 255
+            type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/Assignment'
+                type: array
+          description: The assignments.
+        "400":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The request could not be decoded or a parameter is malformed.
+        "401":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The bearer token is missing or wrong.
+        "403":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller reaches the resource but its scopes or role do not allow the operation.
+        "404":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The tenant, member, group, or device does not exist, was removed, or is outside the caller's reach.
+        "429":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller is over its rate limit.
+          headers:
+            Retry-After:
+              description: Seconds to wait.
+              schema:
+                type: integer
+              style: simple
+      security:
+        - clientCredentials: []
+        - bearerAuth: []
+      summary: List a profile's assignments
+      tags:
+        - profiles
+    post:
+      description: Assigns the profile to the tenant, a group, a member, or a device, for devices of the listed levels. One assignment per profile and target; 409 when it exists. The devices it reaches rebuild their effective policies.
+      operationId: createAssignment
+      parameters:
+        - description: The tenant id, or `ext:` and the account's external id for it.
+          in: path
+          name: tenant
+          required: true
+          schema:
+            maxLength: 260
+            minLength: 1
+            type: string
+        - in: path
+          name: profile
+          required: true
+          schema:
+            format: uuid
+            type: string
+        - description: 'Makes a retry safe (IETF draft): the first response is stored for 24 hours and replayed, with Idempotent-Replayed, for a retry by the same caller with the same key, method, path, and body. The same key with another request answers 422; a retry while the first runs answers 409.'
+          in: header
+          name: Idempotency-Key
+          schema:
+            maxLength: 255
+            minLength: 1
+            type: string
+        - description: 'For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.'
+          in: header
+          name: Mdm-Actor
+          schema:
+            maxLength: 255
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssignmentRequest'
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Assignment'
+          description: The assignment.
+        "400":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The request could not be decoded or a parameter is malformed.
+        "401":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The bearer token is missing or wrong.
+        "403":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller reaches the resource but its scopes or role do not allow the operation.
+        "404":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The tenant, member, group, or device does not exist, was removed, or is outside the caller's reach.
+        "409":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: 'A unique value is taken (an external id, a group priority), the device is not in a state that allows this operation, a request with the same Idempotency-Key is still in progress, the tenant is being deleted (tenant_deleting), or a licence refuses the write (licence_exceeded: a device, tenant, or people limit; licence_expired: the tenant''s licence has ended).'
+        "422":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The body is well formed but fails validation.
+        "429":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller is over its rate limit.
+          headers:
+            Retry-After:
+              description: Seconds to wait.
+              schema:
+                type: integer
+              style: simple
+      security:
+        - clientCredentials: []
+        - bearerAuth: []
+      summary: Assign a profile
+      tags:
+        - profiles
+  /api/v1/tenants/{tenant}/profiles/{profile}/assignments/{assignment}:
+    delete:
+      operationId: deleteAssignment
+      parameters:
+        - description: The tenant id, or `ext:` and the account's external id for it.
+          in: path
+          name: tenant
+          required: true
+          schema:
+            maxLength: 260
+            minLength: 1
+            type: string
+        - in: path
+          name: profile
+          required: true
+          schema:
+            format: uuid
+            type: string
+        - in: path
+          name: assignment
+          required: true
+          schema:
+            format: uuid
+            type: string
+        - description: 'For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.'
+          in: header
+          name: Mdm-Actor
+          schema:
+            maxLength: 255
+            type: string
+      responses:
+        "204":
+          description: The assignment was removed.
+        "400":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The request could not be decoded or a parameter is malformed.
+        "401":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The bearer token is missing or wrong.
+        "403":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller reaches the resource but its scopes or role do not allow the operation.
+        "404":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The tenant, member, group, or device does not exist, was removed, or is outside the caller's reach.
+        "409":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: 'A unique value is taken (an external id, a group priority), the device is not in a state that allows this operation, a request with the same Idempotency-Key is still in progress, the tenant is being deleted (tenant_deleting), or a licence refuses the write (licence_exceeded: a device, tenant, or people limit; licence_expired: the tenant''s licence has ended).'
+        "429":
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Problem'
+          description: The caller is over its rate limit.
+          headers:
+            Retry-After:
+              description: Seconds to wait.
+              schema:
+                type: integer
+              style: simple
+      security:
+        - clientCredentials: []
+        - bearerAuth: []
+      summary: Remove an assignment
+      tags:
+        - profiles
 servers:
   - url: https://enroll.dev

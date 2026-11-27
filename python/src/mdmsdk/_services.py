@@ -3,12 +3,46 @@
 # pyright: reportUnusedImport=false
 from __future__ import annotations
 
+import uuid
+from collections.abc import AsyncIterator, Iterator
 from typing import Any
 
 from ._call import call, call_async
 from ._gen.models import *
 from ._gen.types import UNSET, Unset
 from ._transport import OpInfo
+
+
+class AssignmentsService:
+    """The assignments resource."""
+
+    def __init__(self, client: Any) -> None:
+        self._c = client
+
+    def create(self, tenant: str, profile: uuid.UUID, body: AssignmentRequest) -> Assignment:
+        """Assign a profile (createAssignment)."""
+        return call(self._c, "._gen.api.profiles.create_assignment", OpInfo("createAssignment", idempotent=True, retry_transport=False), {'tenant': tenant, 'profile': profile, 'body': body})
+
+    async def create_async(self, tenant: str, profile: uuid.UUID, body: AssignmentRequest) -> Assignment:
+        """Assign a profile (createAssignment), async."""
+        return await call_async(self._c, "._gen.api.profiles.create_assignment", OpInfo("createAssignment", idempotent=True, retry_transport=False), {'tenant': tenant, 'profile': profile, 'body': body})
+
+    def delete(self, tenant: str, profile: uuid.UUID, assignment: uuid.UUID) -> None:
+        """Remove an assignment (deleteAssignment)."""
+        return call(self._c, "._gen.api.profiles.delete_assignment", OpInfo("deleteAssignment", idempotent=False, retry_transport=False), {'tenant': tenant, 'profile': profile, 'assignment': assignment})
+
+    async def delete_async(self, tenant: str, profile: uuid.UUID, assignment: uuid.UUID) -> None:
+        """Remove an assignment (deleteAssignment), async."""
+        return await call_async(self._c, "._gen.api.profiles.delete_assignment", OpInfo("deleteAssignment", idempotent=False, retry_transport=False), {'tenant': tenant, 'profile': profile, 'assignment': assignment})
+
+    def list(self, tenant: str, profile: uuid.UUID) -> Iterator[Assignment]:
+        """List a profile's assignments (listAssignments)."""
+        yield from call(self._c, "._gen.api.profiles.list_assignments", OpInfo("listAssignments", idempotent=False, retry_transport=False), {'tenant': tenant, 'profile': profile})
+
+    async def list_async(self, tenant: str, profile: uuid.UUID) -> AsyncIterator[Assignment]:
+        """List a profile's assignments (listAssignments), async."""
+        for item in await call_async(self._c, "._gen.api.profiles.list_assignments", OpInfo("listAssignments", idempotent=False, retry_transport=False), {'tenant': tenant, 'profile': profile}):
+            yield item
 
 
 class CatalogService:
@@ -26,6 +60,199 @@ class CatalogService:
         return await call_async(self._c, "._gen.api.catalog.get_catalog", OpInfo("getCatalog", idempotent=False, retry_transport=False), {'level': level, 'os': os})
 
 
+class CommandsService:
+    """The commands resource."""
+
+    def __init__(self, client: Any) -> None:
+        self._c = client
+
+    def send(self, tenant: str, id: uuid.UUID, body: CommandRequest) -> CommandAccepted:
+        """Send a command (createCommand)."""
+        return call(self._c, "._gen.api.commands.create_command", OpInfo("createCommand", idempotent=True, retry_transport=False), {'tenant': tenant, 'id': id, 'body': body})
+
+    async def send_async(self, tenant: str, id: uuid.UUID, body: CommandRequest) -> CommandAccepted:
+        """Send a command (createCommand), async."""
+        return await call_async(self._c, "._gen.api.commands.create_command", OpInfo("createCommand", idempotent=True, retry_transport=False), {'tenant': tenant, 'id': id, 'body': body})
+
+    def get(self, tenant: str, id: uuid.UUID, command: uuid.UUID) -> Command:
+        """Get a command (getCommand)."""
+        return call(self._c, "._gen.api.commands.get_command", OpInfo("getCommand", idempotent=False, retry_transport=False), {'tenant': tenant, 'id': id, 'command': command})
+
+    async def get_async(self, tenant: str, id: uuid.UUID, command: uuid.UUID) -> Command:
+        """Get a command (getCommand), async."""
+        return await call_async(self._c, "._gen.api.commands.get_command", OpInfo("getCommand", idempotent=False, retry_transport=False), {'tenant': tenant, 'id': id, 'command': command})
+
+    def list(self, tenant: str, id: uuid.UUID) -> Iterator[Command]:
+        """Command history (listCommands)."""
+        yield from call(self._c, "._gen.api.commands.list_commands", OpInfo("listCommands", idempotent=False, retry_transport=False), {'tenant': tenant, 'id': id})
+
+    async def list_async(self, tenant: str, id: uuid.UUID) -> AsyncIterator[Command]:
+        """Command history (listCommands), async."""
+        for item in await call_async(self._c, "._gen.api.commands.list_commands", OpInfo("listCommands", idempotent=False, retry_transport=False), {'tenant': tenant, 'id': id}):
+            yield item
+
+
+class DevicesService:
+    """The devices resource."""
+
+    def __init__(self, client: Any) -> None:
+        self._c = client
+
+    def clear_member(self, tenant: str, id: uuid.UUID) -> Device:
+        """Give a device back to the tenant (clearDeviceMember)."""
+        return call(self._c, "._gen.api.devices.clear_device_member", OpInfo("clearDeviceMember", idempotent=False, retry_transport=False), {'tenant': tenant, 'id': id})
+
+    async def clear_member_async(self, tenant: str, id: uuid.UUID) -> Device:
+        """Give a device back to the tenant (clearDeviceMember), async."""
+        return await call_async(self._c, "._gen.api.devices.clear_device_member", OpInfo("clearDeviceMember", idempotent=False, retry_transport=False), {'tenant': tenant, 'id': id})
+
+    def create(self, tenant: str, body: CreateDeviceRequest) -> EnrollmentResponse:
+        """Register a device (createDevice)."""
+        return call(self._c, "._gen.api.devices.create_device", OpInfo("createDevice", idempotent=True, retry_transport=False), {'tenant': tenant, 'body': body})
+
+    async def create_async(self, tenant: str, body: CreateDeviceRequest) -> EnrollmentResponse:
+        """Register a device (createDevice), async."""
+        return await call_async(self._c, "._gen.api.devices.create_device", OpInfo("createDevice", idempotent=True, retry_transport=False), {'tenant': tenant, 'body': body})
+
+    def create_enrollment_link(self, tenant: str, id: uuid.UUID) -> EnrollmentLinkResponse:
+        """Create a one-time enrollment link (createEnrollmentLink)."""
+        return call(self._c, "._gen.api.devices.create_enrollment_link", OpInfo("createEnrollmentLink", idempotent=True, retry_transport=False), {'tenant': tenant, 'id': id})
+
+    async def create_enrollment_link_async(self, tenant: str, id: uuid.UUID) -> EnrollmentLinkResponse:
+        """Create a one-time enrollment link (createEnrollmentLink), async."""
+        return await call_async(self._c, "._gen.api.devices.create_enrollment_link", OpInfo("createEnrollmentLink", idempotent=True, retry_transport=False), {'tenant': tenant, 'id': id})
+
+    def delete(self, tenant: str, id: uuid.UUID) -> None:
+        """Remove a device (deleteDevice)."""
+        return call(self._c, "._gen.api.devices.delete_device", OpInfo("deleteDevice", idempotent=False, retry_transport=False), {'tenant': tenant, 'id': id})
+
+    async def delete_async(self, tenant: str, id: uuid.UUID) -> None:
+        """Remove a device (deleteDevice), async."""
+        return await call_async(self._c, "._gen.api.devices.delete_device", OpInfo("deleteDevice", idempotent=False, retry_transport=False), {'tenant': tenant, 'id': id})
+
+    def get(self, tenant: str, id: uuid.UUID) -> Device:
+        """Get a device (getDevice)."""
+        return call(self._c, "._gen.api.devices.get_device", OpInfo("getDevice", idempotent=False, retry_transport=False), {'tenant': tenant, 'id': id})
+
+    async def get_async(self, tenant: str, id: uuid.UUID) -> Device:
+        """Get a device (getDevice), async."""
+        return await call_async(self._c, "._gen.api.devices.get_device", OpInfo("getDevice", idempotent=False, retry_transport=False), {'tenant': tenant, 'id': id})
+
+    def get_ddm(self, tenant: str, id: uuid.UUID) -> DeviceDDM:
+        """Declarative management state (getDeviceDDM)."""
+        return call(self._c, "._gen.api.devices.get_device_ddm", OpInfo("getDeviceDDM", idempotent=False, retry_transport=False), {'tenant': tenant, 'id': id})
+
+    async def get_ddm_async(self, tenant: str, id: uuid.UUID) -> DeviceDDM:
+        """Declarative management state (getDeviceDDM), async."""
+        return await call_async(self._c, "._gen.api.devices.get_device_ddm", OpInfo("getDeviceDDM", idempotent=False, retry_transport=False), {'tenant': tenant, 'id': id})
+
+    def effective_policy(self, tenant: str, id: uuid.UUID) -> EffectivePolicy:
+        """Get the device's effective policy with provenance (getEffectivePolicy)."""
+        return call(self._c, "._gen.api.policy.get_effective_policy", OpInfo("getEffectivePolicy", idempotent=False, retry_transport=False), {'tenant': tenant, 'id': id})
+
+    async def effective_policy_async(self, tenant: str, id: uuid.UUID) -> EffectivePolicy:
+        """Get the device's effective policy with provenance (getEffectivePolicy), async."""
+        return await call_async(self._c, "._gen.api.policy.get_effective_policy", OpInfo("getEffectivePolicy", idempotent=False, retry_transport=False), {'tenant': tenant, 'id': id})
+
+    def list(self, tenant: str, *, member: str | Unset = UNSET) -> Iterator[Device]:
+        """List devices (listDevices)."""
+        yield from call(self._c, "._gen.api.devices.list_devices", OpInfo("listDevices", idempotent=False, retry_transport=False), {'tenant': tenant, 'member': member})
+
+    async def list_async(self, tenant: str, *, member: str | Unset = UNSET) -> AsyncIterator[Device]:
+        """List devices (listDevices), async."""
+        for item in await call_async(self._c, "._gen.api.devices.list_devices", OpInfo("listDevices", idempotent=False, retry_transport=False), {'tenant': tenant, 'member': member}):
+            yield item
+
+    def reissue_enrollment_profile(self, tenant: str, id: uuid.UUID) -> EnrollmentResponse:
+        """Issue a fresh enrollment profile (reissueEnrollmentProfile)."""
+        return call(self._c, "._gen.api.devices.reissue_enrollment_profile", OpInfo("reissueEnrollmentProfile", idempotent=True, retry_transport=False), {'tenant': tenant, 'id': id})
+
+    async def reissue_enrollment_profile_async(self, tenant: str, id: uuid.UUID) -> EnrollmentResponse:
+        """Issue a fresh enrollment profile (reissueEnrollmentProfile), async."""
+        return await call_async(self._c, "._gen.api.devices.reissue_enrollment_profile", OpInfo("reissueEnrollmentProfile", idempotent=True, retry_transport=False), {'tenant': tenant, 'id': id})
+
+    def set_member(self, tenant: str, id: uuid.UUID, body: DeviceMemberRequest) -> Device:
+        """Give a device to a member (setDeviceMember)."""
+        return call(self._c, "._gen.api.devices.set_device_member", OpInfo("setDeviceMember", idempotent=False, retry_transport=False), {'tenant': tenant, 'id': id, 'body': body})
+
+    async def set_member_async(self, tenant: str, id: uuid.UUID, body: DeviceMemberRequest) -> Device:
+        """Give a device to a member (setDeviceMember), async."""
+        return await call_async(self._c, "._gen.api.devices.set_device_member", OpInfo("setDeviceMember", idempotent=False, retry_transport=False), {'tenant': tenant, 'id': id, 'body': body})
+
+
+class GroupsService:
+    """The groups resource."""
+
+    def __init__(self, client: Any) -> None:
+        self._c = client
+
+    def add_member(self, tenant: str, group: uuid.UUID, member: str) -> None:
+        """Add a member to a group (addGroupMember)."""
+        return call(self._c, "._gen.api.members.add_group_member", OpInfo("addGroupMember", idempotent=False, retry_transport=False), {'tenant': tenant, 'group': group, 'member': member})
+
+    async def add_member_async(self, tenant: str, group: uuid.UUID, member: str) -> None:
+        """Add a member to a group (addGroupMember), async."""
+        return await call_async(self._c, "._gen.api.members.add_group_member", OpInfo("addGroupMember", idempotent=False, retry_transport=False), {'tenant': tenant, 'group': group, 'member': member})
+
+    def create(self, tenant: str, body: GroupRequest) -> Group:
+        """Create a group (createGroup)."""
+        return call(self._c, "._gen.api.members.create_group", OpInfo("createGroup", idempotent=True, retry_transport=False), {'tenant': tenant, 'body': body})
+
+    async def create_async(self, tenant: str, body: GroupRequest) -> Group:
+        """Create a group (createGroup), async."""
+        return await call_async(self._c, "._gen.api.members.create_group", OpInfo("createGroup", idempotent=True, retry_transport=False), {'tenant': tenant, 'body': body})
+
+    def delete(self, tenant: str, group: uuid.UUID) -> None:
+        """Delete a group (deleteGroup)."""
+        return call(self._c, "._gen.api.members.delete_group", OpInfo("deleteGroup", idempotent=False, retry_transport=False), {'tenant': tenant, 'group': group})
+
+    async def delete_async(self, tenant: str, group: uuid.UUID) -> None:
+        """Delete a group (deleteGroup), async."""
+        return await call_async(self._c, "._gen.api.members.delete_group", OpInfo("deleteGroup", idempotent=False, retry_transport=False), {'tenant': tenant, 'group': group})
+
+    def get(self, tenant: str, group: uuid.UUID) -> Group:
+        """Get a group (getGroup)."""
+        return call(self._c, "._gen.api.members.get_group", OpInfo("getGroup", idempotent=False, retry_transport=False), {'tenant': tenant, 'group': group})
+
+    async def get_async(self, tenant: str, group: uuid.UUID) -> Group:
+        """Get a group (getGroup), async."""
+        return await call_async(self._c, "._gen.api.members.get_group", OpInfo("getGroup", idempotent=False, retry_transport=False), {'tenant': tenant, 'group': group})
+
+    def list_members(self, tenant: str, group: uuid.UUID) -> Iterator[Member]:
+        """List a group's members (listGroupMembers)."""
+        yield from call(self._c, "._gen.api.members.list_group_members", OpInfo("listGroupMembers", idempotent=False, retry_transport=False), {'tenant': tenant, 'group': group})
+
+    async def list_members_async(self, tenant: str, group: uuid.UUID) -> AsyncIterator[Member]:
+        """List a group's members (listGroupMembers), async."""
+        for item in await call_async(self._c, "._gen.api.members.list_group_members", OpInfo("listGroupMembers", idempotent=False, retry_transport=False), {'tenant': tenant, 'group': group}):
+            yield item
+
+    def list(self, tenant: str) -> Iterator[Group]:
+        """List groups (listGroups)."""
+        yield from call(self._c, "._gen.api.members.list_groups", OpInfo("listGroups", idempotent=False, retry_transport=False), {'tenant': tenant})
+
+    async def list_async(self, tenant: str) -> AsyncIterator[Group]:
+        """List groups (listGroups), async."""
+        for item in await call_async(self._c, "._gen.api.members.list_groups", OpInfo("listGroups", idempotent=False, retry_transport=False), {'tenant': tenant}):
+            yield item
+
+    def remove_member(self, tenant: str, group: uuid.UUID, member: str) -> None:
+        """Remove a member from a group (removeGroupMember)."""
+        return call(self._c, "._gen.api.members.remove_group_member", OpInfo("removeGroupMember", idempotent=False, retry_transport=False), {'tenant': tenant, 'group': group, 'member': member})
+
+    async def remove_member_async(self, tenant: str, group: uuid.UUID, member: str) -> None:
+        """Remove a member from a group (removeGroupMember), async."""
+        return await call_async(self._c, "._gen.api.members.remove_group_member", OpInfo("removeGroupMember", idempotent=False, retry_transport=False), {'tenant': tenant, 'group': group, 'member': member})
+
+    def update(self, tenant: str, group: uuid.UUID, body: GroupUpdate) -> Group:
+        """Update a group (updateGroup)."""
+        return call(self._c, "._gen.api.members.update_group", OpInfo("updateGroup", idempotent=False, retry_transport=False), {'tenant': tenant, 'group': group, 'body': body})
+
+    async def update_async(self, tenant: str, group: uuid.UUID, body: GroupUpdate) -> Group:
+        """Update a group (updateGroup), async."""
+        return await call_async(self._c, "._gen.api.members.update_group", OpInfo("updateGroup", idempotent=False, retry_transport=False), {'tenant': tenant, 'group': group, 'body': body})
+
+
 class MeService:
     """The me resource."""
 
@@ -41,7 +268,190 @@ class MeService:
         return await call_async(self._c, "._gen.api.session.get_me", OpInfo("getMe", idempotent=False, retry_transport=False), {})
 
 
+class MembersService:
+    """The members resource."""
+
+    def __init__(self, client: Any) -> None:
+        self._c = client
+
+    def create(self, tenant: str, body: MemberRequest) -> Member:
+        """Create a member (createMember)."""
+        return call(self._c, "._gen.api.members.create_member", OpInfo("createMember", idempotent=True, retry_transport=False), {'tenant': tenant, 'body': body})
+
+    async def create_async(self, tenant: str, body: MemberRequest) -> Member:
+        """Create a member (createMember), async."""
+        return await call_async(self._c, "._gen.api.members.create_member", OpInfo("createMember", idempotent=True, retry_transport=False), {'tenant': tenant, 'body': body})
+
+    def delete(self, tenant: str, member: str) -> None:
+        """Delete a member (deleteMember)."""
+        return call(self._c, "._gen.api.members.delete_member", OpInfo("deleteMember", idempotent=False, retry_transport=False), {'tenant': tenant, 'member': member})
+
+    async def delete_async(self, tenant: str, member: str) -> None:
+        """Delete a member (deleteMember), async."""
+        return await call_async(self._c, "._gen.api.members.delete_member", OpInfo("deleteMember", idempotent=False, retry_transport=False), {'tenant': tenant, 'member': member})
+
+    def get(self, tenant: str, member: str) -> Member:
+        """Get a member (getMember)."""
+        return call(self._c, "._gen.api.members.get_member", OpInfo("getMember", idempotent=False, retry_transport=False), {'tenant': tenant, 'member': member})
+
+    async def get_async(self, tenant: str, member: str) -> Member:
+        """Get a member (getMember), async."""
+        return await call_async(self._c, "._gen.api.members.get_member", OpInfo("getMember", idempotent=False, retry_transport=False), {'tenant': tenant, 'member': member})
+
+    def list(self, tenant: str) -> Iterator[Member]:
+        """List members (listMembers)."""
+        yield from call(self._c, "._gen.api.members.list_members", OpInfo("listMembers", idempotent=False, retry_transport=False), {'tenant': tenant})
+
+    async def list_async(self, tenant: str) -> AsyncIterator[Member]:
+        """List members (listMembers), async."""
+        for item in await call_async(self._c, "._gen.api.members.list_members", OpInfo("listMembers", idempotent=False, retry_transport=False), {'tenant': tenant}):
+            yield item
+
+    def update(self, tenant: str, member: str, body: MemberUpdate) -> Member:
+        """Update a member (updateMember)."""
+        return call(self._c, "._gen.api.members.update_member", OpInfo("updateMember", idempotent=False, retry_transport=False), {'tenant': tenant, 'member': member, 'body': body})
+
+    async def update_async(self, tenant: str, member: str, body: MemberUpdate) -> Member:
+        """Update a member (updateMember), async."""
+        return await call_async(self._c, "._gen.api.members.update_member", OpInfo("updateMember", idempotent=False, retry_transport=False), {'tenant': tenant, 'member': member, 'body': body})
+
+
+class ProfilesService:
+    """The profiles resource."""
+
+    def __init__(self, client: Any) -> None:
+        self._c = client
+
+    def create(self, tenant: str, body: ProfileRequest) -> Profile:
+        """Create a profile (createProfile)."""
+        return call(self._c, "._gen.api.profiles.create_profile", OpInfo("createProfile", idempotent=True, retry_transport=False), {'tenant': tenant, 'body': body})
+
+    async def create_async(self, tenant: str, body: ProfileRequest) -> Profile:
+        """Create a profile (createProfile), async."""
+        return await call_async(self._c, "._gen.api.profiles.create_profile", OpInfo("createProfile", idempotent=True, retry_transport=False), {'tenant': tenant, 'body': body})
+
+    def delete(self, tenant: str, profile: uuid.UUID) -> None:
+        """Delete a profile (deleteProfile)."""
+        return call(self._c, "._gen.api.profiles.delete_profile", OpInfo("deleteProfile", idempotent=False, retry_transport=False), {'tenant': tenant, 'profile': profile})
+
+    async def delete_async(self, tenant: str, profile: uuid.UUID) -> None:
+        """Delete a profile (deleteProfile), async."""
+        return await call_async(self._c, "._gen.api.profiles.delete_profile", OpInfo("deleteProfile", idempotent=False, retry_transport=False), {'tenant': tenant, 'profile': profile})
+
+    def get(self, tenant: str, profile: uuid.UUID) -> Profile:
+        """Get a profile (getProfile)."""
+        return call(self._c, "._gen.api.profiles.get_profile", OpInfo("getProfile", idempotent=False, retry_transport=False), {'tenant': tenant, 'profile': profile})
+
+    async def get_async(self, tenant: str, profile: uuid.UUID) -> Profile:
+        """Get a profile (getProfile), async."""
+        return await call_async(self._c, "._gen.api.profiles.get_profile", OpInfo("getProfile", idempotent=False, retry_transport=False), {'tenant': tenant, 'profile': profile})
+
+    def list(self, tenant: str) -> Iterator[Profile]:
+        """List profiles (listProfiles)."""
+        yield from call(self._c, "._gen.api.profiles.list_profiles", OpInfo("listProfiles", idempotent=False, retry_transport=False), {'tenant': tenant})
+
+    async def list_async(self, tenant: str) -> AsyncIterator[Profile]:
+        """List profiles (listProfiles), async."""
+        for item in await call_async(self._c, "._gen.api.profiles.list_profiles", OpInfo("listProfiles", idempotent=False, retry_transport=False), {'tenant': tenant}):
+            yield item
+
+    def update(self, tenant: str, profile: uuid.UUID, body: ProfileRequest) -> Profile:
+        """Replace a profile (updateProfile)."""
+        return call(self._c, "._gen.api.profiles.update_profile", OpInfo("updateProfile", idempotent=False, retry_transport=False), {'tenant': tenant, 'profile': profile, 'body': body})
+
+    async def update_async(self, tenant: str, profile: uuid.UUID, body: ProfileRequest) -> Profile:
+        """Replace a profile (updateProfile), async."""
+        return await call_async(self._c, "._gen.api.profiles.update_profile", OpInfo("updateProfile", idempotent=False, retry_transport=False), {'tenant': tenant, 'profile': profile, 'body': body})
+
+
+class SettingsService:
+    """The settings resource."""
+
+    def __init__(self, client: Any) -> None:
+        self._c = client
+
+    def delete(self, tenant: str, id: uuid.UUID) -> Device:
+        """Remove the device's own settings (deleteDeviceSettings)."""
+        return call(self._c, "._gen.api.policy.delete_device_settings", OpInfo("deleteDeviceSettings", idempotent=False, retry_transport=False), {'tenant': tenant, 'id': id})
+
+    async def delete_async(self, tenant: str, id: uuid.UUID) -> Device:
+        """Remove the device's own settings (deleteDeviceSettings), async."""
+        return await call_async(self._c, "._gen.api.policy.delete_device_settings", OpInfo("deleteDeviceSettings", idempotent=False, retry_transport=False), {'tenant': tenant, 'id': id})
+
+    def get(self, tenant: str, id: uuid.UUID) -> Policy:
+        """Get the device's own settings (getDeviceSettings)."""
+        return call(self._c, "._gen.api.policy.get_device_settings", OpInfo("getDeviceSettings", idempotent=False, retry_transport=False), {'tenant': tenant, 'id': id})
+
+    async def get_async(self, tenant: str, id: uuid.UUID) -> Policy:
+        """Get the device's own settings (getDeviceSettings), async."""
+        return await call_async(self._c, "._gen.api.policy.get_device_settings", OpInfo("getDeviceSettings", idempotent=False, retry_transport=False), {'tenant': tenant, 'id': id})
+
+    def put(self, tenant: str, id: uuid.UUID, body: Policy) -> Device:
+        """Set the device's own settings (putDeviceSettings)."""
+        return call(self._c, "._gen.api.policy.put_device_settings", OpInfo("putDeviceSettings", idempotent=False, retry_transport=False), {'tenant': tenant, 'id': id, 'body': body})
+
+    async def put_async(self, tenant: str, id: uuid.UUID, body: Policy) -> Device:
+        """Set the device's own settings (putDeviceSettings), async."""
+        return await call_async(self._c, "._gen.api.policy.put_device_settings", OpInfo("putDeviceSettings", idempotent=False, retry_transport=False), {'tenant': tenant, 'id': id, 'body': body})
+
+
+class TenantsService:
+    """The tenants resource."""
+
+    def __init__(self, client: Any) -> None:
+        self._c = client
+
+    def create(self, body: TenantRequest) -> Tenant:
+        """Create a tenant (createTenant)."""
+        return call(self._c, "._gen.api.tenants.create_tenant", OpInfo("createTenant", idempotent=True, retry_transport=False), {'body': body})
+
+    async def create_async(self, body: TenantRequest) -> Tenant:
+        """Create a tenant (createTenant), async."""
+        return await call_async(self._c, "._gen.api.tenants.create_tenant", OpInfo("createTenant", idempotent=True, retry_transport=False), {'body': body})
+
+    def delete(self, tenant: str) -> Tenant:
+        """Delete a tenant (deleteTenant)."""
+        return call(self._c, "._gen.api.tenants.delete_tenant", OpInfo("deleteTenant", idempotent=False, retry_transport=False), {'tenant': tenant})
+
+    async def delete_async(self, tenant: str) -> Tenant:
+        """Delete a tenant (deleteTenant), async."""
+        return await call_async(self._c, "._gen.api.tenants.delete_tenant", OpInfo("deleteTenant", idempotent=False, retry_transport=False), {'tenant': tenant})
+
+    def get(self, tenant: str) -> Tenant:
+        """Get a tenant (getTenant)."""
+        return call(self._c, "._gen.api.tenants.get_tenant", OpInfo("getTenant", idempotent=False, retry_transport=False), {'tenant': tenant})
+
+    async def get_async(self, tenant: str) -> Tenant:
+        """Get a tenant (getTenant), async."""
+        return await call_async(self._c, "._gen.api.tenants.get_tenant", OpInfo("getTenant", idempotent=False, retry_transport=False), {'tenant': tenant})
+
+    def list(self) -> Iterator[Tenant]:
+        """Tenants the caller reaches (listTenants)."""
+        yield from call(self._c, "._gen.api.tenants.list_tenants", OpInfo("listTenants", idempotent=False, retry_transport=False), {})
+
+    async def list_async(self) -> AsyncIterator[Tenant]:
+        """Tenants the caller reaches (listTenants), async."""
+        for item in await call_async(self._c, "._gen.api.tenants.list_tenants", OpInfo("listTenants", idempotent=False, retry_transport=False), {}):
+            yield item
+
+    def update(self, tenant: str, body: TenantUpdate) -> Tenant:
+        """Rename a tenant or change its credential holder (updateTenant)."""
+        return call(self._c, "._gen.api.tenants.update_tenant", OpInfo("updateTenant", idempotent=False, retry_transport=False), {'tenant': tenant, 'body': body})
+
+    async def update_async(self, tenant: str, body: TenantUpdate) -> Tenant:
+        """Rename a tenant or change its credential holder (updateTenant), async."""
+        return await call_async(self._c, "._gen.api.tenants.update_tenant", OpInfo("updateTenant", idempotent=False, retry_transport=False), {'tenant': tenant, 'body': body})
+
+
 SERVICES = {
+    "assignments": AssignmentsService,
     "catalog": CatalogService,
+    "commands": CommandsService,
+    "devices": DevicesService,
+    "groups": GroupsService,
     "me": MeService,
+    "members": MembersService,
+    "profiles": ProfilesService,
+    "settings": SettingsService,
+    "tenants": TenantsService,
 }

@@ -1,0 +1,74 @@
+---
+/*
+ * PLACEHOLDER for the rite terminal (phase 4b).
+ *
+ * Phase 4b replaces everything between the rite-terminal markers below with
+ * the interactive terminal: an `mdm` command set over a mock of the API. Keep
+ * the section element, its id, and its minimum height so the home page does
+ * not shift when the terminal mounts.
+ */
+interface Props {
+  quickstart: string;
+}
+
+const { quickstart } = Astro.props;
+---
+
+<!-- rite-terminal:start (placeholder, replaced in phase 4b) -->
+<section class="terminal not-content" id="terminal" aria-labelledby="terminal-label" data-terminal="placeholder">
+  <header>
+    <span id="terminal-label">Terminal</span>
+    <span class="state">Placeholder</span>
+  </header>
+  <div class="screen">
+    <p class="line"><span class="prompt" aria-hidden="true">$</span> mdm devices ls</p>
+    <p class="note">
+      A terminal over a mock of the API will run here. Until it does, the <a href={quickstart}>quickstart</a> makes the
+      same calls against the real one.
+    </p>
+  </div>
+</section>
+<!-- rite-terminal:end -->
+
+<style>
+  .terminal {
+    margin-block: 2rem;
+    border: 1px solid var(--sl-color-hairline-light);
+    border-radius: 6px;
+    background: var(--sl-color-gray-6);
+    overflow: hidden;
+  }
+  header {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 1rem;
+    border-bottom: 1px solid var(--sl-color-hairline-light);
+    font-size: var(--sl-text-xs);
+    font-weight: 500;
+    color: var(--sl-color-gray-3);
+  }
+  .screen {
+    min-height: 14rem;
+    padding: 1rem;
+    font-family: var(--__sl-font-mono);
+    font-size: var(--sl-text-sm);
+    line-height: 1.6;
+  }
+  .line {
+    margin: 0;
+    color: var(--sl-color-white);
+  }
+  .prompt {
+    color: var(--sl-color-gray-3);
+    user-select: none;
+  }
+  .note {
+    margin: 1rem 0 0;
+    max-width: 60ch;
+    font-family: var(--__sl-font);
+    color: var(--sl-color-gray-3);
+  }
+  .note a {
+    color: var(--sl-color-text-accent);
+  }
+</style>

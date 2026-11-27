@@ -125,8 +125,7 @@ def sync_detailed(
     Args:
         level (GetCatalogLevel | Unset):
         os (str | Unset):
-        mdm_actor (str | Unset): For an account client: the user the client acts for, recorded in
-            the audit trail. Ignored for other callers.
+        mdm_actor (str | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -167,8 +166,7 @@ def sync(
     Args:
         level (GetCatalogLevel | Unset):
         os (str | Unset):
-        mdm_actor (str | Unset): For an account client: the user the client acts for, recorded in
-            the audit trail. Ignored for other callers.
+        mdm_actor (str | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -204,8 +202,7 @@ async def asyncio_detailed(
     Args:
         level (GetCatalogLevel | Unset):
         os (str | Unset):
-        mdm_actor (str | Unset): For an account client: the user the client acts for, recorded in
-            the audit trail. Ignored for other callers.
+        mdm_actor (str | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.
@@ -246,8 +243,7 @@ async def asyncio(
     Args:
         level (GetCatalogLevel | Unset):
         os (str | Unset):
-        mdm_actor (str | Unset): For an account client: the user the client acts for, recorded in
-            the audit trail. Ignored for other callers.
+        mdm_actor (str | Unset):
 
     Raises:
         errors.UnexpectedStatus: If the server returns an undocumented status code and Client.raise_on_unexpected_status is True.

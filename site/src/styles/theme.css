@@ -1,0 +1,151 @@
+/*
+ * mdmsdk docs theme. Warm low-chroma neutrals, one accent (the product's
+ * blue) kept to links, focus, and the current page. System type, a 1.2 scale.
+ * Starlight names its grays for dark mode and inverts them for light mode,
+ * so each block below lists them from text (white) to background (black).
+ */
+
+:root,
+::backdrop {
+  --sl-color-white: oklch(0.965 0.004 75);
+  --sl-color-gray-1: oklch(0.92 0.006 75);
+  --sl-color-gray-2: oklch(0.84 0.008 75);
+  --sl-color-gray-3: oklch(0.68 0.01 75);
+  --sl-color-gray-4: oklch(0.46 0.01 75);
+  --sl-color-gray-5: oklch(0.29 0.008 75);
+  --sl-color-gray-6: oklch(0.225 0.007 75);
+  --sl-color-black: oklch(0.19 0.006 75);
+
+  --sl-color-accent-low: oklch(0.3 0.1 264);
+  --sl-color-accent: oklch(0.62 0.21 264);
+  --sl-color-accent-high: oklch(0.82 0.1 264);
+
+  --sl-color-backdrop-overlay: oklch(0.19 0.006 75 / 0.7);
+
+  --sl-text-h1: 2rem;
+  --sl-text-h2: 1.5rem;
+  --sl-text-h3: 1.25rem;
+  --sl-text-h4: 1.0625rem;
+  --sl-text-h5: 1rem;
+  --sl-line-height: 1.65;
+  --sl-line-height-headings: 1.25;
+  --sl-content-width: 43rem;
+}
+
+:root[data-theme='light'],
+[data-theme='light'] ::backdrop {
+  --sl-color-white: oklch(0.22 0.012 75);
+  --sl-color-gray-1: oklch(0.26 0.012 75);
+  --sl-color-gray-2: oklch(0.3 0.012 75);
+  --sl-color-gray-3: oklch(0.47 0.012 75);
+  --sl-color-gray-4: oklch(0.6 0.01 75);
+  --sl-color-gray-5: oklch(0.9 0.008 75);
+  --sl-color-gray-6: oklch(0.965 0.006 75);
+  --sl-color-gray-7: oklch(0.975 0.005 75);
+  --sl-color-black: oklch(0.985 0.004 75);
+
+  --sl-color-accent-low: oklch(0.95 0.03 264);
+  --sl-color-accent: oklch(0.51 0.27 264);
+  --sl-color-accent-high: oklch(0.4 0.21 264);
+
+  /* Hairlines one step darker than the sunk surface they sit beside. */
+  --sl-color-hairline-light: var(--sl-color-gray-5);
+  --sl-color-hairline-shade: var(--sl-color-gray-5);
+  --sl-color-bg-sidebar: var(--sl-color-gray-7);
+
+  --sl-color-backdrop-overlay: oklch(0.47 0.012 75 / 0.5);
+}
+
+/* Starlight's own breakpoints enlarge headings; keep the 1.2 scale instead. */
+@media (min-width: 50em) {
+  :root {
+    --sl-text-h1: 2.125rem;
+    --sl-text-h2: 1.5rem;
+    --sl-text-h3: 1.25rem;
+    --sl-text-h4: 1.0625rem;
+  }
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-weight: 600;
+  letter-spacing: -0.011em;
+}
+
+/* The current page: a wash and a weight, not a filled accent block. */
+.sidebar-content a[aria-current='page'],
+.sidebar-content a[aria-current='page']:hover,
+.sidebar-content a[aria-current='page']:focus {
+  background-color: var(--sl-color-accent-low);
+  color: var(--sl-color-white);
+}
+
+/* Tables carry the retry rules, error kinds, and scopes: dates, counts, and
+   status codes line up, and the header sits on the sunk surface. */
+.sl-markdown-content table {
+  font-variant-numeric: tabular-nums;
+  font-size: var(--sl-text-sm);
+}
+.sl-markdown-content th {
+  background-color: var(--sl-color-gray-6);
+  font-weight: 600;
+}
+:root[data-theme='light'] .sl-markdown-content th {
+  background-color: var(--sl-color-gray-6);
+}
+.sl-markdown-content :is(th, td):not(:where(.not-content *)) {
+  border-bottom-color: var(--sl-color-hairline-light);
+}
+
+/*
+ * Mermaid renders once with its base theme; these rules repaint it from the
+ * site tokens, so a theme switch needs no second render. The diagram's own
+ * styles are scoped by id, which is why each rule is !important.
+ */
+pre.mermaid {
+  background: transparent;
+  border: 0;
+  padding: 0;
+  margin-block: 1.5rem;
+  text-align: center;
+  overflow-x: auto;
+}
+pre.mermaid svg {
+  max-width: 100%;
+  height: auto;
+}
+pre.mermaid :is(.node, .actor) :is(rect, polygon, circle, ellipse, path),
+pre.mermaid :is(rect.actor, rect.note) {
+  fill: var(--sl-color-gray-6) !important;
+  stroke: var(--sl-color-gray-4) !important;
+  stroke-width: 1px !important;
+}
+pre.mermaid .cluster rect {
+  fill: transparent !important;
+  stroke: var(--sl-color-gray-5) !important;
+}
+pre.mermaid :is(.nodeLabel, .edgeLabel, .cluster-label, .label) :is(span, p, div),
+pre.mermaid :is(.nodeLabel, .edgeLabel) {
+  color: var(--sl-color-white) !important;
+}
+pre.mermaid :is(text, tspan, .messageText, .noteText, .loopText) {
+  fill: var(--sl-color-white) !important;
+  stroke: none !important;
+}
+pre.mermaid :is(.edgeLabel, .edgeLabel p, .labelBkg) {
+  background-color: var(--sl-color-black) !important;
+}
+pre.mermaid .edgeLabel rect {
+  fill: var(--sl-color-black) !important;
+  opacity: 1 !important;
+}
+pre.mermaid :is(.flowchart-link, .messageLine0, .messageLine1, .actor-line, .loopLine) {
+  stroke: var(--sl-color-gray-3) !important;
+}
+pre.mermaid :is(.marker, .arrowheadPath, .arrowMarkerPath),
+pre.mermaid marker path {
+  fill: var(--sl-color-gray-3) !important;
+  stroke: var(--sl-color-gray-3) !important;
+}

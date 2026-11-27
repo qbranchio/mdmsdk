@@ -1,0 +1,6 @@
+node_modules/
+dist/
+.astro/
+# Copied in by scripts/sync-contract.mjs on every dev, check, and build.
+public/openapi.yaml
+public/scalar/

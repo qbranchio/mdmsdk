@@ -4,6 +4,7 @@
 package api
 
 import (
+	"bytes"
 	"context"
 	"io"
 	"net/http"
@@ -15,39 +16,123 @@ import (
 	openapi_types "github.com/oapi-codegen/runtime/types"
 )
 
+// Defines values for AssignmentLevels.
+const (
+	AssignmentLevelsSupervised   AssignmentLevels = "supervised"
+	AssignmentLevelsUnsupervised AssignmentLevels = "unsupervised"
+)
+
+// Valid indicates whether the value is a known member of the AssignmentLevels enum.
+func (e AssignmentLevels) Valid() bool {
+	switch e {
+	case AssignmentLevelsSupervised:
+		return true
+	case AssignmentLevelsUnsupervised:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for AssignmentTarget.
+const (
+	AssignmentTargetDevice AssignmentTarget = "device"
+	AssignmentTargetGroup  AssignmentTarget = "group"
+	AssignmentTargetMember AssignmentTarget = "member"
+	AssignmentTargetTenant AssignmentTarget = "tenant"
+)
+
+// Valid indicates whether the value is a known member of the AssignmentTarget enum.
+func (e AssignmentTarget) Valid() bool {
+	switch e {
+	case AssignmentTargetDevice:
+		return true
+	case AssignmentTargetGroup:
+		return true
+	case AssignmentTargetMember:
+		return true
+	case AssignmentTargetTenant:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for AssignmentRequestLevels.
+const (
+	AssignmentRequestLevelsSupervised   AssignmentRequestLevels = "supervised"
+	AssignmentRequestLevelsUnsupervised AssignmentRequestLevels = "unsupervised"
+)
+
+// Valid indicates whether the value is a known member of the AssignmentRequestLevels enum.
+func (e AssignmentRequestLevels) Valid() bool {
+	switch e {
+	case AssignmentRequestLevelsSupervised:
+		return true
+	case AssignmentRequestLevelsUnsupervised:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for AssignmentRequestTarget.
+const (
+	AssignmentRequestTargetDevice AssignmentRequestTarget = "device"
+	AssignmentRequestTargetGroup  AssignmentRequestTarget = "group"
+	AssignmentRequestTargetMember AssignmentRequestTarget = "member"
+	AssignmentRequestTargetTenant AssignmentRequestTarget = "tenant"
+)
+
+// Valid indicates whether the value is a known member of the AssignmentRequestTarget enum.
+func (e AssignmentRequestTarget) Valid() bool {
+	switch e {
+	case AssignmentRequestTargetDevice:
+		return true
+	case AssignmentRequestTargetGroup:
+		return true
+	case AssignmentRequestTargetMember:
+		return true
+	case AssignmentRequestTargetTenant:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for CatalogEntryGroup.
 const (
-	Accounts CatalogEntryGroup = "accounts"
-	Apps     CatalogEntryGroup = "apps"
-	Camera   CatalogEntryGroup = "camera"
-	Content  CatalogEntryGroup = "content"
-	Device   CatalogEntryGroup = "device"
-	Home     CatalogEntryGroup = "home"
-	Messages CatalogEntryGroup = "messages"
-	Network  CatalogEntryGroup = "network"
-	Passcode CatalogEntryGroup = "passcode"
+	CatalogEntryGroupAccounts CatalogEntryGroup = "accounts"
+	CatalogEntryGroupApps     CatalogEntryGroup = "apps"
+	CatalogEntryGroupCamera   CatalogEntryGroup = "camera"
+	CatalogEntryGroupContent  CatalogEntryGroup = "content"
+	CatalogEntryGroupDevice   CatalogEntryGroup = "device"
+	CatalogEntryGroupHome     CatalogEntryGroup = "home"
+	CatalogEntryGroupMessages CatalogEntryGroup = "messages"
+	CatalogEntryGroupNetwork  CatalogEntryGroup = "network"
+	CatalogEntryGroupPasscode CatalogEntryGroup = "passcode"
 )
 
 // Valid indicates whether the value is a known member of the CatalogEntryGroup enum.
 func (e CatalogEntryGroup) Valid() bool {
 	switch e {
-	case Accounts:
+	case CatalogEntryGroupAccounts:
 		return true
-	case Apps:
+	case CatalogEntryGroupApps:
 		return true
-	case Camera:
+	case CatalogEntryGroupCamera:
 		return true
-	case Content:
+	case CatalogEntryGroupContent:
 		return true
-	case Device:
+	case CatalogEntryGroupDevice:
 		return true
-	case Home:
+	case CatalogEntryGroupHome:
 		return true
-	case Messages:
+	case CatalogEntryGroupMessages:
 		return true
-	case Network:
+	case CatalogEntryGroupNetwork:
 		return true
-	case Passcode:
+	case CatalogEntryGroupPasscode:
 		return true
 	default:
 		return false
@@ -56,19 +141,19 @@ func (e CatalogEntryGroup) Valid() bool {
 
 // Defines values for CatalogEntryKind.
 const (
-	Declaration CatalogEntryKind = "declaration"
-	Profile     CatalogEntryKind = "profile"
-	Restriction CatalogEntryKind = "restriction"
+	CatalogEntryKindDeclaration CatalogEntryKind = "declaration"
+	CatalogEntryKindProfile     CatalogEntryKind = "profile"
+	CatalogEntryKindRestriction CatalogEntryKind = "restriction"
 )
 
 // Valid indicates whether the value is a known member of the CatalogEntryKind enum.
 func (e CatalogEntryKind) Valid() bool {
 	switch e {
-	case Declaration:
+	case CatalogEntryKindDeclaration:
 		return true
-	case Profile:
+	case CatalogEntryKindProfile:
 		return true
-	case Restriction:
+	case CatalogEntryKindRestriction:
 		return true
 	default:
 		return false
@@ -168,6 +253,246 @@ func (e CatalogKeyType) Valid() bool {
 	}
 }
 
+// Defines values for CommandStatus.
+const (
+	Acknowledged       CommandStatus = "acknowledged"
+	Cancelled          CommandStatus = "cancelled"
+	CommandFormatError CommandStatus = "command_format_error"
+	Error              CommandStatus = "error"
+	Notnow             CommandStatus = "notnow"
+	Outbox             CommandStatus = "outbox"
+	Queued             CommandStatus = "queued"
+)
+
+// Valid indicates whether the value is a known member of the CommandStatus enum.
+func (e CommandStatus) Valid() bool {
+	switch e {
+	case Acknowledged:
+		return true
+	case Cancelled:
+		return true
+	case CommandFormatError:
+		return true
+	case Error:
+		return true
+	case Notnow:
+		return true
+	case Outbox:
+		return true
+	case Queued:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for CommandRequestType.
+const (
+	DeviceInformation CommandRequestType = "DeviceInformation"
+	DeviceLock        CommandRequestType = "DeviceLock"
+)
+
+// Valid indicates whether the value is a known member of the CommandRequestType enum.
+func (e CommandRequestType) Valid() bool {
+	switch e {
+	case DeviceInformation:
+		return true
+	case DeviceLock:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for DeviceStatus.
+const (
+	DeviceStatusEnrolled   DeviceStatus = "enrolled"
+	DeviceStatusEnrolling  DeviceStatus = "enrolling"
+	DeviceStatusPending    DeviceStatus = "pending"
+	DeviceStatusUnenrolled DeviceStatus = "unenrolled"
+)
+
+// Valid indicates whether the value is a known member of the DeviceStatus enum.
+func (e DeviceStatus) Valid() bool {
+	switch e {
+	case DeviceStatusEnrolled:
+		return true
+	case DeviceStatusEnrolling:
+		return true
+	case DeviceStatusPending:
+		return true
+	case DeviceStatusUnenrolled:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for DeviceDDMStage.
+const (
+	Enabled    DeviceDDMStage = "enabled"
+	Enabling   DeviceDDMStage = "enabling"
+	None       DeviceDDMStage = "none"
+	TakingOver DeviceDDMStage = "taking_over"
+)
+
+// Valid indicates whether the value is a known member of the DeviceDDMStage enum.
+func (e DeviceDDMStage) Valid() bool {
+	switch e {
+	case Enabled:
+		return true
+	case Enabling:
+		return true
+	case None:
+		return true
+	case TakingOver:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for DevicePolicyAppliedLevel.
+const (
+	DevicePolicyAppliedLevelLessThannil  DevicePolicyAppliedLevel = "<nil>"
+	DevicePolicyAppliedLevelSupervised   DevicePolicyAppliedLevel = "supervised"
+	DevicePolicyAppliedLevelUnsupervised DevicePolicyAppliedLevel = "unsupervised"
+)
+
+// Valid indicates whether the value is a known member of the DevicePolicyAppliedLevel enum.
+func (e DevicePolicyAppliedLevel) Valid() bool {
+	switch e {
+	case DevicePolicyAppliedLevelLessThannil:
+		return true
+	case DevicePolicyAppliedLevelSupervised:
+		return true
+	case DevicePolicyAppliedLevelUnsupervised:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for DevicePolicyInstallLevel.
+const (
+	DevicePolicyInstallLevelLessThannil  DevicePolicyInstallLevel = "<nil>"
+	DevicePolicyInstallLevelSupervised   DevicePolicyInstallLevel = "supervised"
+	DevicePolicyInstallLevelUnsupervised DevicePolicyInstallLevel = "unsupervised"
+)
+
+// Valid indicates whether the value is a known member of the DevicePolicyInstallLevel enum.
+func (e DevicePolicyInstallLevel) Valid() bool {
+	switch e {
+	case DevicePolicyInstallLevelLessThannil:
+		return true
+	case DevicePolicyInstallLevelSupervised:
+		return true
+	case DevicePolicyInstallLevelUnsupervised:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for DevicePolicyStatus.
+const (
+	DevicePolicyStatusApplied  DevicePolicyStatus = "applied"
+	DevicePolicyStatusFailed   DevicePolicyStatus = "failed"
+	DevicePolicyStatusPending  DevicePolicyStatus = "pending"
+	DevicePolicyStatusRemoving DevicePolicyStatus = "removing"
+)
+
+// Valid indicates whether the value is a known member of the DevicePolicyStatus enum.
+func (e DevicePolicyStatus) Valid() bool {
+	switch e {
+	case DevicePolicyStatusApplied:
+		return true
+	case DevicePolicyStatusFailed:
+		return true
+	case DevicePolicyStatusPending:
+		return true
+	case DevicePolicyStatusRemoving:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for EffectivePolicyStatus.
+const (
+	EffectivePolicyStatusApplied  EffectivePolicyStatus = "applied"
+	EffectivePolicyStatusFailed   EffectivePolicyStatus = "failed"
+	EffectivePolicyStatusPending  EffectivePolicyStatus = "pending"
+	EffectivePolicyStatusRemoving EffectivePolicyStatus = "removing"
+)
+
+// Valid indicates whether the value is a known member of the EffectivePolicyStatus enum.
+func (e EffectivePolicyStatus) Valid() bool {
+	switch e {
+	case EffectivePolicyStatusApplied:
+		return true
+	case EffectivePolicyStatusFailed:
+		return true
+	case EffectivePolicyStatusPending:
+		return true
+	case EffectivePolicyStatusRemoving:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ItemStatusReason.
+const (
+	ItemStatusReasonLessThannil          ItemStatusReason = "<nil>"
+	ItemStatusReasonNotSupportedByDevice ItemStatusReason = "not_supported_by_device"
+	ItemStatusReasonRequiresOs           ItemStatusReason = "requires_os"
+	ItemStatusReasonRequiresSupervision  ItemStatusReason = "requires_supervision"
+)
+
+// Valid indicates whether the value is a known member of the ItemStatusReason enum.
+func (e ItemStatusReason) Valid() bool {
+	switch e {
+	case ItemStatusReasonLessThannil:
+		return true
+	case ItemStatusReasonNotSupportedByDevice:
+		return true
+	case ItemStatusReasonRequiresOs:
+		return true
+	case ItemStatusReasonRequiresSupervision:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for ItemStatusStatus.
+const (
+	ItemStatusStatusApplied     ItemStatusStatus = "applied"
+	ItemStatusStatusFailed      ItemStatusStatus = "failed"
+	ItemStatusStatusPending     ItemStatusStatus = "pending"
+	ItemStatusStatusRemoving    ItemStatusStatus = "removing"
+	ItemStatusStatusUnsupported ItemStatusStatus = "unsupported"
+)
+
+// Valid indicates whether the value is a known member of the ItemStatusStatus enum.
+func (e ItemStatusStatus) Valid() bool {
+	switch e {
+	case ItemStatusStatusApplied:
+		return true
+	case ItemStatusStatusFailed:
+		return true
+	case ItemStatusStatusPending:
+		return true
+	case ItemStatusStatusRemoving:
+		return true
+	case ItemStatusStatusUnsupported:
+		return true
+	default:
+		return false
+	}
+}
+
 // Defines values for MeKind.
 const (
 	AccountAdmin  MeKind = "account_admin"
@@ -210,6 +535,33 @@ func (e MeRole) Valid() bool {
 	case MeRoleOwner:
 		return true
 	case MeRoleViewer:
+		return true
+	default:
+		return false
+	}
+}
+
+// Defines values for SourceLayer.
+const (
+	SourceLayerDevice   SourceLayer = "device"
+	SourceLayerGroup    SourceLayer = "group"
+	SourceLayerMember   SourceLayer = "member"
+	SourceLayerSettings SourceLayer = "settings"
+	SourceLayerTenant   SourceLayer = "tenant"
+)
+
+// Valid indicates whether the value is a known member of the SourceLayer enum.
+func (e SourceLayer) Valid() bool {
+	switch e {
+	case SourceLayerDevice:
+		return true
+	case SourceLayerGroup:
+		return true
+	case SourceLayerMember:
+		return true
+	case SourceLayerSettings:
+		return true
+	case SourceLayerTenant:
 		return true
 	default:
 		return false
@@ -260,6 +612,39 @@ type AccountRef struct {
 	Id   openapi_types.UUID `json:"id"`
 	Name string             `json:"name"`
 }
+
+// Assignment defines model for Assignment.
+type Assignment struct {
+	CreatedAt time.Time          `json:"created_at"`
+	Id        openapi_types.UUID `json:"id"`
+	Levels    []AssignmentLevels `json:"levels"`
+	ProfileId openapi_types.UUID `json:"profile_id"`
+	Target    AssignmentTarget   `json:"target"`
+
+	// TargetId The group, member, or device id. Null for the tenant.
+	TargetId *openapi_types.UUID `json:"target_id"`
+}
+
+// AssignmentLevels defines model for Assignment.Levels.
+type AssignmentLevels string
+
+// AssignmentTarget defines model for Assignment.Target.
+type AssignmentTarget string
+
+// AssignmentRequest defines model for AssignmentRequest.
+type AssignmentRequest struct {
+	Levels []AssignmentRequestLevels `json:"levels"`
+	Target AssignmentRequestTarget   `json:"target"`
+
+	// TargetId The group or device id, or the member id or `ext:` and the account's id for the member. Not set for the tenant.
+	TargetId *string `json:"target_id,omitempty"`
+}
+
+// AssignmentRequestLevels defines model for AssignmentRequest.Levels.
+type AssignmentRequestLevels string
+
+// AssignmentRequestTarget defines model for AssignmentRequest.Target.
+type AssignmentRequestTarget string
 
 // CatalogCond A condition on another key of the payload. key is relative to the constrained key's dictionary: "Name", "../Name" one level up, or "/Name" at the payload root. An unset key is compared by its default. Every field present must hold.
 type CatalogCond struct {
@@ -350,11 +735,257 @@ type CatalogResponse struct {
 	Entries []CatalogEntry `json:"entries"`
 }
 
+// Command defines model for Command.
+type Command struct {
+	CommandUuid openapi_types.UUID `json:"command_uuid"`
+	CreatedAt   time.Time          `json:"created_at"`
+
+	// Error The device's ErrorChain.
+	Error       *[]map[string]any `json:"error"`
+	RequestType string            `json:"request_type"`
+
+	// Result The device's report without UDID, Status, CommandUUID, and ErrorChain. For DeviceInformation it carries QueryResponses, for DeviceLock MessageResult when present.
+	Result *map[string]any `json:"result"`
+
+	// Status A command starts in the first status listed and stays there until it is handed to the MDM server. cancelled: it was dropped without being sent, because its enrollment ended or a newer decision replaced it. It never reached the device.
+	Status    CommandStatus `json:"status"`
+	UpdatedAt time.Time     `json:"updated_at"`
+}
+
+// CommandStatus A command starts in the first status listed and stays there until it is handed to the MDM server. cancelled: it was dropped without being sent, because its enrollment ended or a newer decision replaced it. It never reached the device.
+type CommandStatus string
+
+// CommandAccepted defines model for CommandAccepted.
+type CommandAccepted struct {
+	CommandUuid openapi_types.UUID `json:"command_uuid"`
+}
+
+// CommandRequest defines model for CommandRequest.
+type CommandRequest struct {
+	// Message DeviceLock only.
+	Message *string `json:"message,omitempty"`
+
+	// PhoneNumber DeviceLock only.
+	PhoneNumber *string            `json:"phone_number,omitempty"`
+	Type        CommandRequestType `json:"type"`
+}
+
+// CommandRequestType defines model for CommandRequest.Type.
+type CommandRequestType string
+
+// CreateDeviceRequest defines model for CreateDeviceRequest.
+type CreateDeviceRequest struct {
+	// Member The member who owns the device: a member id, or `ext:` and the account's id for the member. Without it the device is the tenant's.
+	Member *string `json:"member,omitempty"`
+	Name   string  `json:"name"`
+
+	// Settings Settings: items from the catalog (GET /api/v1/catalog). Items a device's level or OS cannot take are left out of its declarations and reported unsupported. Secret keys (marked in the catalog) are write-only: responses show {"secret": "set"}; a PUT that sends it keeps the stored value, a string replaces it, and leaving the key out clears it.
+	Settings *Policy `json:"settings,omitempty"`
+}
+
+// DeclarationReason defines model for DeclarationReason.
+type DeclarationReason struct {
+	Code        string  `json:"code"`
+	Description *string `json:"description,omitempty"`
+}
+
+// DeclarationState defines model for DeclarationState.
+type DeclarationState struct {
+	Active     bool                `json:"active"`
+	Identifier string              `json:"identifier"`
+	Reasons    []DeclarationReason `json:"reasons"`
+
+	// ReportedToken The version the device last reported. Null before it reports.
+	ReportedToken *string `json:"reported_token"`
+
+	// ServerToken The current version.
+	ServerToken string `json:"server_token"`
+
+	// Valid Apple's value (valid, invalid, unknown), or unknown before a report.
+	Valid string `json:"valid"`
+}
+
+// Device defines model for Device.
+type Device struct {
+	CreatedAt time.Time `json:"created_at"`
+
+	// EnrollmentId The enrollment ID bound to this device.
+	EnrollmentId *string            `json:"enrollment_id"`
+	Id           openapi_types.UUID `json:"id"`
+	LastSeenAt   *time.Time         `json:"last_seen_at"`
+
+	// MemberId The member who owns the device. Null when it is the tenant's.
+	MemberId *openapi_types.UUID `json:"member_id"`
+	Model    *string             `json:"model"`
+	Name     string              `json:"name"`
+
+	// OsBehind Below its tenant's minimum, or below os_latest when the tenant sets none.
+	OsBehind bool `json:"os_behind"`
+
+	// OsLatest The newest iOS Apple publishes for its model, from the daily check.
+	OsLatest  *string `json:"os_latest"`
+	OsVersion *string `json:"os_version"`
+
+	// Policy The deployment of the device's effective policy. Its items are read with profiles:read: GET .../effective-policy (with provenance) and GET .../settings (the device's own).
+	Policy       *DevicePolicy `json:"policy"`
+	SerialNumber *string       `json:"serial_number"`
+
+	// Settings One status per policy item, in policy order. Empty without a policy.
+	Settings []ItemStatus `json:"settings"`
+	Status   DeviceStatus `json:"status"`
+
+	// Supervised The level, from the current DeviceInformation IsSupervised. Null until reported, and again on each new enrollment until reported.
+	Supervised *bool   `json:"supervised"`
+	Udid       *string `json:"udid"`
+}
+
+// DeviceStatus defines model for Device.Status.
+type DeviceStatus string
+
+// DeviceDDM defines model for DeviceDDM.
+type DeviceDDM struct {
+	Declarations []DeclarationState `json:"declarations"`
+	Stage        DeviceDDMStage     `json:"stage"`
+}
+
+// DeviceDDMStage defines model for DeviceDDM.Stage.
+type DeviceDDMStage string
+
+// DeviceMemberRequest defines model for DeviceMemberRequest.
+type DeviceMemberRequest struct {
+	// Member The member id, or `ext:` and the account's id for the member.
+	Member string `json:"member"`
+}
+
+// DevicePolicy The deployment of the device's effective policy. Its items are read with profiles:read: GET .../effective-policy (with provenance) and GET .../settings (the device's own).
+type DevicePolicy struct {
+	// AppliedLevel The level of the declarations the device last reported active.
+	AppliedLevel *DevicePolicyAppliedLevel `json:"applied_level"`
+
+	// AppliedRevision The revision the device last reported active. Null before that.
+	AppliedRevision *int64 `json:"applied_revision"`
+
+	// Error The declarations the device reported invalid, with Apple's reason, when status is failed.
+	Error *[]map[string]any `json:"error"`
+
+	// InstallGeneration Increments on every deploy, including a rebuild for a changed level.
+	InstallGeneration int64 `json:"install_generation"`
+
+	// InstallLevel The level the current declarations were built for. Null before the first deploy.
+	InstallLevel *DevicePolicyInstallLevel `json:"install_level"`
+
+	// Revision The effective policy's revision. Increments whenever the merged result changes.
+	Revision int64              `json:"revision"`
+	Status   DevicePolicyStatus `json:"status"`
+}
+
+// DevicePolicyAppliedLevel The level of the declarations the device last reported active.
+type DevicePolicyAppliedLevel string
+
+// DevicePolicyInstallLevel The level the current declarations were built for. Null before the first deploy.
+type DevicePolicyInstallLevel string
+
+// DevicePolicyStatus defines model for DevicePolicy.Status.
+type DevicePolicyStatus string
+
+// EffectiveItem defines model for EffectiveItem.
+type EffectiveItem struct {
+	// Conflicts Sources in the same layer that set the same item and lost to the lower profile id.
+	Conflicts []Source   `json:"conflicts"`
+	Item      PolicyItem `json:"item"`
+
+	// Overridden Less specific sources (or lower priority groups) that set the same item.
+	Overridden []Source `json:"overridden"`
+	Source     Source   `json:"source"`
+}
+
+// EffectivePolicy defines model for EffectivePolicy.
+type EffectivePolicy struct {
+	// Items Empty while the policy is being removed.
+	Items []EffectiveItem `json:"items"`
+
+	// Revision The effective policy's revision. Absent when the device has none.
+	Revision *int64 `json:"revision,omitempty"`
+
+	// Status Absent when the device has no policy.
+	Status *EffectivePolicyStatus `json:"status,omitempty"`
+}
+
+// EffectivePolicyStatus Absent when the device has no policy.
+type EffectivePolicyStatus string
+
+// EnrollmentLinkResponse defines model for EnrollmentLinkResponse.
+type EnrollmentLinkResponse struct {
+	Device Device `json:"device"`
+
+	// EnrollmentProfile The unsigned .mobileconfig the link serves, base64 encoded.
+	EnrollmentProfile []byte    `json:"enrollment_profile"`
+	ExpiresAt         time.Time `json:"expires_at"`
+
+	// Url The public link. Treat it as a secret until it expires.
+	Url string `json:"url"`
+}
+
+// EnrollmentResponse defines model for EnrollmentResponse.
+type EnrollmentResponse struct {
+	Device Device `json:"device"`
+
+	// EnrollmentProfile The unsigned .mobileconfig, base64 encoded.
+	EnrollmentProfile []byte `json:"enrollment_profile"`
+}
+
 // FieldError defines model for FieldError.
 type FieldError struct {
 	Detail string `json:"detail"`
 	Field  string `json:"field"`
 }
+
+// Group defines model for Group.
+type Group struct {
+	CreatedAt time.Time          `json:"created_at"`
+	Id        openapi_types.UUID `json:"id"`
+	Name      string             `json:"name"`
+	Priority  int                `json:"priority"`
+	UpdatedAt time.Time          `json:"updated_at"`
+}
+
+// GroupRequest defines model for GroupRequest.
+type GroupRequest struct {
+	Name string `json:"name"`
+
+	// Priority Unique in the tenant. The higher priority wins between groups.
+	Priority int `json:"priority"`
+}
+
+// GroupUpdate defines model for GroupUpdate.
+type GroupUpdate struct {
+	Name     *string `json:"name,omitempty"`
+	Priority *int    `json:"priority,omitempty"`
+}
+
+// ItemStatus defines model for ItemStatus.
+type ItemStatus struct {
+	Id  string  `json:"id"`
+	Key *string `json:"key"`
+
+	// MinOs The iOS version the item needs, with reason requires_os.
+	MinOs *string `json:"min_os"`
+
+	// Reason Set when status is unsupported.
+	Reason *ItemStatusReason `json:"reason"`
+
+	// Ref The item's id, or id#key for an item added more than once.
+	Ref string `json:"ref"`
+
+	// Status Derived, first match wins: level or OS unknown, pending; OS below 17, unsupported; the item needs supervision or a newer OS, or every key it sets does, unsupported; policy removing, removing; the device's capabilities lack its declaration type, unsupported; the item's declarations reported for this revision, their state; policy applied for this revision and level, applied; otherwise pending.
+	Status ItemStatusStatus `json:"status"`
+}
+
+// ItemStatusReason Set when status is unsupported.
+type ItemStatusReason string
+
+// ItemStatusStatus Derived, first match wins: level or OS unknown, pending; OS below 17, unsupported; the item needs supervision or a newer OS, or every key it sets does, unsupported; policy removing, removing; the device's capabilities lack its declaration type, unsupported; the item's declarations reported for this revision, their state; policy applied for this revision and level, applied; otherwise pending.
+type ItemStatusStatus string
 
 // Licence defines model for Licence.
 type Licence struct {
@@ -393,6 +1024,51 @@ type MeKind string
 // MeRole For tenant_admin and account_admin.
 type MeRole string
 
+// Member defines model for Member.
+type Member struct {
+	CreatedAt  time.Time `json:"created_at"`
+	ExternalId *string   `json:"external_id,omitempty"`
+
+	// Groups The ids of the member's groups.
+	Groups    []openapi_types.UUID `json:"groups"`
+	Id        openapi_types.UUID   `json:"id"`
+	Name      string               `json:"name"`
+	UpdatedAt time.Time            `json:"updated_at"`
+}
+
+// MemberRequest defines model for MemberRequest.
+type MemberRequest struct {
+	// ExternalId The account's own id for the person: letters, digits, and the characters . _ ~ @ : -
+	ExternalId *string `json:"external_id,omitempty"`
+	Name       string  `json:"name"`
+}
+
+// MemberUpdate defines model for MemberUpdate.
+type MemberUpdate struct {
+	ExternalId *string `json:"external_id,omitempty"`
+	Name       *string `json:"name,omitempty"`
+}
+
+// Policy Settings: items from the catalog (GET /api/v1/catalog). Items a device's level or OS cannot take are left out of its declarations and reported unsupported. Secret keys (marked in the catalog) are write-only: responses show {"secret": "set"}; a PUT that sends it keeps the stored value, a string replaces it, and leaving the key out clears it.
+type Policy struct {
+	Items []PolicyItem `json:"items"`
+}
+
+// PolicyItem defines model for PolicyItem.
+type PolicyItem struct {
+	// Id A catalog entry id, such as restriction:allowCamera.
+	Id string `json:"id"`
+
+	// Key Names the instance of an entry that can be added more than once (multiple), such as one Wi-Fi network.
+	Key *string `json:"key,omitempty"`
+
+	// Payload A profile payload's or declaration's keys, as the catalog describes them. Data keys are base64.
+	Payload *map[string]any `json:"payload,omitempty"`
+
+	// Value A restriction's value.
+	Value any `json:"value,omitempty"`
+}
+
 // Problem RFC 9457 problem detail.
 type Problem struct {
 	// Code Names the problem; branch on it, not on status or title.
@@ -406,6 +1082,36 @@ type Problem struct {
 	Title    string  `json:"title"`
 	Type     string  `json:"type"`
 }
+
+// Profile defines model for Profile.
+type Profile struct {
+	CreatedAt time.Time `json:"created_at"`
+
+	// Id A UUIDv7. Within one layer the lower id wins a conflict.
+	Id        openapi_types.UUID `json:"id"`
+	Items     []PolicyItem       `json:"items"`
+	Name      string             `json:"name"`
+	UpdatedAt time.Time          `json:"updated_at"`
+}
+
+// ProfileRequest defines model for ProfileRequest.
+type ProfileRequest struct {
+	Items []PolicyItem `json:"items"`
+	Name  string       `json:"name"`
+}
+
+// Source defines model for Source.
+type Source struct {
+	// GroupId The group the profile reached the device through, for the group layer.
+	GroupId *openapi_types.UUID `json:"group_id,omitempty"`
+
+	// Layer Where the item came from; settings is the device's own items.
+	Layer     SourceLayer         `json:"layer"`
+	ProfileId *openapi_types.UUID `json:"profile_id,omitempty"`
+}
+
+// SourceLayer Where the item came from; settings is the device's own items.
+type SourceLayer string
 
 // Tenant defines model for Tenant.
 type Tenant struct {
@@ -431,6 +1137,26 @@ type Tenant struct {
 // TenantRole The caller's role, for an admin app token only.
 type TenantRole string
 
+// TenantRequest defines model for TenantRequest.
+type TenantRequest struct {
+	// ExternalId The account's own id for the tenant: letters, digits, and the characters . _ ~ @ : -
+	ExternalId *string `json:"external_id,omitempty"`
+
+	// HolderId The credential holder whose Apple credentials the tenant uses; the account's default when absent.
+	HolderId *openapi_types.UUID `json:"holder_id,omitempty"`
+	Name     string              `json:"name"`
+}
+
+// TenantUpdate defines model for TenantUpdate.
+type TenantUpdate struct {
+	// HolderId Moves the tenant to another credential holder of the account; enrolled devices keep their push topic.
+	HolderId *openapi_types.UUID `json:"holder_id,omitempty"`
+
+	// MinOs The iOS version its devices must reach (26.2); empty clears it. Without it a device is behind when Apple has a newer release for its model.
+	MinOs *string `json:"min_os,omitempty"`
+	Name  *string `json:"name,omitempty"`
+}
+
 // GetCatalogParams defines parameters for GetCatalog.
 type GetCatalogParams struct {
 	Level *GetCatalogParamsLevel `form:"level,omitempty" json:"level,omitempty"`
@@ -448,6 +1174,327 @@ type GetMeParams struct {
 	// MdmActor For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.
 	MdmActor *string `json:"Mdm-Actor,omitempty"`
 }
+
+// ListTenantsParams defines parameters for ListTenants.
+type ListTenantsParams struct {
+	// MdmActor For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.
+	MdmActor *string `json:"Mdm-Actor,omitempty"`
+}
+
+// CreateTenantParams defines parameters for CreateTenant.
+type CreateTenantParams struct {
+	// IdempotencyKey Makes a retry safe (IETF draft): the first response is stored for 24 hours and replayed, with Idempotent-Replayed, for a retry by the same caller with the same key, method, path, and body. The same key with another request answers 422; a retry while the first runs answers 409.
+	IdempotencyKey *string `json:"Idempotency-Key,omitempty"`
+
+	// MdmActor For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.
+	MdmActor *string `json:"Mdm-Actor,omitempty"`
+}
+
+// DeleteTenantParams defines parameters for DeleteTenant.
+type DeleteTenantParams struct {
+	// MdmActor For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.
+	MdmActor *string `json:"Mdm-Actor,omitempty"`
+}
+
+// GetTenantParams defines parameters for GetTenant.
+type GetTenantParams struct {
+	// MdmActor For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.
+	MdmActor *string `json:"Mdm-Actor,omitempty"`
+}
+
+// UpdateTenantParams defines parameters for UpdateTenant.
+type UpdateTenantParams struct {
+	// MdmActor For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.
+	MdmActor *string `json:"Mdm-Actor,omitempty"`
+}
+
+// ListDevicesParams defines parameters for ListDevices.
+type ListDevicesParams struct {
+	// Member A member id, or `ext:` and the account's id for the member.
+	Member *string `form:"member,omitempty" json:"member,omitempty"`
+
+	// MdmActor For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.
+	MdmActor *string `json:"Mdm-Actor,omitempty"`
+}
+
+// CreateDeviceParams defines parameters for CreateDevice.
+type CreateDeviceParams struct {
+	// IdempotencyKey Makes a retry safe (IETF draft): the first response is stored for 24 hours and replayed, with Idempotent-Replayed, for a retry by the same caller with the same key, method, path, and body. The same key with another request answers 422; a retry while the first runs answers 409.
+	IdempotencyKey *string `json:"Idempotency-Key,omitempty"`
+
+	// MdmActor For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.
+	MdmActor *string `json:"Mdm-Actor,omitempty"`
+}
+
+// DeleteDeviceParams defines parameters for DeleteDevice.
+type DeleteDeviceParams struct {
+	// MdmActor For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.
+	MdmActor *string `json:"Mdm-Actor,omitempty"`
+}
+
+// GetDeviceParams defines parameters for GetDevice.
+type GetDeviceParams struct {
+	// MdmActor For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.
+	MdmActor *string `json:"Mdm-Actor,omitempty"`
+}
+
+// ListCommandsParams defines parameters for ListCommands.
+type ListCommandsParams struct {
+	// MdmActor For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.
+	MdmActor *string `json:"Mdm-Actor,omitempty"`
+}
+
+// CreateCommandParams defines parameters for CreateCommand.
+type CreateCommandParams struct {
+	// IdempotencyKey Makes a retry safe (IETF draft): the first response is stored for 24 hours and replayed, with Idempotent-Replayed, for a retry by the same caller with the same key, method, path, and body. The same key with another request answers 422; a retry while the first runs answers 409.
+	IdempotencyKey *string `json:"Idempotency-Key,omitempty"`
+
+	// MdmActor For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.
+	MdmActor *string `json:"Mdm-Actor,omitempty"`
+}
+
+// GetCommandParams defines parameters for GetCommand.
+type GetCommandParams struct {
+	// MdmActor For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.
+	MdmActor *string `json:"Mdm-Actor,omitempty"`
+}
+
+// GetDeviceDDMParams defines parameters for GetDeviceDDM.
+type GetDeviceDDMParams struct {
+	// MdmActor For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.
+	MdmActor *string `json:"Mdm-Actor,omitempty"`
+}
+
+// GetEffectivePolicyParams defines parameters for GetEffectivePolicy.
+type GetEffectivePolicyParams struct {
+	// MdmActor For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.
+	MdmActor *string `json:"Mdm-Actor,omitempty"`
+}
+
+// CreateEnrollmentLinkParams defines parameters for CreateEnrollmentLink.
+type CreateEnrollmentLinkParams struct {
+	// IdempotencyKey Makes a retry safe (IETF draft): the first response is stored for 24 hours and replayed, with Idempotent-Replayed, for a retry by the same caller with the same key, method, path, and body. The same key with another request answers 422; a retry while the first runs answers 409.
+	IdempotencyKey *string `json:"Idempotency-Key,omitempty"`
+
+	// MdmActor For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.
+	MdmActor *string `json:"Mdm-Actor,omitempty"`
+}
+
+// ReissueEnrollmentProfileParams defines parameters for ReissueEnrollmentProfile.
+type ReissueEnrollmentProfileParams struct {
+	// IdempotencyKey Makes a retry safe (IETF draft): the first response is stored for 24 hours and replayed, with Idempotent-Replayed, for a retry by the same caller with the same key, method, path, and body. The same key with another request answers 422; a retry while the first runs answers 409.
+	IdempotencyKey *string `json:"Idempotency-Key,omitempty"`
+
+	// MdmActor For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.
+	MdmActor *string `json:"Mdm-Actor,omitempty"`
+}
+
+// ClearDeviceMemberParams defines parameters for ClearDeviceMember.
+type ClearDeviceMemberParams struct {
+	// MdmActor For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.
+	MdmActor *string `json:"Mdm-Actor,omitempty"`
+}
+
+// SetDeviceMemberParams defines parameters for SetDeviceMember.
+type SetDeviceMemberParams struct {
+	// MdmActor For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.
+	MdmActor *string `json:"Mdm-Actor,omitempty"`
+}
+
+// DeleteDeviceSettingsParams defines parameters for DeleteDeviceSettings.
+type DeleteDeviceSettingsParams struct {
+	// MdmActor For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.
+	MdmActor *string `json:"Mdm-Actor,omitempty"`
+}
+
+// GetDeviceSettingsParams defines parameters for GetDeviceSettings.
+type GetDeviceSettingsParams struct {
+	// MdmActor For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.
+	MdmActor *string `json:"Mdm-Actor,omitempty"`
+}
+
+// PutDeviceSettingsParams defines parameters for PutDeviceSettings.
+type PutDeviceSettingsParams struct {
+	// MdmActor For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.
+	MdmActor *string `json:"Mdm-Actor,omitempty"`
+}
+
+// ListGroupsParams defines parameters for ListGroups.
+type ListGroupsParams struct {
+	// MdmActor For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.
+	MdmActor *string `json:"Mdm-Actor,omitempty"`
+}
+
+// CreateGroupParams defines parameters for CreateGroup.
+type CreateGroupParams struct {
+	// IdempotencyKey Makes a retry safe (IETF draft): the first response is stored for 24 hours and replayed, with Idempotent-Replayed, for a retry by the same caller with the same key, method, path, and body. The same key with another request answers 422; a retry while the first runs answers 409.
+	IdempotencyKey *string `json:"Idempotency-Key,omitempty"`
+
+	// MdmActor For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.
+	MdmActor *string `json:"Mdm-Actor,omitempty"`
+}
+
+// DeleteGroupParams defines parameters for DeleteGroup.
+type DeleteGroupParams struct {
+	// MdmActor For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.
+	MdmActor *string `json:"Mdm-Actor,omitempty"`
+}
+
+// GetGroupParams defines parameters for GetGroup.
+type GetGroupParams struct {
+	// MdmActor For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.
+	MdmActor *string `json:"Mdm-Actor,omitempty"`
+}
+
+// UpdateGroupParams defines parameters for UpdateGroup.
+type UpdateGroupParams struct {
+	// MdmActor For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.
+	MdmActor *string `json:"Mdm-Actor,omitempty"`
+}
+
+// ListGroupMembersParams defines parameters for ListGroupMembers.
+type ListGroupMembersParams struct {
+	// MdmActor For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.
+	MdmActor *string `json:"Mdm-Actor,omitempty"`
+}
+
+// RemoveGroupMemberParams defines parameters for RemoveGroupMember.
+type RemoveGroupMemberParams struct {
+	// MdmActor For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.
+	MdmActor *string `json:"Mdm-Actor,omitempty"`
+}
+
+// AddGroupMemberParams defines parameters for AddGroupMember.
+type AddGroupMemberParams struct {
+	// MdmActor For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.
+	MdmActor *string `json:"Mdm-Actor,omitempty"`
+}
+
+// ListMembersParams defines parameters for ListMembers.
+type ListMembersParams struct {
+	// MdmActor For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.
+	MdmActor *string `json:"Mdm-Actor,omitempty"`
+}
+
+// CreateMemberParams defines parameters for CreateMember.
+type CreateMemberParams struct {
+	// IdempotencyKey Makes a retry safe (IETF draft): the first response is stored for 24 hours and replayed, with Idempotent-Replayed, for a retry by the same caller with the same key, method, path, and body. The same key with another request answers 422; a retry while the first runs answers 409.
+	IdempotencyKey *string `json:"Idempotency-Key,omitempty"`
+
+	// MdmActor For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.
+	MdmActor *string `json:"Mdm-Actor,omitempty"`
+}
+
+// DeleteMemberParams defines parameters for DeleteMember.
+type DeleteMemberParams struct {
+	// MdmActor For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.
+	MdmActor *string `json:"Mdm-Actor,omitempty"`
+}
+
+// GetMemberParams defines parameters for GetMember.
+type GetMemberParams struct {
+	// MdmActor For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.
+	MdmActor *string `json:"Mdm-Actor,omitempty"`
+}
+
+// UpdateMemberParams defines parameters for UpdateMember.
+type UpdateMemberParams struct {
+	// MdmActor For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.
+	MdmActor *string `json:"Mdm-Actor,omitempty"`
+}
+
+// ListProfilesParams defines parameters for ListProfiles.
+type ListProfilesParams struct {
+	// MdmActor For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.
+	MdmActor *string `json:"Mdm-Actor,omitempty"`
+}
+
+// CreateProfileParams defines parameters for CreateProfile.
+type CreateProfileParams struct {
+	// IdempotencyKey Makes a retry safe (IETF draft): the first response is stored for 24 hours and replayed, with Idempotent-Replayed, for a retry by the same caller with the same key, method, path, and body. The same key with another request answers 422; a retry while the first runs answers 409.
+	IdempotencyKey *string `json:"Idempotency-Key,omitempty"`
+
+	// MdmActor For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.
+	MdmActor *string `json:"Mdm-Actor,omitempty"`
+}
+
+// DeleteProfileParams defines parameters for DeleteProfile.
+type DeleteProfileParams struct {
+	// MdmActor For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.
+	MdmActor *string `json:"Mdm-Actor,omitempty"`
+}
+
+// GetProfileParams defines parameters for GetProfile.
+type GetProfileParams struct {
+	// MdmActor For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.
+	MdmActor *string `json:"Mdm-Actor,omitempty"`
+}
+
+// UpdateProfileParams defines parameters for UpdateProfile.
+type UpdateProfileParams struct {
+	// MdmActor For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.
+	MdmActor *string `json:"Mdm-Actor,omitempty"`
+}
+
+// ListAssignmentsParams defines parameters for ListAssignments.
+type ListAssignmentsParams struct {
+	// MdmActor For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.
+	MdmActor *string `json:"Mdm-Actor,omitempty"`
+}
+
+// CreateAssignmentParams defines parameters for CreateAssignment.
+type CreateAssignmentParams struct {
+	// IdempotencyKey Makes a retry safe (IETF draft): the first response is stored for 24 hours and replayed, with Idempotent-Replayed, for a retry by the same caller with the same key, method, path, and body. The same key with another request answers 422; a retry while the first runs answers 409.
+	IdempotencyKey *string `json:"Idempotency-Key,omitempty"`
+
+	// MdmActor For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.
+	MdmActor *string `json:"Mdm-Actor,omitempty"`
+}
+
+// DeleteAssignmentParams defines parameters for DeleteAssignment.
+type DeleteAssignmentParams struct {
+	// MdmActor For an account client: the user the client acts for, recorded in the audit trail. Ignored for other callers.
+	MdmActor *string `json:"Mdm-Actor,omitempty"`
+}
+
+// CreateTenantJSONRequestBody defines body for CreateTenant for application/json ContentType.
+type CreateTenantJSONRequestBody = TenantRequest
+
+// UpdateTenantJSONRequestBody defines body for UpdateTenant for application/json ContentType.
+type UpdateTenantJSONRequestBody = TenantUpdate
+
+// CreateDeviceJSONRequestBody defines body for CreateDevice for application/json ContentType.
+type CreateDeviceJSONRequestBody = CreateDeviceRequest
+
+// CreateCommandJSONRequestBody defines body for CreateCommand for application/json ContentType.
+type CreateCommandJSONRequestBody = CommandRequest
+
+// SetDeviceMemberJSONRequestBody defines body for SetDeviceMember for application/json ContentType.
+type SetDeviceMemberJSONRequestBody = DeviceMemberRequest
+
+// PutDeviceSettingsJSONRequestBody defines body for PutDeviceSettings for application/json ContentType.
+type PutDeviceSettingsJSONRequestBody = Policy
+
+// CreateGroupJSONRequestBody defines body for CreateGroup for application/json ContentType.
+type CreateGroupJSONRequestBody = GroupRequest
+
+// UpdateGroupJSONRequestBody defines body for UpdateGroup for application/json ContentType.
+type UpdateGroupJSONRequestBody = GroupUpdate
+
+// CreateMemberJSONRequestBody defines body for CreateMember for application/json ContentType.
+type CreateMemberJSONRequestBody = MemberRequest
+
+// UpdateMemberJSONRequestBody defines body for UpdateMember for application/json ContentType.
+type UpdateMemberJSONRequestBody = MemberUpdate
+
+// CreateProfileJSONRequestBody defines body for CreateProfile for application/json ContentType.
+type CreateProfileJSONRequestBody = ProfileRequest
+
+// UpdateProfileJSONRequestBody defines body for UpdateProfile for application/json ContentType.
+type UpdateProfileJSONRequestBody = ProfileRequest
+
+// CreateAssignmentJSONRequestBody defines body for CreateAssignment for application/json ContentType.
+type CreateAssignmentJSONRequestBody = AssignmentRequest
 
 // RequestEditorFn is the function signature for the RequestEditor callback function
 type RequestEditorFn func(ctx context.Context, req *http.Request) error
@@ -536,6 +1583,411 @@ type ClientInterface interface {
 	//
 	// Corresponds with GET /api/v1/me (the `GetMe` operationId).
 	GetMe(ctx context.Context, params *GetMeParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ListTenants Tenants the caller reaches
+	//
+	// An account client: every tenant of its account (tenants:read), oldest first. An admin app token: its organization's tenant, with the caller's role.
+	//
+	// Corresponds with GET /api/v1/tenants (the `ListTenants` operationId).
+	ListTenants(ctx context.Context, params *ListTenantsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// CreateTenantWithBody Create a tenant
+	//
+	// Account clients only (tenants:write). external_id is the account's own id for the tenant, unique in the account; 409 when it is taken.
+	//
+	// Takes any type of body and a specified content type.
+	//
+	// Corresponds with POST /api/v1/tenants (the `CreateTenant` operationId).
+	CreateTenantWithBody(ctx context.Context, params *CreateTenantParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// CreateTenant Create a tenant
+	//
+	// Account clients only (tenants:write). external_id is the account's own id for the tenant, unique in the account; 409 when it is taken.
+	//
+	// Takes a body of the `application/json` content type.
+	//
+	// Corresponds with POST /api/v1/tenants (the `CreateTenant` operationId).
+	CreateTenant(ctx context.Context, params *CreateTenantParams, body CreateTenantJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// DeleteTenant Delete a tenant
+	//
+	// Account clients only (tenants:write). Starts the deletion and answers at once: tenant.deleting fires, writes to the tenant answer 409 from then on (reads keep working), delegated tokens are no longer issued for it, and every enrolled device is asked to remove its enrollment profile. Once each device has, checked out, or stayed silent for 30 days, the tenant and everything in it are deleted and tenant.deleted fires. Calling it again changes nothing.
+	//
+	// Corresponds with DELETE /api/v1/tenants/{tenant} (the `DeleteTenant` operationId).
+	DeleteTenant(ctx context.Context, tenant string, params *DeleteTenantParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetTenant Get a tenant
+	//
+	// Corresponds with GET /api/v1/tenants/{tenant} (the `GetTenant` operationId).
+	GetTenant(ctx context.Context, tenant string, params *GetTenantParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// UpdateTenantWithBody Rename a tenant or change its credential holder
+	//
+	// Account clients only (tenants:write).
+	//
+	// Takes any type of body and a specified content type.
+	//
+	// Corresponds with PATCH /api/v1/tenants/{tenant} (the `UpdateTenant` operationId).
+	UpdateTenantWithBody(ctx context.Context, tenant string, params *UpdateTenantParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// UpdateTenant Rename a tenant or change its credential holder
+	//
+	// Account clients only (tenants:write).
+	//
+	// Takes a body of the `application/json` content type.
+	//
+	// Corresponds with PATCH /api/v1/tenants/{tenant} (the `UpdateTenant` operationId).
+	UpdateTenant(ctx context.Context, tenant string, params *UpdateTenantParams, body UpdateTenantJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ListDevices List devices
+	//
+	// Every device that has not been removed, oldest first; with member, that member's only (404 when the member is not in the tenant).
+	//
+	// Corresponds with GET /api/v1/tenants/{tenant}/devices (the `ListDevices` operationId).
+	ListDevices(ctx context.Context, tenant string, params *ListDevicesParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// CreateDeviceWithBody Register a device
+	//
+	// Creates a device in status pending with a fresh enrollment token and SCEP challenge, both valid for 7 days, and returns its enrollment profile. settings are the device's own items (PUT .../settings); its effective policy is installed once the enrolled device reports its level and OS through DeviceInformation.
+	//
+	// Takes any type of body and a specified content type.
+	//
+	// Corresponds with POST /api/v1/tenants/{tenant}/devices (the `CreateDevice` operationId).
+	CreateDeviceWithBody(ctx context.Context, tenant string, params *CreateDeviceParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// CreateDevice Register a device
+	//
+	// Creates a device in status pending with a fresh enrollment token and SCEP challenge, both valid for 7 days, and returns its enrollment profile. settings are the device's own items (PUT .../settings); its effective policy is installed once the enrolled device reports its level and OS through DeviceInformation.
+	//
+	// Takes a body of the `application/json` content type.
+	//
+	// Corresponds with POST /api/v1/tenants/{tenant}/devices (the `CreateDevice` operationId).
+	CreateDevice(ctx context.Context, tenant string, params *CreateDeviceParams, body CreateDeviceJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// DeleteDevice Remove a device
+	//
+	// Marks the device removed. Later webhooks for its enrollment are ignored and API calls on it return 404. The MDM server keeps the enrollment until the device is erased or its enrollment profile is removed.
+	//
+	// Corresponds with DELETE /api/v1/tenants/{tenant}/devices/{id} (the `DeleteDevice` operationId).
+	DeleteDevice(ctx context.Context, tenant string, id openapi_types.UUID, params *DeleteDeviceParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetDevice Get a device
+	//
+	// Corresponds with GET /api/v1/tenants/{tenant}/devices/{id} (the `GetDevice` operationId).
+	GetDevice(ctx context.Context, tenant string, id openapi_types.UUID, params *GetDeviceParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ListCommands Command history
+	//
+	// Every command sent to the device, newest first.
+	//
+	// Corresponds with GET /api/v1/tenants/{tenant}/devices/{id}/commands (the `ListCommands` operationId).
+	ListCommands(ctx context.Context, tenant string, id openapi_types.UUID, params *ListCommandsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// CreateCommandWithBody Send a command
+	//
+	// Accepts a command for an enrolled device. It is handed to the MDM server after the request commits; its status says where it is (GET .../commands/{command}). Returns 409 for any other device.
+	//
+	// Takes any type of body and a specified content type.
+	//
+	// Corresponds with POST /api/v1/tenants/{tenant}/devices/{id}/commands (the `CreateCommand` operationId).
+	CreateCommandWithBody(ctx context.Context, tenant string, id openapi_types.UUID, params *CreateCommandParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// CreateCommand Send a command
+	//
+	// Accepts a command for an enrolled device. It is handed to the MDM server after the request commits; its status says where it is (GET .../commands/{command}). Returns 409 for any other device.
+	//
+	// Takes a body of the `application/json` content type.
+	//
+	// Corresponds with POST /api/v1/tenants/{tenant}/devices/{id}/commands (the `CreateCommand` operationId).
+	CreateCommand(ctx context.Context, tenant string, id openapi_types.UUID, params *CreateCommandParams, body CreateCommandJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetCommand Get a command
+	//
+	// One command sent to the device, by the command_uuid it was accepted with: the same record the command history lists. 404 when the device has no such command.
+	//
+	// Corresponds with GET /api/v1/tenants/{tenant}/devices/{id}/commands/{command} (the `GetCommand` operationId).
+	GetCommand(ctx context.Context, tenant string, id openapi_types.UUID, command openapi_types.UUID, params *GetCommandParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetDeviceDDM Declarative management state
+	//
+	// The device's declarative management stage and the state it reported for each current declaration (from management.declarations).
+	//
+	// Corresponds with GET /api/v1/tenants/{tenant}/devices/{id}/ddm (the `GetDeviceDDM` operationId).
+	GetDeviceDDM(ctx context.Context, tenant string, id openapi_types.UUID, params *GetDeviceDDMParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetEffectivePolicy Get the device's effective policy with provenance
+	//
+	// Each effective item with its source (a profile assigned to the tenant, a group, the member, or the device, or the device's own settings), the sources it overrode, and the sources in its own layer that set the same item and lost (conflicts: the lower profile id wins). Profiles assigned to the tenant, the member's groups (the higher priority wins between groups), the member, and the device merge in that order for the device's level, then the device's own settings. Until the level is known only the device's own settings apply.
+	//
+	// Corresponds with GET /api/v1/tenants/{tenant}/devices/{id}/effective-policy (the `GetEffectivePolicy` operationId).
+	GetEffectivePolicy(ctx context.Context, tenant string, id openapi_types.UUID, params *GetEffectivePolicyParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// CreateEnrollmentLink Create a one-time enrollment link
+	//
+	// Issues a new enrollment token and SCEP challenge, which invalidates earlier profiles and links, and returns a public link that serves the profile built from them, plus the same profile for a direct download. The link works for 24 hours, until the device enrolls, or until a new link or profile is issued. Open it on the iPhone (scan it as a QR code) to download the profile. Returns 409 once the device is bound to an enrollment.
+	//
+	// Corresponds with POST /api/v1/tenants/{tenant}/devices/{id}/enrollment-link (the `CreateEnrollmentLink` operationId).
+	CreateEnrollmentLink(ctx context.Context, tenant string, id openapi_types.UUID, params *CreateEnrollmentLinkParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ReissueEnrollmentProfile Issue a fresh enrollment profile
+	//
+	// Issues a new enrollment token and SCEP challenge, which invalidates the previous ones, and returns the new profile. Returns 409 once the device is bound to an enrollment.
+	//
+	// Corresponds with POST /api/v1/tenants/{tenant}/devices/{id}/enrollment-profile (the `ReissueEnrollmentProfile` operationId).
+	ReissueEnrollmentProfile(ctx context.Context, tenant string, id openapi_types.UUID, params *ReissueEnrollmentProfileParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ClearDeviceMember Give a device back to the tenant
+	//
+	// Corresponds with DELETE /api/v1/tenants/{tenant}/devices/{id}/member (the `ClearDeviceMember` operationId).
+	ClearDeviceMember(ctx context.Context, tenant string, id openapi_types.UUID, params *ClearDeviceMemberParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// SetDeviceMemberWithBody Give a device to a member
+	//
+	// Takes any type of body and a specified content type.
+	//
+	// Corresponds with PUT /api/v1/tenants/{tenant}/devices/{id}/member (the `SetDeviceMember` operationId).
+	SetDeviceMemberWithBody(ctx context.Context, tenant string, id openapi_types.UUID, params *SetDeviceMemberParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// SetDeviceMember Give a device to a member
+	//
+	// Takes a body of the `application/json` content type.
+	//
+	// Corresponds with PUT /api/v1/tenants/{tenant}/devices/{id}/member (the `SetDeviceMember` operationId).
+	SetDeviceMember(ctx context.Context, tenant string, id openapi_types.UUID, params *SetDeviceMemberParams, body SetDeviceMemberJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// DeleteDeviceSettings Remove the device's own settings
+	//
+	// Removes the device's own items and rebuilds its effective policy. When nothing is left, the policy's revision increments, its status turns removing, and its declarations leave an enrolled device's set; the device removes what they installed, and the policy is deleted once the device reports them gone. A policy never deployed is deleted at once.
+	//
+	// Corresponds with DELETE /api/v1/tenants/{tenant}/devices/{id}/settings (the `DeleteDeviceSettings` operationId).
+	DeleteDeviceSettings(ctx context.Context, tenant string, id openapi_types.UUID, params *DeleteDeviceSettingsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetDeviceSettings Get the device's own settings
+	//
+	// The device's own items, the most specific layer of its effective policy. Secret values show as {"secret": "set"}.
+	//
+	// Corresponds with GET /api/v1/tenants/{tenant}/devices/{id}/settings (the `GetDeviceSettings` operationId).
+	GetDeviceSettings(ctx context.Context, tenant string, id openapi_types.UUID, params *GetDeviceSettingsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// PutDeviceSettingsWithBody Set the device's own settings
+	//
+	// Replaces the device's own items and rebuilds its effective policy (its assigned profiles, then these items). When the result changes its revision increments and its status turns pending. An enrolled device whose level and OS are known gets it as declarations built for its level now, announced with a DeclarativeManagement command. Any other device gets them once DeviceInformation reports its level and OS. Devices below iOS and iPadOS 17 get none. The status turns applied when the device reports every declaration valid and active. An empty list removes the settings.
+	//
+	// Takes any type of body and a specified content type.
+	//
+	// Corresponds with PUT /api/v1/tenants/{tenant}/devices/{id}/settings (the `PutDeviceSettings` operationId).
+	PutDeviceSettingsWithBody(ctx context.Context, tenant string, id openapi_types.UUID, params *PutDeviceSettingsParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// PutDeviceSettings Set the device's own settings
+	//
+	// Replaces the device's own items and rebuilds its effective policy (its assigned profiles, then these items). When the result changes its revision increments and its status turns pending. An enrolled device whose level and OS are known gets it as declarations built for its level now, announced with a DeclarativeManagement command. Any other device gets them once DeviceInformation reports its level and OS. Devices below iOS and iPadOS 17 get none. The status turns applied when the device reports every declaration valid and active. An empty list removes the settings.
+	//
+	// Takes a body of the `application/json` content type.
+	//
+	// Corresponds with PUT /api/v1/tenants/{tenant}/devices/{id}/settings (the `PutDeviceSettings` operationId).
+	PutDeviceSettings(ctx context.Context, tenant string, id openapi_types.UUID, params *PutDeviceSettingsParams, body PutDeviceSettingsJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ListGroups List groups
+	//
+	// Every group of the tenant, highest priority first.
+	//
+	// Corresponds with GET /api/v1/tenants/{tenant}/groups (the `ListGroups` operationId).
+	ListGroups(ctx context.Context, tenant string, params *ListGroupsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// CreateGroupWithBody Create a group
+	//
+	// A group is a flat set of members. When profiles assigned to two groups set the same item, the higher priority wins. Priorities are unique in the tenant; 409 when it is taken.
+	//
+	// Takes any type of body and a specified content type.
+	//
+	// Corresponds with POST /api/v1/tenants/{tenant}/groups (the `CreateGroup` operationId).
+	CreateGroupWithBody(ctx context.Context, tenant string, params *CreateGroupParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// CreateGroup Create a group
+	//
+	// A group is a flat set of members. When profiles assigned to two groups set the same item, the higher priority wins. Priorities are unique in the tenant; 409 when it is taken.
+	//
+	// Takes a body of the `application/json` content type.
+	//
+	// Corresponds with POST /api/v1/tenants/{tenant}/groups (the `CreateGroup` operationId).
+	CreateGroup(ctx context.Context, tenant string, params *CreateGroupParams, body CreateGroupJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// DeleteGroup Delete a group
+	//
+	// Its members stay; only the memberships go.
+	//
+	// Corresponds with DELETE /api/v1/tenants/{tenant}/groups/{group} (the `DeleteGroup` operationId).
+	DeleteGroup(ctx context.Context, tenant string, group openapi_types.UUID, params *DeleteGroupParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetGroup Get a group
+	//
+	// Corresponds with GET /api/v1/tenants/{tenant}/groups/{group} (the `GetGroup` operationId).
+	GetGroup(ctx context.Context, tenant string, group openapi_types.UUID, params *GetGroupParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// UpdateGroupWithBody Update a group
+	//
+	// Takes any type of body and a specified content type.
+	//
+	// Corresponds with PATCH /api/v1/tenants/{tenant}/groups/{group} (the `UpdateGroup` operationId).
+	UpdateGroupWithBody(ctx context.Context, tenant string, group openapi_types.UUID, params *UpdateGroupParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// UpdateGroup Update a group
+	//
+	// Takes a body of the `application/json` content type.
+	//
+	// Corresponds with PATCH /api/v1/tenants/{tenant}/groups/{group} (the `UpdateGroup` operationId).
+	UpdateGroup(ctx context.Context, tenant string, group openapi_types.UUID, params *UpdateGroupParams, body UpdateGroupJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ListGroupMembers List a group's members
+	//
+	// Corresponds with GET /api/v1/tenants/{tenant}/groups/{group}/members (the `ListGroupMembers` operationId).
+	ListGroupMembers(ctx context.Context, tenant string, group openapi_types.UUID, params *ListGroupMembersParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// RemoveGroupMember Remove a member from a group
+	//
+	// Corresponds with DELETE /api/v1/tenants/{tenant}/groups/{group}/members/{member} (the `RemoveGroupMember` operationId).
+	RemoveGroupMember(ctx context.Context, tenant string, group openapi_types.UUID, member string, params *RemoveGroupMemberParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// AddGroupMember Add a member to a group
+	//
+	// Adding a member already in the group changes nothing.
+	//
+	// Corresponds with PUT /api/v1/tenants/{tenant}/groups/{group}/members/{member} (the `AddGroupMember` operationId).
+	AddGroupMember(ctx context.Context, tenant string, group openapi_types.UUID, member string, params *AddGroupMemberParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ListMembers List members
+	//
+	// Every member of the tenant, oldest first.
+	//
+	// Corresponds with GET /api/v1/tenants/{tenant}/members (the `ListMembers` operationId).
+	ListMembers(ctx context.Context, tenant string, params *ListMembersParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// CreateMemberWithBody Create a member
+	//
+	// A member is a person as an owner of devices. external_id is the account's own id for the person, unique in the tenant; 409 when it is taken.
+	//
+	// Takes any type of body and a specified content type.
+	//
+	// Corresponds with POST /api/v1/tenants/{tenant}/members (the `CreateMember` operationId).
+	CreateMemberWithBody(ctx context.Context, tenant string, params *CreateMemberParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// CreateMember Create a member
+	//
+	// A member is a person as an owner of devices. external_id is the account's own id for the person, unique in the tenant; 409 when it is taken.
+	//
+	// Takes a body of the `application/json` content type.
+	//
+	// Corresponds with POST /api/v1/tenants/{tenant}/members (the `CreateMember` operationId).
+	CreateMember(ctx context.Context, tenant string, params *CreateMemberParams, body CreateMemberJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// DeleteMember Delete a member
+	//
+	// The member leaves its groups and its devices become the tenant's.
+	//
+	// Corresponds with DELETE /api/v1/tenants/{tenant}/members/{member} (the `DeleteMember` operationId).
+	DeleteMember(ctx context.Context, tenant string, member string, params *DeleteMemberParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetMember Get a member
+	//
+	// Corresponds with GET /api/v1/tenants/{tenant}/members/{member} (the `GetMember` operationId).
+	GetMember(ctx context.Context, tenant string, member string, params *GetMemberParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// UpdateMemberWithBody Update a member
+	//
+	// Takes any type of body and a specified content type.
+	//
+	// Corresponds with PATCH /api/v1/tenants/{tenant}/members/{member} (the `UpdateMember` operationId).
+	UpdateMemberWithBody(ctx context.Context, tenant string, member string, params *UpdateMemberParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// UpdateMember Update a member
+	//
+	// Takes a body of the `application/json` content type.
+	//
+	// Corresponds with PATCH /api/v1/tenants/{tenant}/members/{member} (the `UpdateMember` operationId).
+	UpdateMember(ctx context.Context, tenant string, member string, params *UpdateMemberParams, body UpdateMemberJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ListProfiles List profiles
+	//
+	// Every profile of the tenant, oldest first. Secret values show as {"secret": "set"}.
+	//
+	// Corresponds with GET /api/v1/tenants/{tenant}/profiles (the `ListProfiles` operationId).
+	ListProfiles(ctx context.Context, tenant string, params *ListProfilesParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// CreateProfileWithBody Create a profile
+	//
+	// A profile is a named item list of the tenant. It reaches devices through assignments.
+	//
+	// Takes any type of body and a specified content type.
+	//
+	// Corresponds with POST /api/v1/tenants/{tenant}/profiles (the `CreateProfile` operationId).
+	CreateProfileWithBody(ctx context.Context, tenant string, params *CreateProfileParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// CreateProfile Create a profile
+	//
+	// A profile is a named item list of the tenant. It reaches devices through assignments.
+	//
+	// Takes a body of the `application/json` content type.
+	//
+	// Corresponds with POST /api/v1/tenants/{tenant}/profiles (the `CreateProfile` operationId).
+	CreateProfile(ctx context.Context, tenant string, params *CreateProfileParams, body CreateProfileJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// DeleteProfile Delete a profile
+	//
+	// Deletes the profile and its assignments; the devices it reached rebuild their effective policies.
+	//
+	// Corresponds with DELETE /api/v1/tenants/{tenant}/profiles/{profile} (the `DeleteProfile` operationId).
+	DeleteProfile(ctx context.Context, tenant string, profile openapi_types.UUID, params *DeleteProfileParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// GetProfile Get a profile
+	//
+	// Corresponds with GET /api/v1/tenants/{tenant}/profiles/{profile} (the `GetProfile` operationId).
+	GetProfile(ctx context.Context, tenant string, profile openapi_types.UUID, params *GetProfileParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// UpdateProfileWithBody Replace a profile
+	//
+	// Replaces the name and items. Every device the profile reaches rebuilds its effective policy. A secret sent as {"secret": "set"} keeps the stored value.
+	//
+	// Takes any type of body and a specified content type.
+	//
+	// Corresponds with PUT /api/v1/tenants/{tenant}/profiles/{profile} (the `UpdateProfile` operationId).
+	UpdateProfileWithBody(ctx context.Context, tenant string, profile openapi_types.UUID, params *UpdateProfileParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// UpdateProfile Replace a profile
+	//
+	// Replaces the name and items. Every device the profile reaches rebuilds its effective policy. A secret sent as {"secret": "set"} keeps the stored value.
+	//
+	// Takes a body of the `application/json` content type.
+	//
+	// Corresponds with PUT /api/v1/tenants/{tenant}/profiles/{profile} (the `UpdateProfile` operationId).
+	UpdateProfile(ctx context.Context, tenant string, profile openapi_types.UUID, params *UpdateProfileParams, body UpdateProfileJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// ListAssignments List a profile's assignments
+	//
+	// Corresponds with GET /api/v1/tenants/{tenant}/profiles/{profile}/assignments (the `ListAssignments` operationId).
+	ListAssignments(ctx context.Context, tenant string, profile openapi_types.UUID, params *ListAssignmentsParams, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// CreateAssignmentWithBody Assign a profile
+	//
+	// Assigns the profile to the tenant, a group, a member, or a device, for devices of the listed levels. One assignment per profile and target; 409 when it exists. The devices it reaches rebuild their effective policies.
+	//
+	// Takes any type of body and a specified content type.
+	//
+	// Corresponds with POST /api/v1/tenants/{tenant}/profiles/{profile}/assignments (the `CreateAssignment` operationId).
+	CreateAssignmentWithBody(ctx context.Context, tenant string, profile openapi_types.UUID, params *CreateAssignmentParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// CreateAssignment Assign a profile
+	//
+	// Assigns the profile to the tenant, a group, a member, or a device, for devices of the listed levels. One assignment per profile and target; 409 when it exists. The devices it reaches rebuild their effective policies.
+	//
+	// Takes a body of the `application/json` content type.
+	//
+	// Corresponds with POST /api/v1/tenants/{tenant}/profiles/{profile}/assignments (the `CreateAssignment` operationId).
+	CreateAssignment(ctx context.Context, tenant string, profile openapi_types.UUID, params *CreateAssignmentParams, body CreateAssignmentJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error)
+
+	// DeleteAssignment Remove an assignment
+	//
+	// Corresponds with DELETE /api/v1/tenants/{tenant}/profiles/{profile}/assignments/{assignment} (the `DeleteAssignment` operationId).
+	DeleteAssignment(ctx context.Context, tenant string, profile openapi_types.UUID, assignment openapi_types.UUID, params *DeleteAssignmentParams, reqEditors ...RequestEditorFn) (*http.Response, error)
 }
 
 // GetCatalog Settings a device can take
@@ -562,6 +2014,961 @@ func (c *Client) GetCatalog(ctx context.Context, params *GetCatalogParams, reqEd
 // Corresponds with GET /api/v1/me (the `GetMe` operationId).
 func (c *Client) GetMe(ctx context.Context, params *GetMeParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
 	req, err := NewGetMeRequest(c.Server, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// ListTenants Tenants the caller reaches
+//
+// An account client: every tenant of its account (tenants:read), oldest first. An admin app token: its organization's tenant, with the caller's role.
+//
+// Corresponds with GET /api/v1/tenants (the `ListTenants` operationId).
+func (c *Client) ListTenants(ctx context.Context, params *ListTenantsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListTenantsRequest(c.Server, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// CreateTenantWithBody Create a tenant
+//
+// Account clients only (tenants:write). external_id is the account's own id for the tenant, unique in the account; 409 when it is taken.
+//
+// Takes any type of body and a specified content type.
+//
+// Corresponds with POST /api/v1/tenants (the `CreateTenant` operationId).
+func (c *Client) CreateTenantWithBody(ctx context.Context, params *CreateTenantParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateTenantRequestWithBody(c.Server, params, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// CreateTenant Create a tenant
+//
+// Account clients only (tenants:write). external_id is the account's own id for the tenant, unique in the account; 409 when it is taken.
+//
+// Takes a body of the `application/json` content type.
+//
+// Corresponds with POST /api/v1/tenants (the `CreateTenant` operationId).
+func (c *Client) CreateTenant(ctx context.Context, params *CreateTenantParams, body CreateTenantJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateTenantRequest(c.Server, params, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// DeleteTenant Delete a tenant
+//
+// Account clients only (tenants:write). Starts the deletion and answers at once: tenant.deleting fires, writes to the tenant answer 409 from then on (reads keep working), delegated tokens are no longer issued for it, and every enrolled device is asked to remove its enrollment profile. Once each device has, checked out, or stayed silent for 30 days, the tenant and everything in it are deleted and tenant.deleted fires. Calling it again changes nothing.
+//
+// Corresponds with DELETE /api/v1/tenants/{tenant} (the `DeleteTenant` operationId).
+func (c *Client) DeleteTenant(ctx context.Context, tenant string, params *DeleteTenantParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewDeleteTenantRequest(c.Server, tenant, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// GetTenant Get a tenant
+//
+// Corresponds with GET /api/v1/tenants/{tenant} (the `GetTenant` operationId).
+func (c *Client) GetTenant(ctx context.Context, tenant string, params *GetTenantParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetTenantRequest(c.Server, tenant, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// UpdateTenantWithBody Rename a tenant or change its credential holder
+//
+// Account clients only (tenants:write).
+//
+// Takes any type of body and a specified content type.
+//
+// Corresponds with PATCH /api/v1/tenants/{tenant} (the `UpdateTenant` operationId).
+func (c *Client) UpdateTenantWithBody(ctx context.Context, tenant string, params *UpdateTenantParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateTenantRequestWithBody(c.Server, tenant, params, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// UpdateTenant Rename a tenant or change its credential holder
+//
+// Account clients only (tenants:write).
+//
+// Takes a body of the `application/json` content type.
+//
+// Corresponds with PATCH /api/v1/tenants/{tenant} (the `UpdateTenant` operationId).
+func (c *Client) UpdateTenant(ctx context.Context, tenant string, params *UpdateTenantParams, body UpdateTenantJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateTenantRequest(c.Server, tenant, params, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// ListDevices List devices
+//
+// Every device that has not been removed, oldest first; with member, that member's only (404 when the member is not in the tenant).
+//
+// Corresponds with GET /api/v1/tenants/{tenant}/devices (the `ListDevices` operationId).
+func (c *Client) ListDevices(ctx context.Context, tenant string, params *ListDevicesParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListDevicesRequest(c.Server, tenant, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// CreateDeviceWithBody Register a device
+//
+// Creates a device in status pending with a fresh enrollment token and SCEP challenge, both valid for 7 days, and returns its enrollment profile. settings are the device's own items (PUT .../settings); its effective policy is installed once the enrolled device reports its level and OS through DeviceInformation.
+//
+// Takes any type of body and a specified content type.
+//
+// Corresponds with POST /api/v1/tenants/{tenant}/devices (the `CreateDevice` operationId).
+func (c *Client) CreateDeviceWithBody(ctx context.Context, tenant string, params *CreateDeviceParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateDeviceRequestWithBody(c.Server, tenant, params, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// CreateDevice Register a device
+//
+// Creates a device in status pending with a fresh enrollment token and SCEP challenge, both valid for 7 days, and returns its enrollment profile. settings are the device's own items (PUT .../settings); its effective policy is installed once the enrolled device reports its level and OS through DeviceInformation.
+//
+// Takes a body of the `application/json` content type.
+//
+// Corresponds with POST /api/v1/tenants/{tenant}/devices (the `CreateDevice` operationId).
+func (c *Client) CreateDevice(ctx context.Context, tenant string, params *CreateDeviceParams, body CreateDeviceJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateDeviceRequest(c.Server, tenant, params, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// DeleteDevice Remove a device
+//
+// Marks the device removed. Later webhooks for its enrollment are ignored and API calls on it return 404. The MDM server keeps the enrollment until the device is erased or its enrollment profile is removed.
+//
+// Corresponds with DELETE /api/v1/tenants/{tenant}/devices/{id} (the `DeleteDevice` operationId).
+func (c *Client) DeleteDevice(ctx context.Context, tenant string, id openapi_types.UUID, params *DeleteDeviceParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewDeleteDeviceRequest(c.Server, tenant, id, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// GetDevice Get a device
+//
+// Corresponds with GET /api/v1/tenants/{tenant}/devices/{id} (the `GetDevice` operationId).
+func (c *Client) GetDevice(ctx context.Context, tenant string, id openapi_types.UUID, params *GetDeviceParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetDeviceRequest(c.Server, tenant, id, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// ListCommands Command history
+//
+// Every command sent to the device, newest first.
+//
+// Corresponds with GET /api/v1/tenants/{tenant}/devices/{id}/commands (the `ListCommands` operationId).
+func (c *Client) ListCommands(ctx context.Context, tenant string, id openapi_types.UUID, params *ListCommandsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListCommandsRequest(c.Server, tenant, id, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// CreateCommandWithBody Send a command
+//
+// Accepts a command for an enrolled device. It is handed to the MDM server after the request commits; its status says where it is (GET .../commands/{command}). Returns 409 for any other device.
+//
+// Takes any type of body and a specified content type.
+//
+// Corresponds with POST /api/v1/tenants/{tenant}/devices/{id}/commands (the `CreateCommand` operationId).
+func (c *Client) CreateCommandWithBody(ctx context.Context, tenant string, id openapi_types.UUID, params *CreateCommandParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateCommandRequestWithBody(c.Server, tenant, id, params, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// CreateCommand Send a command
+//
+// Accepts a command for an enrolled device. It is handed to the MDM server after the request commits; its status says where it is (GET .../commands/{command}). Returns 409 for any other device.
+//
+// Takes a body of the `application/json` content type.
+//
+// Corresponds with POST /api/v1/tenants/{tenant}/devices/{id}/commands (the `CreateCommand` operationId).
+func (c *Client) CreateCommand(ctx context.Context, tenant string, id openapi_types.UUID, params *CreateCommandParams, body CreateCommandJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateCommandRequest(c.Server, tenant, id, params, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// GetCommand Get a command
+//
+// One command sent to the device, by the command_uuid it was accepted with: the same record the command history lists. 404 when the device has no such command.
+//
+// Corresponds with GET /api/v1/tenants/{tenant}/devices/{id}/commands/{command} (the `GetCommand` operationId).
+func (c *Client) GetCommand(ctx context.Context, tenant string, id openapi_types.UUID, command openapi_types.UUID, params *GetCommandParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetCommandRequest(c.Server, tenant, id, command, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// GetDeviceDDM Declarative management state
+//
+// The device's declarative management stage and the state it reported for each current declaration (from management.declarations).
+//
+// Corresponds with GET /api/v1/tenants/{tenant}/devices/{id}/ddm (the `GetDeviceDDM` operationId).
+func (c *Client) GetDeviceDDM(ctx context.Context, tenant string, id openapi_types.UUID, params *GetDeviceDDMParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetDeviceDDMRequest(c.Server, tenant, id, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// GetEffectivePolicy Get the device's effective policy with provenance
+//
+// Each effective item with its source (a profile assigned to the tenant, a group, the member, or the device, or the device's own settings), the sources it overrode, and the sources in its own layer that set the same item and lost (conflicts: the lower profile id wins). Profiles assigned to the tenant, the member's groups (the higher priority wins between groups), the member, and the device merge in that order for the device's level, then the device's own settings. Until the level is known only the device's own settings apply.
+//
+// Corresponds with GET /api/v1/tenants/{tenant}/devices/{id}/effective-policy (the `GetEffectivePolicy` operationId).
+func (c *Client) GetEffectivePolicy(ctx context.Context, tenant string, id openapi_types.UUID, params *GetEffectivePolicyParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetEffectivePolicyRequest(c.Server, tenant, id, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// CreateEnrollmentLink Create a one-time enrollment link
+//
+// Issues a new enrollment token and SCEP challenge, which invalidates earlier profiles and links, and returns a public link that serves the profile built from them, plus the same profile for a direct download. The link works for 24 hours, until the device enrolls, or until a new link or profile is issued. Open it on the iPhone (scan it as a QR code) to download the profile. Returns 409 once the device is bound to an enrollment.
+//
+// Corresponds with POST /api/v1/tenants/{tenant}/devices/{id}/enrollment-link (the `CreateEnrollmentLink` operationId).
+func (c *Client) CreateEnrollmentLink(ctx context.Context, tenant string, id openapi_types.UUID, params *CreateEnrollmentLinkParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateEnrollmentLinkRequest(c.Server, tenant, id, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// ReissueEnrollmentProfile Issue a fresh enrollment profile
+//
+// Issues a new enrollment token and SCEP challenge, which invalidates the previous ones, and returns the new profile. Returns 409 once the device is bound to an enrollment.
+//
+// Corresponds with POST /api/v1/tenants/{tenant}/devices/{id}/enrollment-profile (the `ReissueEnrollmentProfile` operationId).
+func (c *Client) ReissueEnrollmentProfile(ctx context.Context, tenant string, id openapi_types.UUID, params *ReissueEnrollmentProfileParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewReissueEnrollmentProfileRequest(c.Server, tenant, id, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// ClearDeviceMember Give a device back to the tenant
+//
+// Corresponds with DELETE /api/v1/tenants/{tenant}/devices/{id}/member (the `ClearDeviceMember` operationId).
+func (c *Client) ClearDeviceMember(ctx context.Context, tenant string, id openapi_types.UUID, params *ClearDeviceMemberParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewClearDeviceMemberRequest(c.Server, tenant, id, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// SetDeviceMemberWithBody Give a device to a member
+//
+// Takes any type of body and a specified content type.
+//
+// Corresponds with PUT /api/v1/tenants/{tenant}/devices/{id}/member (the `SetDeviceMember` operationId).
+func (c *Client) SetDeviceMemberWithBody(ctx context.Context, tenant string, id openapi_types.UUID, params *SetDeviceMemberParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewSetDeviceMemberRequestWithBody(c.Server, tenant, id, params, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// SetDeviceMember Give a device to a member
+//
+// Takes a body of the `application/json` content type.
+//
+// Corresponds with PUT /api/v1/tenants/{tenant}/devices/{id}/member (the `SetDeviceMember` operationId).
+func (c *Client) SetDeviceMember(ctx context.Context, tenant string, id openapi_types.UUID, params *SetDeviceMemberParams, body SetDeviceMemberJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewSetDeviceMemberRequest(c.Server, tenant, id, params, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// DeleteDeviceSettings Remove the device's own settings
+//
+// Removes the device's own items and rebuilds its effective policy. When nothing is left, the policy's revision increments, its status turns removing, and its declarations leave an enrolled device's set; the device removes what they installed, and the policy is deleted once the device reports them gone. A policy never deployed is deleted at once.
+//
+// Corresponds with DELETE /api/v1/tenants/{tenant}/devices/{id}/settings (the `DeleteDeviceSettings` operationId).
+func (c *Client) DeleteDeviceSettings(ctx context.Context, tenant string, id openapi_types.UUID, params *DeleteDeviceSettingsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewDeleteDeviceSettingsRequest(c.Server, tenant, id, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// GetDeviceSettings Get the device's own settings
+//
+// The device's own items, the most specific layer of its effective policy. Secret values show as {"secret": "set"}.
+//
+// Corresponds with GET /api/v1/tenants/{tenant}/devices/{id}/settings (the `GetDeviceSettings` operationId).
+func (c *Client) GetDeviceSettings(ctx context.Context, tenant string, id openapi_types.UUID, params *GetDeviceSettingsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetDeviceSettingsRequest(c.Server, tenant, id, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// PutDeviceSettingsWithBody Set the device's own settings
+//
+// Replaces the device's own items and rebuilds its effective policy (its assigned profiles, then these items). When the result changes its revision increments and its status turns pending. An enrolled device whose level and OS are known gets it as declarations built for its level now, announced with a DeclarativeManagement command. Any other device gets them once DeviceInformation reports its level and OS. Devices below iOS and iPadOS 17 get none. The status turns applied when the device reports every declaration valid and active. An empty list removes the settings.
+//
+// Takes any type of body and a specified content type.
+//
+// Corresponds with PUT /api/v1/tenants/{tenant}/devices/{id}/settings (the `PutDeviceSettings` operationId).
+func (c *Client) PutDeviceSettingsWithBody(ctx context.Context, tenant string, id openapi_types.UUID, params *PutDeviceSettingsParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewPutDeviceSettingsRequestWithBody(c.Server, tenant, id, params, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// PutDeviceSettings Set the device's own settings
+//
+// Replaces the device's own items and rebuilds its effective policy (its assigned profiles, then these items). When the result changes its revision increments and its status turns pending. An enrolled device whose level and OS are known gets it as declarations built for its level now, announced with a DeclarativeManagement command. Any other device gets them once DeviceInformation reports its level and OS. Devices below iOS and iPadOS 17 get none. The status turns applied when the device reports every declaration valid and active. An empty list removes the settings.
+//
+// Takes a body of the `application/json` content type.
+//
+// Corresponds with PUT /api/v1/tenants/{tenant}/devices/{id}/settings (the `PutDeviceSettings` operationId).
+func (c *Client) PutDeviceSettings(ctx context.Context, tenant string, id openapi_types.UUID, params *PutDeviceSettingsParams, body PutDeviceSettingsJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewPutDeviceSettingsRequest(c.Server, tenant, id, params, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// ListGroups List groups
+//
+// Every group of the tenant, highest priority first.
+//
+// Corresponds with GET /api/v1/tenants/{tenant}/groups (the `ListGroups` operationId).
+func (c *Client) ListGroups(ctx context.Context, tenant string, params *ListGroupsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListGroupsRequest(c.Server, tenant, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// CreateGroupWithBody Create a group
+//
+// A group is a flat set of members. When profiles assigned to two groups set the same item, the higher priority wins. Priorities are unique in the tenant; 409 when it is taken.
+//
+// Takes any type of body and a specified content type.
+//
+// Corresponds with POST /api/v1/tenants/{tenant}/groups (the `CreateGroup` operationId).
+func (c *Client) CreateGroupWithBody(ctx context.Context, tenant string, params *CreateGroupParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateGroupRequestWithBody(c.Server, tenant, params, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// CreateGroup Create a group
+//
+// A group is a flat set of members. When profiles assigned to two groups set the same item, the higher priority wins. Priorities are unique in the tenant; 409 when it is taken.
+//
+// Takes a body of the `application/json` content type.
+//
+// Corresponds with POST /api/v1/tenants/{tenant}/groups (the `CreateGroup` operationId).
+func (c *Client) CreateGroup(ctx context.Context, tenant string, params *CreateGroupParams, body CreateGroupJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateGroupRequest(c.Server, tenant, params, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// DeleteGroup Delete a group
+//
+// Its members stay; only the memberships go.
+//
+// Corresponds with DELETE /api/v1/tenants/{tenant}/groups/{group} (the `DeleteGroup` operationId).
+func (c *Client) DeleteGroup(ctx context.Context, tenant string, group openapi_types.UUID, params *DeleteGroupParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewDeleteGroupRequest(c.Server, tenant, group, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// GetGroup Get a group
+//
+// Corresponds with GET /api/v1/tenants/{tenant}/groups/{group} (the `GetGroup` operationId).
+func (c *Client) GetGroup(ctx context.Context, tenant string, group openapi_types.UUID, params *GetGroupParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetGroupRequest(c.Server, tenant, group, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// UpdateGroupWithBody Update a group
+//
+// Takes any type of body and a specified content type.
+//
+// Corresponds with PATCH /api/v1/tenants/{tenant}/groups/{group} (the `UpdateGroup` operationId).
+func (c *Client) UpdateGroupWithBody(ctx context.Context, tenant string, group openapi_types.UUID, params *UpdateGroupParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateGroupRequestWithBody(c.Server, tenant, group, params, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// UpdateGroup Update a group
+//
+// Takes a body of the `application/json` content type.
+//
+// Corresponds with PATCH /api/v1/tenants/{tenant}/groups/{group} (the `UpdateGroup` operationId).
+func (c *Client) UpdateGroup(ctx context.Context, tenant string, group openapi_types.UUID, params *UpdateGroupParams, body UpdateGroupJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateGroupRequest(c.Server, tenant, group, params, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// ListGroupMembers List a group's members
+//
+// Corresponds with GET /api/v1/tenants/{tenant}/groups/{group}/members (the `ListGroupMembers` operationId).
+func (c *Client) ListGroupMembers(ctx context.Context, tenant string, group openapi_types.UUID, params *ListGroupMembersParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListGroupMembersRequest(c.Server, tenant, group, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// RemoveGroupMember Remove a member from a group
+//
+// Corresponds with DELETE /api/v1/tenants/{tenant}/groups/{group}/members/{member} (the `RemoveGroupMember` operationId).
+func (c *Client) RemoveGroupMember(ctx context.Context, tenant string, group openapi_types.UUID, member string, params *RemoveGroupMemberParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewRemoveGroupMemberRequest(c.Server, tenant, group, member, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// AddGroupMember Add a member to a group
+//
+// Adding a member already in the group changes nothing.
+//
+// Corresponds with PUT /api/v1/tenants/{tenant}/groups/{group}/members/{member} (the `AddGroupMember` operationId).
+func (c *Client) AddGroupMember(ctx context.Context, tenant string, group openapi_types.UUID, member string, params *AddGroupMemberParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewAddGroupMemberRequest(c.Server, tenant, group, member, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// ListMembers List members
+//
+// Every member of the tenant, oldest first.
+//
+// Corresponds with GET /api/v1/tenants/{tenant}/members (the `ListMembers` operationId).
+func (c *Client) ListMembers(ctx context.Context, tenant string, params *ListMembersParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListMembersRequest(c.Server, tenant, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// CreateMemberWithBody Create a member
+//
+// A member is a person as an owner of devices. external_id is the account's own id for the person, unique in the tenant; 409 when it is taken.
+//
+// Takes any type of body and a specified content type.
+//
+// Corresponds with POST /api/v1/tenants/{tenant}/members (the `CreateMember` operationId).
+func (c *Client) CreateMemberWithBody(ctx context.Context, tenant string, params *CreateMemberParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateMemberRequestWithBody(c.Server, tenant, params, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// CreateMember Create a member
+//
+// A member is a person as an owner of devices. external_id is the account's own id for the person, unique in the tenant; 409 when it is taken.
+//
+// Takes a body of the `application/json` content type.
+//
+// Corresponds with POST /api/v1/tenants/{tenant}/members (the `CreateMember` operationId).
+func (c *Client) CreateMember(ctx context.Context, tenant string, params *CreateMemberParams, body CreateMemberJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateMemberRequest(c.Server, tenant, params, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// DeleteMember Delete a member
+//
+// The member leaves its groups and its devices become the tenant's.
+//
+// Corresponds with DELETE /api/v1/tenants/{tenant}/members/{member} (the `DeleteMember` operationId).
+func (c *Client) DeleteMember(ctx context.Context, tenant string, member string, params *DeleteMemberParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewDeleteMemberRequest(c.Server, tenant, member, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// GetMember Get a member
+//
+// Corresponds with GET /api/v1/tenants/{tenant}/members/{member} (the `GetMember` operationId).
+func (c *Client) GetMember(ctx context.Context, tenant string, member string, params *GetMemberParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetMemberRequest(c.Server, tenant, member, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// UpdateMemberWithBody Update a member
+//
+// Takes any type of body and a specified content type.
+//
+// Corresponds with PATCH /api/v1/tenants/{tenant}/members/{member} (the `UpdateMember` operationId).
+func (c *Client) UpdateMemberWithBody(ctx context.Context, tenant string, member string, params *UpdateMemberParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateMemberRequestWithBody(c.Server, tenant, member, params, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// UpdateMember Update a member
+//
+// Takes a body of the `application/json` content type.
+//
+// Corresponds with PATCH /api/v1/tenants/{tenant}/members/{member} (the `UpdateMember` operationId).
+func (c *Client) UpdateMember(ctx context.Context, tenant string, member string, params *UpdateMemberParams, body UpdateMemberJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateMemberRequest(c.Server, tenant, member, params, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// ListProfiles List profiles
+//
+// Every profile of the tenant, oldest first. Secret values show as {"secret": "set"}.
+//
+// Corresponds with GET /api/v1/tenants/{tenant}/profiles (the `ListProfiles` operationId).
+func (c *Client) ListProfiles(ctx context.Context, tenant string, params *ListProfilesParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListProfilesRequest(c.Server, tenant, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// CreateProfileWithBody Create a profile
+//
+// A profile is a named item list of the tenant. It reaches devices through assignments.
+//
+// Takes any type of body and a specified content type.
+//
+// Corresponds with POST /api/v1/tenants/{tenant}/profiles (the `CreateProfile` operationId).
+func (c *Client) CreateProfileWithBody(ctx context.Context, tenant string, params *CreateProfileParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateProfileRequestWithBody(c.Server, tenant, params, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// CreateProfile Create a profile
+//
+// A profile is a named item list of the tenant. It reaches devices through assignments.
+//
+// Takes a body of the `application/json` content type.
+//
+// Corresponds with POST /api/v1/tenants/{tenant}/profiles (the `CreateProfile` operationId).
+func (c *Client) CreateProfile(ctx context.Context, tenant string, params *CreateProfileParams, body CreateProfileJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateProfileRequest(c.Server, tenant, params, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// DeleteProfile Delete a profile
+//
+// Deletes the profile and its assignments; the devices it reached rebuild their effective policies.
+//
+// Corresponds with DELETE /api/v1/tenants/{tenant}/profiles/{profile} (the `DeleteProfile` operationId).
+func (c *Client) DeleteProfile(ctx context.Context, tenant string, profile openapi_types.UUID, params *DeleteProfileParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewDeleteProfileRequest(c.Server, tenant, profile, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// GetProfile Get a profile
+//
+// Corresponds with GET /api/v1/tenants/{tenant}/profiles/{profile} (the `GetProfile` operationId).
+func (c *Client) GetProfile(ctx context.Context, tenant string, profile openapi_types.UUID, params *GetProfileParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewGetProfileRequest(c.Server, tenant, profile, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// UpdateProfileWithBody Replace a profile
+//
+// Replaces the name and items. Every device the profile reaches rebuilds its effective policy. A secret sent as {"secret": "set"} keeps the stored value.
+//
+// Takes any type of body and a specified content type.
+//
+// Corresponds with PUT /api/v1/tenants/{tenant}/profiles/{profile} (the `UpdateProfile` operationId).
+func (c *Client) UpdateProfileWithBody(ctx context.Context, tenant string, profile openapi_types.UUID, params *UpdateProfileParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateProfileRequestWithBody(c.Server, tenant, profile, params, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// UpdateProfile Replace a profile
+//
+// Replaces the name and items. Every device the profile reaches rebuilds its effective policy. A secret sent as {"secret": "set"} keeps the stored value.
+//
+// Takes a body of the `application/json` content type.
+//
+// Corresponds with PUT /api/v1/tenants/{tenant}/profiles/{profile} (the `UpdateProfile` operationId).
+func (c *Client) UpdateProfile(ctx context.Context, tenant string, profile openapi_types.UUID, params *UpdateProfileParams, body UpdateProfileJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewUpdateProfileRequest(c.Server, tenant, profile, params, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// ListAssignments List a profile's assignments
+//
+// Corresponds with GET /api/v1/tenants/{tenant}/profiles/{profile}/assignments (the `ListAssignments` operationId).
+func (c *Client) ListAssignments(ctx context.Context, tenant string, profile openapi_types.UUID, params *ListAssignmentsParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewListAssignmentsRequest(c.Server, tenant, profile, params)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// CreateAssignmentWithBody Assign a profile
+//
+// Assigns the profile to the tenant, a group, a member, or a device, for devices of the listed levels. One assignment per profile and target; 409 when it exists. The devices it reaches rebuild their effective policies.
+//
+// Takes any type of body and a specified content type.
+//
+// Corresponds with POST /api/v1/tenants/{tenant}/profiles/{profile}/assignments (the `CreateAssignment` operationId).
+func (c *Client) CreateAssignmentWithBody(ctx context.Context, tenant string, profile openapi_types.UUID, params *CreateAssignmentParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateAssignmentRequestWithBody(c.Server, tenant, profile, params, contentType, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// CreateAssignment Assign a profile
+//
+// Assigns the profile to the tenant, a group, a member, or a device, for devices of the listed levels. One assignment per profile and target; 409 when it exists. The devices it reaches rebuild their effective policies.
+//
+// Takes a body of the `application/json` content type.
+//
+// Corresponds with POST /api/v1/tenants/{tenant}/profiles/{profile}/assignments (the `CreateAssignment` operationId).
+func (c *Client) CreateAssignment(ctx context.Context, tenant string, profile openapi_types.UUID, params *CreateAssignmentParams, body CreateAssignmentJSONRequestBody, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewCreateAssignmentRequest(c.Server, tenant, profile, params, body)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	if err := c.applyEditors(ctx, req, reqEditors); err != nil {
+		return nil, err
+	}
+	return c.Client.Do(req)
+}
+
+// DeleteAssignment Remove an assignment
+//
+// Corresponds with DELETE /api/v1/tenants/{tenant}/profiles/{profile}/assignments/{assignment} (the `DeleteAssignment` operationId).
+func (c *Client) DeleteAssignment(ctx context.Context, tenant string, profile openapi_types.UUID, assignment openapi_types.UUID, params *DeleteAssignmentParams, reqEditors ...RequestEditorFn) (*http.Response, error) {
+	req, err := NewDeleteAssignmentRequest(c.Server, tenant, profile, assignment, params)
 	if err != nil {
 		return nil, err
 	}
@@ -695,6 +3102,2576 @@ func NewGetMeRequest(server string, params *GetMeParams) (*http.Request, error) 
 	return req, nil
 }
 
+// NewListTenantsRequest constructs an http.Request for the ListTenants method
+func NewListTenantsRequest(server string, params *ListTenantsParams) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := "/api/v1/tenants"
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+
+		if params.MdmActor != nil {
+			var headerParam0 string
+
+			headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Mdm-Actor", *params.MdmActor, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Mdm-Actor", headerParam0)
+		}
+
+	}
+
+	return req, nil
+}
+
+// NewCreateTenantRequest calls the generic CreateTenant builder with application/json body
+func NewCreateTenantRequest(server string, params *CreateTenantParams, body CreateTenantJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := runtime.JSONMarshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewCreateTenantRequestWithBody(server, params, "application/json", bodyReader)
+}
+
+// NewCreateTenantRequestWithBody constructs an http.Request for the CreateTenant method, with any body, and a specified content type
+func NewCreateTenantRequestWithBody(server string, params *CreateTenantParams, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := "/api/v1/tenants"
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	if params != nil {
+
+		if params.IdempotencyKey != nil {
+			var headerParam0 string
+
+			headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Idempotency-Key", *params.IdempotencyKey, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Idempotency-Key", headerParam0)
+		}
+
+		if params.MdmActor != nil {
+			var headerParam1 string
+
+			headerParam1, err = runtime.StyleParamWithOptions("simple", false, "Mdm-Actor", *params.MdmActor, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Mdm-Actor", headerParam1)
+		}
+
+	}
+
+	return req, nil
+}
+
+// NewDeleteTenantRequest constructs an http.Request for the DeleteTenant method
+func NewDeleteTenantRequest(server string, tenant string, params *DeleteTenantParams) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "tenant", tenant, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := "/api/v1/tenants/" + pathParam0
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodDelete, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+
+		if params.MdmActor != nil {
+			var headerParam0 string
+
+			headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Mdm-Actor", *params.MdmActor, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Mdm-Actor", headerParam0)
+		}
+
+	}
+
+	return req, nil
+}
+
+// NewGetTenantRequest constructs an http.Request for the GetTenant method
+func NewGetTenantRequest(server string, tenant string, params *GetTenantParams) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "tenant", tenant, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := "/api/v1/tenants/" + pathParam0
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+
+		if params.MdmActor != nil {
+			var headerParam0 string
+
+			headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Mdm-Actor", *params.MdmActor, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Mdm-Actor", headerParam0)
+		}
+
+	}
+
+	return req, nil
+}
+
+// NewUpdateTenantRequest calls the generic UpdateTenant builder with application/json body
+func NewUpdateTenantRequest(server string, tenant string, params *UpdateTenantParams, body UpdateTenantJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := runtime.JSONMarshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewUpdateTenantRequestWithBody(server, tenant, params, "application/json", bodyReader)
+}
+
+// NewUpdateTenantRequestWithBody constructs an http.Request for the UpdateTenant method, with any body, and a specified content type
+func NewUpdateTenantRequestWithBody(server string, tenant string, params *UpdateTenantParams, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "tenant", tenant, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := "/api/v1/tenants/" + pathParam0
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPatch, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	if params != nil {
+
+		if params.MdmActor != nil {
+			var headerParam0 string
+
+			headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Mdm-Actor", *params.MdmActor, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Mdm-Actor", headerParam0)
+		}
+
+	}
+
+	return req, nil
+}
+
+// NewListDevicesRequest constructs an http.Request for the ListDevices method
+func NewListDevicesRequest(server string, tenant string, params *ListDevicesParams) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "tenant", tenant, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := "/api/v1/tenants/" + pathParam0 + "/devices"
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+		// queryValues collects non-styled parameters (passthrough, JSON)
+		// that are safe to round-trip through url.Values.Encode().
+		queryValues := queryURL.Query()
+		// rawQueryFragments collects pre-encoded query fragments from
+		// styled parameters, preserving literal commas as delimiters
+		// per the OpenAPI spec (e.g. "color=blue,black,brown").
+		var rawQueryFragments []string
+
+		if params.Member != nil {
+
+			if queryFrag, err := runtime.StyleParamWithOptions("form", true, "member", *params.Member, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationQuery, Type: "string", Format: ""}); err != nil {
+				return nil, err
+			} else {
+				for _, qp := range strings.Split(queryFrag, "&") {
+					rawQueryFragments = append(rawQueryFragments, qp)
+				}
+			}
+
+		}
+
+		if encoded := queryValues.Encode(); encoded != "" {
+			rawQueryFragments = append(rawQueryFragments, encoded)
+		}
+		queryURL.RawQuery = strings.Join(rawQueryFragments, "&")
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+
+		if params.MdmActor != nil {
+			var headerParam0 string
+
+			headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Mdm-Actor", *params.MdmActor, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Mdm-Actor", headerParam0)
+		}
+
+	}
+
+	return req, nil
+}
+
+// NewCreateDeviceRequest calls the generic CreateDevice builder with application/json body
+func NewCreateDeviceRequest(server string, tenant string, params *CreateDeviceParams, body CreateDeviceJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := runtime.JSONMarshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewCreateDeviceRequestWithBody(server, tenant, params, "application/json", bodyReader)
+}
+
+// NewCreateDeviceRequestWithBody constructs an http.Request for the CreateDevice method, with any body, and a specified content type
+func NewCreateDeviceRequestWithBody(server string, tenant string, params *CreateDeviceParams, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "tenant", tenant, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := "/api/v1/tenants/" + pathParam0 + "/devices"
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	if params != nil {
+
+		if params.IdempotencyKey != nil {
+			var headerParam0 string
+
+			headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Idempotency-Key", *params.IdempotencyKey, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Idempotency-Key", headerParam0)
+		}
+
+		if params.MdmActor != nil {
+			var headerParam1 string
+
+			headerParam1, err = runtime.StyleParamWithOptions("simple", false, "Mdm-Actor", *params.MdmActor, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Mdm-Actor", headerParam1)
+		}
+
+	}
+
+	return req, nil
+}
+
+// NewDeleteDeviceRequest constructs an http.Request for the DeleteDevice method
+func NewDeleteDeviceRequest(server string, tenant string, id openapi_types.UUID, params *DeleteDeviceParams) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "tenant", tenant, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam1 string
+
+	pathParam1, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: "uuid"})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := "/api/v1/tenants/" + pathParam0 + "/devices/" + pathParam1
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodDelete, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+
+		if params.MdmActor != nil {
+			var headerParam0 string
+
+			headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Mdm-Actor", *params.MdmActor, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Mdm-Actor", headerParam0)
+		}
+
+	}
+
+	return req, nil
+}
+
+// NewGetDeviceRequest constructs an http.Request for the GetDevice method
+func NewGetDeviceRequest(server string, tenant string, id openapi_types.UUID, params *GetDeviceParams) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "tenant", tenant, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam1 string
+
+	pathParam1, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: "uuid"})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := "/api/v1/tenants/" + pathParam0 + "/devices/" + pathParam1
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+
+		if params.MdmActor != nil {
+			var headerParam0 string
+
+			headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Mdm-Actor", *params.MdmActor, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Mdm-Actor", headerParam0)
+		}
+
+	}
+
+	return req, nil
+}
+
+// NewListCommandsRequest constructs an http.Request for the ListCommands method
+func NewListCommandsRequest(server string, tenant string, id openapi_types.UUID, params *ListCommandsParams) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "tenant", tenant, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam1 string
+
+	pathParam1, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: "uuid"})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := "/api/v1/tenants/" + pathParam0 + "/devices/" + pathParam1 + "/commands"
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+
+		if params.MdmActor != nil {
+			var headerParam0 string
+
+			headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Mdm-Actor", *params.MdmActor, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Mdm-Actor", headerParam0)
+		}
+
+	}
+
+	return req, nil
+}
+
+// NewCreateCommandRequest calls the generic CreateCommand builder with application/json body
+func NewCreateCommandRequest(server string, tenant string, id openapi_types.UUID, params *CreateCommandParams, body CreateCommandJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := runtime.JSONMarshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewCreateCommandRequestWithBody(server, tenant, id, params, "application/json", bodyReader)
+}
+
+// NewCreateCommandRequestWithBody constructs an http.Request for the CreateCommand method, with any body, and a specified content type
+func NewCreateCommandRequestWithBody(server string, tenant string, id openapi_types.UUID, params *CreateCommandParams, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "tenant", tenant, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam1 string
+
+	pathParam1, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: "uuid"})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := "/api/v1/tenants/" + pathParam0 + "/devices/" + pathParam1 + "/commands"
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	if params != nil {
+
+		if params.IdempotencyKey != nil {
+			var headerParam0 string
+
+			headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Idempotency-Key", *params.IdempotencyKey, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Idempotency-Key", headerParam0)
+		}
+
+		if params.MdmActor != nil {
+			var headerParam1 string
+
+			headerParam1, err = runtime.StyleParamWithOptions("simple", false, "Mdm-Actor", *params.MdmActor, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Mdm-Actor", headerParam1)
+		}
+
+	}
+
+	return req, nil
+}
+
+// NewGetCommandRequest constructs an http.Request for the GetCommand method
+func NewGetCommandRequest(server string, tenant string, id openapi_types.UUID, command openapi_types.UUID, params *GetCommandParams) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "tenant", tenant, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam1 string
+
+	pathParam1, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: "uuid"})
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam2 string
+
+	pathParam2, err = runtime.StyleParamWithOptions("simple", false, "command", command, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: "uuid"})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := "/api/v1/tenants/" + pathParam0 + "/devices/" + pathParam1 + "/commands/" + pathParam2
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+
+		if params.MdmActor != nil {
+			var headerParam0 string
+
+			headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Mdm-Actor", *params.MdmActor, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Mdm-Actor", headerParam0)
+		}
+
+	}
+
+	return req, nil
+}
+
+// NewGetDeviceDDMRequest constructs an http.Request for the GetDeviceDDM method
+func NewGetDeviceDDMRequest(server string, tenant string, id openapi_types.UUID, params *GetDeviceDDMParams) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "tenant", tenant, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam1 string
+
+	pathParam1, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: "uuid"})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := "/api/v1/tenants/" + pathParam0 + "/devices/" + pathParam1 + "/ddm"
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+
+		if params.MdmActor != nil {
+			var headerParam0 string
+
+			headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Mdm-Actor", *params.MdmActor, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Mdm-Actor", headerParam0)
+		}
+
+	}
+
+	return req, nil
+}
+
+// NewGetEffectivePolicyRequest constructs an http.Request for the GetEffectivePolicy method
+func NewGetEffectivePolicyRequest(server string, tenant string, id openapi_types.UUID, params *GetEffectivePolicyParams) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "tenant", tenant, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam1 string
+
+	pathParam1, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: "uuid"})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := "/api/v1/tenants/" + pathParam0 + "/devices/" + pathParam1 + "/effective-policy"
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+
+		if params.MdmActor != nil {
+			var headerParam0 string
+
+			headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Mdm-Actor", *params.MdmActor, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Mdm-Actor", headerParam0)
+		}
+
+	}
+
+	return req, nil
+}
+
+// NewCreateEnrollmentLinkRequest constructs an http.Request for the CreateEnrollmentLink method
+func NewCreateEnrollmentLinkRequest(server string, tenant string, id openapi_types.UUID, params *CreateEnrollmentLinkParams) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "tenant", tenant, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam1 string
+
+	pathParam1, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: "uuid"})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := "/api/v1/tenants/" + pathParam0 + "/devices/" + pathParam1 + "/enrollment-link"
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+
+		if params.IdempotencyKey != nil {
+			var headerParam0 string
+
+			headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Idempotency-Key", *params.IdempotencyKey, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Idempotency-Key", headerParam0)
+		}
+
+		if params.MdmActor != nil {
+			var headerParam1 string
+
+			headerParam1, err = runtime.StyleParamWithOptions("simple", false, "Mdm-Actor", *params.MdmActor, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Mdm-Actor", headerParam1)
+		}
+
+	}
+
+	return req, nil
+}
+
+// NewReissueEnrollmentProfileRequest constructs an http.Request for the ReissueEnrollmentProfile method
+func NewReissueEnrollmentProfileRequest(server string, tenant string, id openapi_types.UUID, params *ReissueEnrollmentProfileParams) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "tenant", tenant, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam1 string
+
+	pathParam1, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: "uuid"})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := "/api/v1/tenants/" + pathParam0 + "/devices/" + pathParam1 + "/enrollment-profile"
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+
+		if params.IdempotencyKey != nil {
+			var headerParam0 string
+
+			headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Idempotency-Key", *params.IdempotencyKey, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Idempotency-Key", headerParam0)
+		}
+
+		if params.MdmActor != nil {
+			var headerParam1 string
+
+			headerParam1, err = runtime.StyleParamWithOptions("simple", false, "Mdm-Actor", *params.MdmActor, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Mdm-Actor", headerParam1)
+		}
+
+	}
+
+	return req, nil
+}
+
+// NewClearDeviceMemberRequest constructs an http.Request for the ClearDeviceMember method
+func NewClearDeviceMemberRequest(server string, tenant string, id openapi_types.UUID, params *ClearDeviceMemberParams) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "tenant", tenant, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam1 string
+
+	pathParam1, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: "uuid"})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := "/api/v1/tenants/" + pathParam0 + "/devices/" + pathParam1 + "/member"
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodDelete, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+
+		if params.MdmActor != nil {
+			var headerParam0 string
+
+			headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Mdm-Actor", *params.MdmActor, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Mdm-Actor", headerParam0)
+		}
+
+	}
+
+	return req, nil
+}
+
+// NewSetDeviceMemberRequest calls the generic SetDeviceMember builder with application/json body
+func NewSetDeviceMemberRequest(server string, tenant string, id openapi_types.UUID, params *SetDeviceMemberParams, body SetDeviceMemberJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := runtime.JSONMarshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewSetDeviceMemberRequestWithBody(server, tenant, id, params, "application/json", bodyReader)
+}
+
+// NewSetDeviceMemberRequestWithBody constructs an http.Request for the SetDeviceMember method, with any body, and a specified content type
+func NewSetDeviceMemberRequestWithBody(server string, tenant string, id openapi_types.UUID, params *SetDeviceMemberParams, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "tenant", tenant, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam1 string
+
+	pathParam1, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: "uuid"})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := "/api/v1/tenants/" + pathParam0 + "/devices/" + pathParam1 + "/member"
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPut, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	if params != nil {
+
+		if params.MdmActor != nil {
+			var headerParam0 string
+
+			headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Mdm-Actor", *params.MdmActor, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Mdm-Actor", headerParam0)
+		}
+
+	}
+
+	return req, nil
+}
+
+// NewDeleteDeviceSettingsRequest constructs an http.Request for the DeleteDeviceSettings method
+func NewDeleteDeviceSettingsRequest(server string, tenant string, id openapi_types.UUID, params *DeleteDeviceSettingsParams) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "tenant", tenant, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam1 string
+
+	pathParam1, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: "uuid"})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := "/api/v1/tenants/" + pathParam0 + "/devices/" + pathParam1 + "/settings"
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodDelete, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+
+		if params.MdmActor != nil {
+			var headerParam0 string
+
+			headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Mdm-Actor", *params.MdmActor, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Mdm-Actor", headerParam0)
+		}
+
+	}
+
+	return req, nil
+}
+
+// NewGetDeviceSettingsRequest constructs an http.Request for the GetDeviceSettings method
+func NewGetDeviceSettingsRequest(server string, tenant string, id openapi_types.UUID, params *GetDeviceSettingsParams) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "tenant", tenant, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam1 string
+
+	pathParam1, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: "uuid"})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := "/api/v1/tenants/" + pathParam0 + "/devices/" + pathParam1 + "/settings"
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+
+		if params.MdmActor != nil {
+			var headerParam0 string
+
+			headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Mdm-Actor", *params.MdmActor, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Mdm-Actor", headerParam0)
+		}
+
+	}
+
+	return req, nil
+}
+
+// NewPutDeviceSettingsRequest calls the generic PutDeviceSettings builder with application/json body
+func NewPutDeviceSettingsRequest(server string, tenant string, id openapi_types.UUID, params *PutDeviceSettingsParams, body PutDeviceSettingsJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := runtime.JSONMarshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewPutDeviceSettingsRequestWithBody(server, tenant, id, params, "application/json", bodyReader)
+}
+
+// NewPutDeviceSettingsRequestWithBody constructs an http.Request for the PutDeviceSettings method, with any body, and a specified content type
+func NewPutDeviceSettingsRequestWithBody(server string, tenant string, id openapi_types.UUID, params *PutDeviceSettingsParams, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "tenant", tenant, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam1 string
+
+	pathParam1, err = runtime.StyleParamWithOptions("simple", false, "id", id, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: "uuid"})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := "/api/v1/tenants/" + pathParam0 + "/devices/" + pathParam1 + "/settings"
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPut, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	if params != nil {
+
+		if params.MdmActor != nil {
+			var headerParam0 string
+
+			headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Mdm-Actor", *params.MdmActor, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Mdm-Actor", headerParam0)
+		}
+
+	}
+
+	return req, nil
+}
+
+// NewListGroupsRequest constructs an http.Request for the ListGroups method
+func NewListGroupsRequest(server string, tenant string, params *ListGroupsParams) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "tenant", tenant, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := "/api/v1/tenants/" + pathParam0 + "/groups"
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+
+		if params.MdmActor != nil {
+			var headerParam0 string
+
+			headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Mdm-Actor", *params.MdmActor, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Mdm-Actor", headerParam0)
+		}
+
+	}
+
+	return req, nil
+}
+
+// NewCreateGroupRequest calls the generic CreateGroup builder with application/json body
+func NewCreateGroupRequest(server string, tenant string, params *CreateGroupParams, body CreateGroupJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := runtime.JSONMarshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewCreateGroupRequestWithBody(server, tenant, params, "application/json", bodyReader)
+}
+
+// NewCreateGroupRequestWithBody constructs an http.Request for the CreateGroup method, with any body, and a specified content type
+func NewCreateGroupRequestWithBody(server string, tenant string, params *CreateGroupParams, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "tenant", tenant, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := "/api/v1/tenants/" + pathParam0 + "/groups"
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	if params != nil {
+
+		if params.IdempotencyKey != nil {
+			var headerParam0 string
+
+			headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Idempotency-Key", *params.IdempotencyKey, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Idempotency-Key", headerParam0)
+		}
+
+		if params.MdmActor != nil {
+			var headerParam1 string
+
+			headerParam1, err = runtime.StyleParamWithOptions("simple", false, "Mdm-Actor", *params.MdmActor, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Mdm-Actor", headerParam1)
+		}
+
+	}
+
+	return req, nil
+}
+
+// NewDeleteGroupRequest constructs an http.Request for the DeleteGroup method
+func NewDeleteGroupRequest(server string, tenant string, group openapi_types.UUID, params *DeleteGroupParams) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "tenant", tenant, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam1 string
+
+	pathParam1, err = runtime.StyleParamWithOptions("simple", false, "group", group, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: "uuid"})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := "/api/v1/tenants/" + pathParam0 + "/groups/" + pathParam1
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodDelete, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+
+		if params.MdmActor != nil {
+			var headerParam0 string
+
+			headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Mdm-Actor", *params.MdmActor, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Mdm-Actor", headerParam0)
+		}
+
+	}
+
+	return req, nil
+}
+
+// NewGetGroupRequest constructs an http.Request for the GetGroup method
+func NewGetGroupRequest(server string, tenant string, group openapi_types.UUID, params *GetGroupParams) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "tenant", tenant, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam1 string
+
+	pathParam1, err = runtime.StyleParamWithOptions("simple", false, "group", group, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: "uuid"})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := "/api/v1/tenants/" + pathParam0 + "/groups/" + pathParam1
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+
+		if params.MdmActor != nil {
+			var headerParam0 string
+
+			headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Mdm-Actor", *params.MdmActor, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Mdm-Actor", headerParam0)
+		}
+
+	}
+
+	return req, nil
+}
+
+// NewUpdateGroupRequest calls the generic UpdateGroup builder with application/json body
+func NewUpdateGroupRequest(server string, tenant string, group openapi_types.UUID, params *UpdateGroupParams, body UpdateGroupJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := runtime.JSONMarshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewUpdateGroupRequestWithBody(server, tenant, group, params, "application/json", bodyReader)
+}
+
+// NewUpdateGroupRequestWithBody constructs an http.Request for the UpdateGroup method, with any body, and a specified content type
+func NewUpdateGroupRequestWithBody(server string, tenant string, group openapi_types.UUID, params *UpdateGroupParams, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "tenant", tenant, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam1 string
+
+	pathParam1, err = runtime.StyleParamWithOptions("simple", false, "group", group, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: "uuid"})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := "/api/v1/tenants/" + pathParam0 + "/groups/" + pathParam1
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPatch, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	if params != nil {
+
+		if params.MdmActor != nil {
+			var headerParam0 string
+
+			headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Mdm-Actor", *params.MdmActor, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Mdm-Actor", headerParam0)
+		}
+
+	}
+
+	return req, nil
+}
+
+// NewListGroupMembersRequest constructs an http.Request for the ListGroupMembers method
+func NewListGroupMembersRequest(server string, tenant string, group openapi_types.UUID, params *ListGroupMembersParams) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "tenant", tenant, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam1 string
+
+	pathParam1, err = runtime.StyleParamWithOptions("simple", false, "group", group, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: "uuid"})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := "/api/v1/tenants/" + pathParam0 + "/groups/" + pathParam1 + "/members"
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+
+		if params.MdmActor != nil {
+			var headerParam0 string
+
+			headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Mdm-Actor", *params.MdmActor, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Mdm-Actor", headerParam0)
+		}
+
+	}
+
+	return req, nil
+}
+
+// NewRemoveGroupMemberRequest constructs an http.Request for the RemoveGroupMember method
+func NewRemoveGroupMemberRequest(server string, tenant string, group openapi_types.UUID, member string, params *RemoveGroupMemberParams) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "tenant", tenant, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam1 string
+
+	pathParam1, err = runtime.StyleParamWithOptions("simple", false, "group", group, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: "uuid"})
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam2 string
+
+	pathParam2, err = runtime.StyleParamWithOptions("simple", false, "member", member, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := "/api/v1/tenants/" + pathParam0 + "/groups/" + pathParam1 + "/members/" + pathParam2
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodDelete, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+
+		if params.MdmActor != nil {
+			var headerParam0 string
+
+			headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Mdm-Actor", *params.MdmActor, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Mdm-Actor", headerParam0)
+		}
+
+	}
+
+	return req, nil
+}
+
+// NewAddGroupMemberRequest constructs an http.Request for the AddGroupMember method
+func NewAddGroupMemberRequest(server string, tenant string, group openapi_types.UUID, member string, params *AddGroupMemberParams) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "tenant", tenant, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam1 string
+
+	pathParam1, err = runtime.StyleParamWithOptions("simple", false, "group", group, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: "uuid"})
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam2 string
+
+	pathParam2, err = runtime.StyleParamWithOptions("simple", false, "member", member, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := "/api/v1/tenants/" + pathParam0 + "/groups/" + pathParam1 + "/members/" + pathParam2
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPut, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+
+		if params.MdmActor != nil {
+			var headerParam0 string
+
+			headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Mdm-Actor", *params.MdmActor, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Mdm-Actor", headerParam0)
+		}
+
+	}
+
+	return req, nil
+}
+
+// NewListMembersRequest constructs an http.Request for the ListMembers method
+func NewListMembersRequest(server string, tenant string, params *ListMembersParams) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "tenant", tenant, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := "/api/v1/tenants/" + pathParam0 + "/members"
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+
+		if params.MdmActor != nil {
+			var headerParam0 string
+
+			headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Mdm-Actor", *params.MdmActor, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Mdm-Actor", headerParam0)
+		}
+
+	}
+
+	return req, nil
+}
+
+// NewCreateMemberRequest calls the generic CreateMember builder with application/json body
+func NewCreateMemberRequest(server string, tenant string, params *CreateMemberParams, body CreateMemberJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := runtime.JSONMarshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewCreateMemberRequestWithBody(server, tenant, params, "application/json", bodyReader)
+}
+
+// NewCreateMemberRequestWithBody constructs an http.Request for the CreateMember method, with any body, and a specified content type
+func NewCreateMemberRequestWithBody(server string, tenant string, params *CreateMemberParams, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "tenant", tenant, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := "/api/v1/tenants/" + pathParam0 + "/members"
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	if params != nil {
+
+		if params.IdempotencyKey != nil {
+			var headerParam0 string
+
+			headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Idempotency-Key", *params.IdempotencyKey, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Idempotency-Key", headerParam0)
+		}
+
+		if params.MdmActor != nil {
+			var headerParam1 string
+
+			headerParam1, err = runtime.StyleParamWithOptions("simple", false, "Mdm-Actor", *params.MdmActor, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Mdm-Actor", headerParam1)
+		}
+
+	}
+
+	return req, nil
+}
+
+// NewDeleteMemberRequest constructs an http.Request for the DeleteMember method
+func NewDeleteMemberRequest(server string, tenant string, member string, params *DeleteMemberParams) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "tenant", tenant, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam1 string
+
+	pathParam1, err = runtime.StyleParamWithOptions("simple", false, "member", member, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := "/api/v1/tenants/" + pathParam0 + "/members/" + pathParam1
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodDelete, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+
+		if params.MdmActor != nil {
+			var headerParam0 string
+
+			headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Mdm-Actor", *params.MdmActor, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Mdm-Actor", headerParam0)
+		}
+
+	}
+
+	return req, nil
+}
+
+// NewGetMemberRequest constructs an http.Request for the GetMember method
+func NewGetMemberRequest(server string, tenant string, member string, params *GetMemberParams) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "tenant", tenant, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam1 string
+
+	pathParam1, err = runtime.StyleParamWithOptions("simple", false, "member", member, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := "/api/v1/tenants/" + pathParam0 + "/members/" + pathParam1
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+
+		if params.MdmActor != nil {
+			var headerParam0 string
+
+			headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Mdm-Actor", *params.MdmActor, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Mdm-Actor", headerParam0)
+		}
+
+	}
+
+	return req, nil
+}
+
+// NewUpdateMemberRequest calls the generic UpdateMember builder with application/json body
+func NewUpdateMemberRequest(server string, tenant string, member string, params *UpdateMemberParams, body UpdateMemberJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := runtime.JSONMarshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewUpdateMemberRequestWithBody(server, tenant, member, params, "application/json", bodyReader)
+}
+
+// NewUpdateMemberRequestWithBody constructs an http.Request for the UpdateMember method, with any body, and a specified content type
+func NewUpdateMemberRequestWithBody(server string, tenant string, member string, params *UpdateMemberParams, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "tenant", tenant, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam1 string
+
+	pathParam1, err = runtime.StyleParamWithOptions("simple", false, "member", member, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := "/api/v1/tenants/" + pathParam0 + "/members/" + pathParam1
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPatch, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	if params != nil {
+
+		if params.MdmActor != nil {
+			var headerParam0 string
+
+			headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Mdm-Actor", *params.MdmActor, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Mdm-Actor", headerParam0)
+		}
+
+	}
+
+	return req, nil
+}
+
+// NewListProfilesRequest constructs an http.Request for the ListProfiles method
+func NewListProfilesRequest(server string, tenant string, params *ListProfilesParams) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "tenant", tenant, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := "/api/v1/tenants/" + pathParam0 + "/profiles"
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+
+		if params.MdmActor != nil {
+			var headerParam0 string
+
+			headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Mdm-Actor", *params.MdmActor, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Mdm-Actor", headerParam0)
+		}
+
+	}
+
+	return req, nil
+}
+
+// NewCreateProfileRequest calls the generic CreateProfile builder with application/json body
+func NewCreateProfileRequest(server string, tenant string, params *CreateProfileParams, body CreateProfileJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := runtime.JSONMarshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewCreateProfileRequestWithBody(server, tenant, params, "application/json", bodyReader)
+}
+
+// NewCreateProfileRequestWithBody constructs an http.Request for the CreateProfile method, with any body, and a specified content type
+func NewCreateProfileRequestWithBody(server string, tenant string, params *CreateProfileParams, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "tenant", tenant, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := "/api/v1/tenants/" + pathParam0 + "/profiles"
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	if params != nil {
+
+		if params.IdempotencyKey != nil {
+			var headerParam0 string
+
+			headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Idempotency-Key", *params.IdempotencyKey, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Idempotency-Key", headerParam0)
+		}
+
+		if params.MdmActor != nil {
+			var headerParam1 string
+
+			headerParam1, err = runtime.StyleParamWithOptions("simple", false, "Mdm-Actor", *params.MdmActor, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Mdm-Actor", headerParam1)
+		}
+
+	}
+
+	return req, nil
+}
+
+// NewDeleteProfileRequest constructs an http.Request for the DeleteProfile method
+func NewDeleteProfileRequest(server string, tenant string, profile openapi_types.UUID, params *DeleteProfileParams) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "tenant", tenant, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam1 string
+
+	pathParam1, err = runtime.StyleParamWithOptions("simple", false, "profile", profile, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: "uuid"})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := "/api/v1/tenants/" + pathParam0 + "/profiles/" + pathParam1
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodDelete, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+
+		if params.MdmActor != nil {
+			var headerParam0 string
+
+			headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Mdm-Actor", *params.MdmActor, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Mdm-Actor", headerParam0)
+		}
+
+	}
+
+	return req, nil
+}
+
+// NewGetProfileRequest constructs an http.Request for the GetProfile method
+func NewGetProfileRequest(server string, tenant string, profile openapi_types.UUID, params *GetProfileParams) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "tenant", tenant, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam1 string
+
+	pathParam1, err = runtime.StyleParamWithOptions("simple", false, "profile", profile, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: "uuid"})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := "/api/v1/tenants/" + pathParam0 + "/profiles/" + pathParam1
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+
+		if params.MdmActor != nil {
+			var headerParam0 string
+
+			headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Mdm-Actor", *params.MdmActor, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Mdm-Actor", headerParam0)
+		}
+
+	}
+
+	return req, nil
+}
+
+// NewUpdateProfileRequest calls the generic UpdateProfile builder with application/json body
+func NewUpdateProfileRequest(server string, tenant string, profile openapi_types.UUID, params *UpdateProfileParams, body UpdateProfileJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := runtime.JSONMarshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewUpdateProfileRequestWithBody(server, tenant, profile, params, "application/json", bodyReader)
+}
+
+// NewUpdateProfileRequestWithBody constructs an http.Request for the UpdateProfile method, with any body, and a specified content type
+func NewUpdateProfileRequestWithBody(server string, tenant string, profile openapi_types.UUID, params *UpdateProfileParams, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "tenant", tenant, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam1 string
+
+	pathParam1, err = runtime.StyleParamWithOptions("simple", false, "profile", profile, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: "uuid"})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := "/api/v1/tenants/" + pathParam0 + "/profiles/" + pathParam1
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPut, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	if params != nil {
+
+		if params.MdmActor != nil {
+			var headerParam0 string
+
+			headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Mdm-Actor", *params.MdmActor, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Mdm-Actor", headerParam0)
+		}
+
+	}
+
+	return req, nil
+}
+
+// NewListAssignmentsRequest constructs an http.Request for the ListAssignments method
+func NewListAssignmentsRequest(server string, tenant string, profile openapi_types.UUID, params *ListAssignmentsParams) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "tenant", tenant, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam1 string
+
+	pathParam1, err = runtime.StyleParamWithOptions("simple", false, "profile", profile, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: "uuid"})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := "/api/v1/tenants/" + pathParam0 + "/profiles/" + pathParam1 + "/assignments"
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodGet, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+
+		if params.MdmActor != nil {
+			var headerParam0 string
+
+			headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Mdm-Actor", *params.MdmActor, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Mdm-Actor", headerParam0)
+		}
+
+	}
+
+	return req, nil
+}
+
+// NewCreateAssignmentRequest calls the generic CreateAssignment builder with application/json body
+func NewCreateAssignmentRequest(server string, tenant string, profile openapi_types.UUID, params *CreateAssignmentParams, body CreateAssignmentJSONRequestBody) (*http.Request, error) {
+	var bodyReader io.Reader
+	buf, err := runtime.JSONMarshal(body)
+	if err != nil {
+		return nil, err
+	}
+	bodyReader = bytes.NewReader(buf)
+	return NewCreateAssignmentRequestWithBody(server, tenant, profile, params, "application/json", bodyReader)
+}
+
+// NewCreateAssignmentRequestWithBody constructs an http.Request for the CreateAssignment method, with any body, and a specified content type
+func NewCreateAssignmentRequestWithBody(server string, tenant string, profile openapi_types.UUID, params *CreateAssignmentParams, contentType string, body io.Reader) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "tenant", tenant, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam1 string
+
+	pathParam1, err = runtime.StyleParamWithOptions("simple", false, "profile", profile, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: "uuid"})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := "/api/v1/tenants/" + pathParam0 + "/profiles/" + pathParam1 + "/assignments"
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodPost, queryURL.String(), body)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", contentType)
+
+	if params != nil {
+
+		if params.IdempotencyKey != nil {
+			var headerParam0 string
+
+			headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Idempotency-Key", *params.IdempotencyKey, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Idempotency-Key", headerParam0)
+		}
+
+		if params.MdmActor != nil {
+			var headerParam1 string
+
+			headerParam1, err = runtime.StyleParamWithOptions("simple", false, "Mdm-Actor", *params.MdmActor, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Mdm-Actor", headerParam1)
+		}
+
+	}
+
+	return req, nil
+}
+
+// NewDeleteAssignmentRequest constructs an http.Request for the DeleteAssignment method
+func NewDeleteAssignmentRequest(server string, tenant string, profile openapi_types.UUID, assignment openapi_types.UUID, params *DeleteAssignmentParams) (*http.Request, error) {
+	var err error
+
+	var pathParam0 string
+
+	pathParam0, err = runtime.StyleParamWithOptions("simple", false, "tenant", tenant, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: ""})
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam1 string
+
+	pathParam1, err = runtime.StyleParamWithOptions("simple", false, "profile", profile, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: "uuid"})
+	if err != nil {
+		return nil, err
+	}
+
+	var pathParam2 string
+
+	pathParam2, err = runtime.StyleParamWithOptions("simple", false, "assignment", assignment, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationPath, Type: "string", Format: "uuid"})
+	if err != nil {
+		return nil, err
+	}
+
+	serverURL, err := url.Parse(server)
+	if err != nil {
+		return nil, err
+	}
+
+	operationPath := "/api/v1/tenants/" + pathParam0 + "/profiles/" + pathParam1 + "/assignments/" + pathParam2
+	if operationPath[0] == '/' {
+		operationPath = "." + operationPath
+	}
+
+	queryURL, err := serverURL.Parse(operationPath)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest(http.MethodDelete, queryURL.String(), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	if params != nil {
+
+		if params.MdmActor != nil {
+			var headerParam0 string
+
+			headerParam0, err = runtime.StyleParamWithOptions("simple", false, "Mdm-Actor", *params.MdmActor, runtime.StyleParamOptions{ParamLocation: runtime.ParamLocationHeader, Type: "string", Format: ""})
+			if err != nil {
+				return nil, err
+			}
+
+			req.Header.Set("Mdm-Actor", headerParam0)
+		}
+
+	}
+
+	return req, nil
+}
+
 func (c *Client) applyEditors(ctx context.Context, req *http.Request, additionalEditors []RequestEditorFn) error {
 	for _, r := range c.RequestEditors {
 		if err := r(ctx, req); err != nil {
@@ -756,6 +5733,469 @@ type ClientWithResponsesInterface interface {
 	//
 	// Corresponds with GET /api/v1/me (the `GetMe` operationId).
 	GetMeWithResponse(ctx context.Context, params *GetMeParams, reqEditors ...RequestEditorFn) (*GetMeResponse, error)
+
+	// ListTenantsWithResponse Tenants the caller reaches
+	//
+	// An account client: every tenant of its account (tenants:read), oldest first. An admin app token: its organization's tenant, with the caller's role.
+	//
+	// Returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with GET /api/v1/tenants (the `ListTenants` operationId).
+	ListTenantsWithResponse(ctx context.Context, params *ListTenantsParams, reqEditors ...RequestEditorFn) (*ListTenantsResponse, error)
+
+	// CreateTenantWithBodyWithResponse Create a tenant
+	//
+	// Account clients only (tenants:write). external_id is the account's own id for the tenant, unique in the account; 409 when it is taken.
+	//
+	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with POST /api/v1/tenants (the `CreateTenant` operationId).
+	CreateTenantWithBodyWithResponse(ctx context.Context, params *CreateTenantParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateTenantResponse, error)
+
+	// CreateTenantWithResponse Create a tenant
+	//
+	// Account clients only (tenants:write). external_id is the account's own id for the tenant, unique in the account; 409 when it is taken.
+	//
+	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with POST /api/v1/tenants (the `CreateTenant` operationId).
+	CreateTenantWithResponse(ctx context.Context, params *CreateTenantParams, body CreateTenantJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateTenantResponse, error)
+
+	// DeleteTenantWithResponse Delete a tenant
+	//
+	// Account clients only (tenants:write). Starts the deletion and answers at once: tenant.deleting fires, writes to the tenant answer 409 from then on (reads keep working), delegated tokens are no longer issued for it, and every enrolled device is asked to remove its enrollment profile. Once each device has, checked out, or stayed silent for 30 days, the tenant and everything in it are deleted and tenant.deleted fires. Calling it again changes nothing.
+	//
+	// Returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with DELETE /api/v1/tenants/{tenant} (the `DeleteTenant` operationId).
+	DeleteTenantWithResponse(ctx context.Context, tenant string, params *DeleteTenantParams, reqEditors ...RequestEditorFn) (*DeleteTenantResponse, error)
+
+	// GetTenantWithResponse Get a tenant
+	//
+	// Returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with GET /api/v1/tenants/{tenant} (the `GetTenant` operationId).
+	GetTenantWithResponse(ctx context.Context, tenant string, params *GetTenantParams, reqEditors ...RequestEditorFn) (*GetTenantResponse, error)
+
+	// UpdateTenantWithBodyWithResponse Rename a tenant or change its credential holder
+	//
+	// Account clients only (tenants:write).
+	//
+	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with PATCH /api/v1/tenants/{tenant} (the `UpdateTenant` operationId).
+	UpdateTenantWithBodyWithResponse(ctx context.Context, tenant string, params *UpdateTenantParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateTenantResponse, error)
+
+	// UpdateTenantWithResponse Rename a tenant or change its credential holder
+	//
+	// Account clients only (tenants:write).
+	//
+	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with PATCH /api/v1/tenants/{tenant} (the `UpdateTenant` operationId).
+	UpdateTenantWithResponse(ctx context.Context, tenant string, params *UpdateTenantParams, body UpdateTenantJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateTenantResponse, error)
+
+	// ListDevicesWithResponse List devices
+	//
+	// Every device that has not been removed, oldest first; with member, that member's only (404 when the member is not in the tenant).
+	//
+	// Returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with GET /api/v1/tenants/{tenant}/devices (the `ListDevices` operationId).
+	ListDevicesWithResponse(ctx context.Context, tenant string, params *ListDevicesParams, reqEditors ...RequestEditorFn) (*ListDevicesResponse, error)
+
+	// CreateDeviceWithBodyWithResponse Register a device
+	//
+	// Creates a device in status pending with a fresh enrollment token and SCEP challenge, both valid for 7 days, and returns its enrollment profile. settings are the device's own items (PUT .../settings); its effective policy is installed once the enrolled device reports its level and OS through DeviceInformation.
+	//
+	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with POST /api/v1/tenants/{tenant}/devices (the `CreateDevice` operationId).
+	CreateDeviceWithBodyWithResponse(ctx context.Context, tenant string, params *CreateDeviceParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateDeviceResponse, error)
+
+	// CreateDeviceWithResponse Register a device
+	//
+	// Creates a device in status pending with a fresh enrollment token and SCEP challenge, both valid for 7 days, and returns its enrollment profile. settings are the device's own items (PUT .../settings); its effective policy is installed once the enrolled device reports its level and OS through DeviceInformation.
+	//
+	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with POST /api/v1/tenants/{tenant}/devices (the `CreateDevice` operationId).
+	CreateDeviceWithResponse(ctx context.Context, tenant string, params *CreateDeviceParams, body CreateDeviceJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateDeviceResponse, error)
+
+	// DeleteDeviceWithResponse Remove a device
+	//
+	// Marks the device removed. Later webhooks for its enrollment are ignored and API calls on it return 404. The MDM server keeps the enrollment until the device is erased or its enrollment profile is removed.
+	//
+	// Returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with DELETE /api/v1/tenants/{tenant}/devices/{id} (the `DeleteDevice` operationId).
+	DeleteDeviceWithResponse(ctx context.Context, tenant string, id openapi_types.UUID, params *DeleteDeviceParams, reqEditors ...RequestEditorFn) (*DeleteDeviceResponse, error)
+
+	// GetDeviceWithResponse Get a device
+	//
+	// Returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with GET /api/v1/tenants/{tenant}/devices/{id} (the `GetDevice` operationId).
+	GetDeviceWithResponse(ctx context.Context, tenant string, id openapi_types.UUID, params *GetDeviceParams, reqEditors ...RequestEditorFn) (*GetDeviceResponse, error)
+
+	// ListCommandsWithResponse Command history
+	//
+	// Every command sent to the device, newest first.
+	//
+	// Returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with GET /api/v1/tenants/{tenant}/devices/{id}/commands (the `ListCommands` operationId).
+	ListCommandsWithResponse(ctx context.Context, tenant string, id openapi_types.UUID, params *ListCommandsParams, reqEditors ...RequestEditorFn) (*ListCommandsResponse, error)
+
+	// CreateCommandWithBodyWithResponse Send a command
+	//
+	// Accepts a command for an enrolled device. It is handed to the MDM server after the request commits; its status says where it is (GET .../commands/{command}). Returns 409 for any other device.
+	//
+	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with POST /api/v1/tenants/{tenant}/devices/{id}/commands (the `CreateCommand` operationId).
+	CreateCommandWithBodyWithResponse(ctx context.Context, tenant string, id openapi_types.UUID, params *CreateCommandParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateCommandResponse, error)
+
+	// CreateCommandWithResponse Send a command
+	//
+	// Accepts a command for an enrolled device. It is handed to the MDM server after the request commits; its status says where it is (GET .../commands/{command}). Returns 409 for any other device.
+	//
+	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with POST /api/v1/tenants/{tenant}/devices/{id}/commands (the `CreateCommand` operationId).
+	CreateCommandWithResponse(ctx context.Context, tenant string, id openapi_types.UUID, params *CreateCommandParams, body CreateCommandJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateCommandResponse, error)
+
+	// GetCommandWithResponse Get a command
+	//
+	// One command sent to the device, by the command_uuid it was accepted with: the same record the command history lists. 404 when the device has no such command.
+	//
+	// Returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with GET /api/v1/tenants/{tenant}/devices/{id}/commands/{command} (the `GetCommand` operationId).
+	GetCommandWithResponse(ctx context.Context, tenant string, id openapi_types.UUID, command openapi_types.UUID, params *GetCommandParams, reqEditors ...RequestEditorFn) (*GetCommandResponse, error)
+
+	// GetDeviceDDMWithResponse Declarative management state
+	//
+	// The device's declarative management stage and the state it reported for each current declaration (from management.declarations).
+	//
+	// Returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with GET /api/v1/tenants/{tenant}/devices/{id}/ddm (the `GetDeviceDDM` operationId).
+	GetDeviceDDMWithResponse(ctx context.Context, tenant string, id openapi_types.UUID, params *GetDeviceDDMParams, reqEditors ...RequestEditorFn) (*GetDeviceDDMResponse, error)
+
+	// GetEffectivePolicyWithResponse Get the device's effective policy with provenance
+	//
+	// Each effective item with its source (a profile assigned to the tenant, a group, the member, or the device, or the device's own settings), the sources it overrode, and the sources in its own layer that set the same item and lost (conflicts: the lower profile id wins). Profiles assigned to the tenant, the member's groups (the higher priority wins between groups), the member, and the device merge in that order for the device's level, then the device's own settings. Until the level is known only the device's own settings apply.
+	//
+	// Returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with GET /api/v1/tenants/{tenant}/devices/{id}/effective-policy (the `GetEffectivePolicy` operationId).
+	GetEffectivePolicyWithResponse(ctx context.Context, tenant string, id openapi_types.UUID, params *GetEffectivePolicyParams, reqEditors ...RequestEditorFn) (*GetEffectivePolicyResponse, error)
+
+	// CreateEnrollmentLinkWithResponse Create a one-time enrollment link
+	//
+	// Issues a new enrollment token and SCEP challenge, which invalidates earlier profiles and links, and returns a public link that serves the profile built from them, plus the same profile for a direct download. The link works for 24 hours, until the device enrolls, or until a new link or profile is issued. Open it on the iPhone (scan it as a QR code) to download the profile. Returns 409 once the device is bound to an enrollment.
+	//
+	// Returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with POST /api/v1/tenants/{tenant}/devices/{id}/enrollment-link (the `CreateEnrollmentLink` operationId).
+	CreateEnrollmentLinkWithResponse(ctx context.Context, tenant string, id openapi_types.UUID, params *CreateEnrollmentLinkParams, reqEditors ...RequestEditorFn) (*CreateEnrollmentLinkResponse, error)
+
+	// ReissueEnrollmentProfileWithResponse Issue a fresh enrollment profile
+	//
+	// Issues a new enrollment token and SCEP challenge, which invalidates the previous ones, and returns the new profile. Returns 409 once the device is bound to an enrollment.
+	//
+	// Returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with POST /api/v1/tenants/{tenant}/devices/{id}/enrollment-profile (the `ReissueEnrollmentProfile` operationId).
+	ReissueEnrollmentProfileWithResponse(ctx context.Context, tenant string, id openapi_types.UUID, params *ReissueEnrollmentProfileParams, reqEditors ...RequestEditorFn) (*ReissueEnrollmentProfileResponse, error)
+
+	// ClearDeviceMemberWithResponse Give a device back to the tenant
+	//
+	// Returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with DELETE /api/v1/tenants/{tenant}/devices/{id}/member (the `ClearDeviceMember` operationId).
+	ClearDeviceMemberWithResponse(ctx context.Context, tenant string, id openapi_types.UUID, params *ClearDeviceMemberParams, reqEditors ...RequestEditorFn) (*ClearDeviceMemberResponse, error)
+
+	// SetDeviceMemberWithBodyWithResponse Give a device to a member
+	//
+	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with PUT /api/v1/tenants/{tenant}/devices/{id}/member (the `SetDeviceMember` operationId).
+	SetDeviceMemberWithBodyWithResponse(ctx context.Context, tenant string, id openapi_types.UUID, params *SetDeviceMemberParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*SetDeviceMemberResponse, error)
+
+	// SetDeviceMemberWithResponse Give a device to a member
+	//
+	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with PUT /api/v1/tenants/{tenant}/devices/{id}/member (the `SetDeviceMember` operationId).
+	SetDeviceMemberWithResponse(ctx context.Context, tenant string, id openapi_types.UUID, params *SetDeviceMemberParams, body SetDeviceMemberJSONRequestBody, reqEditors ...RequestEditorFn) (*SetDeviceMemberResponse, error)
+
+	// DeleteDeviceSettingsWithResponse Remove the device's own settings
+	//
+	// Removes the device's own items and rebuilds its effective policy. When nothing is left, the policy's revision increments, its status turns removing, and its declarations leave an enrolled device's set; the device removes what they installed, and the policy is deleted once the device reports them gone. A policy never deployed is deleted at once.
+	//
+	// Returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with DELETE /api/v1/tenants/{tenant}/devices/{id}/settings (the `DeleteDeviceSettings` operationId).
+	DeleteDeviceSettingsWithResponse(ctx context.Context, tenant string, id openapi_types.UUID, params *DeleteDeviceSettingsParams, reqEditors ...RequestEditorFn) (*DeleteDeviceSettingsResponse, error)
+
+	// GetDeviceSettingsWithResponse Get the device's own settings
+	//
+	// The device's own items, the most specific layer of its effective policy. Secret values show as {"secret": "set"}.
+	//
+	// Returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with GET /api/v1/tenants/{tenant}/devices/{id}/settings (the `GetDeviceSettings` operationId).
+	GetDeviceSettingsWithResponse(ctx context.Context, tenant string, id openapi_types.UUID, params *GetDeviceSettingsParams, reqEditors ...RequestEditorFn) (*GetDeviceSettingsResponse, error)
+
+	// PutDeviceSettingsWithBodyWithResponse Set the device's own settings
+	//
+	// Replaces the device's own items and rebuilds its effective policy (its assigned profiles, then these items). When the result changes its revision increments and its status turns pending. An enrolled device whose level and OS are known gets it as declarations built for its level now, announced with a DeclarativeManagement command. Any other device gets them once DeviceInformation reports its level and OS. Devices below iOS and iPadOS 17 get none. The status turns applied when the device reports every declaration valid and active. An empty list removes the settings.
+	//
+	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with PUT /api/v1/tenants/{tenant}/devices/{id}/settings (the `PutDeviceSettings` operationId).
+	PutDeviceSettingsWithBodyWithResponse(ctx context.Context, tenant string, id openapi_types.UUID, params *PutDeviceSettingsParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*PutDeviceSettingsResponse, error)
+
+	// PutDeviceSettingsWithResponse Set the device's own settings
+	//
+	// Replaces the device's own items and rebuilds its effective policy (its assigned profiles, then these items). When the result changes its revision increments and its status turns pending. An enrolled device whose level and OS are known gets it as declarations built for its level now, announced with a DeclarativeManagement command. Any other device gets them once DeviceInformation reports its level and OS. Devices below iOS and iPadOS 17 get none. The status turns applied when the device reports every declaration valid and active. An empty list removes the settings.
+	//
+	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with PUT /api/v1/tenants/{tenant}/devices/{id}/settings (the `PutDeviceSettings` operationId).
+	PutDeviceSettingsWithResponse(ctx context.Context, tenant string, id openapi_types.UUID, params *PutDeviceSettingsParams, body PutDeviceSettingsJSONRequestBody, reqEditors ...RequestEditorFn) (*PutDeviceSettingsResponse, error)
+
+	// ListGroupsWithResponse List groups
+	//
+	// Every group of the tenant, highest priority first.
+	//
+	// Returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with GET /api/v1/tenants/{tenant}/groups (the `ListGroups` operationId).
+	ListGroupsWithResponse(ctx context.Context, tenant string, params *ListGroupsParams, reqEditors ...RequestEditorFn) (*ListGroupsResponse, error)
+
+	// CreateGroupWithBodyWithResponse Create a group
+	//
+	// A group is a flat set of members. When profiles assigned to two groups set the same item, the higher priority wins. Priorities are unique in the tenant; 409 when it is taken.
+	//
+	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with POST /api/v1/tenants/{tenant}/groups (the `CreateGroup` operationId).
+	CreateGroupWithBodyWithResponse(ctx context.Context, tenant string, params *CreateGroupParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateGroupResponse, error)
+
+	// CreateGroupWithResponse Create a group
+	//
+	// A group is a flat set of members. When profiles assigned to two groups set the same item, the higher priority wins. Priorities are unique in the tenant; 409 when it is taken.
+	//
+	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with POST /api/v1/tenants/{tenant}/groups (the `CreateGroup` operationId).
+	CreateGroupWithResponse(ctx context.Context, tenant string, params *CreateGroupParams, body CreateGroupJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateGroupResponse, error)
+
+	// DeleteGroupWithResponse Delete a group
+	//
+	// Its members stay; only the memberships go.
+	//
+	// Returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with DELETE /api/v1/tenants/{tenant}/groups/{group} (the `DeleteGroup` operationId).
+	DeleteGroupWithResponse(ctx context.Context, tenant string, group openapi_types.UUID, params *DeleteGroupParams, reqEditors ...RequestEditorFn) (*DeleteGroupResponse, error)
+
+	// GetGroupWithResponse Get a group
+	//
+	// Returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with GET /api/v1/tenants/{tenant}/groups/{group} (the `GetGroup` operationId).
+	GetGroupWithResponse(ctx context.Context, tenant string, group openapi_types.UUID, params *GetGroupParams, reqEditors ...RequestEditorFn) (*GetGroupResponse, error)
+
+	// UpdateGroupWithBodyWithResponse Update a group
+	//
+	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with PATCH /api/v1/tenants/{tenant}/groups/{group} (the `UpdateGroup` operationId).
+	UpdateGroupWithBodyWithResponse(ctx context.Context, tenant string, group openapi_types.UUID, params *UpdateGroupParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateGroupResponse, error)
+
+	// UpdateGroupWithResponse Update a group
+	//
+	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with PATCH /api/v1/tenants/{tenant}/groups/{group} (the `UpdateGroup` operationId).
+	UpdateGroupWithResponse(ctx context.Context, tenant string, group openapi_types.UUID, params *UpdateGroupParams, body UpdateGroupJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateGroupResponse, error)
+
+	// ListGroupMembersWithResponse List a group's members
+	//
+	// Returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with GET /api/v1/tenants/{tenant}/groups/{group}/members (the `ListGroupMembers` operationId).
+	ListGroupMembersWithResponse(ctx context.Context, tenant string, group openapi_types.UUID, params *ListGroupMembersParams, reqEditors ...RequestEditorFn) (*ListGroupMembersResponse, error)
+
+	// RemoveGroupMemberWithResponse Remove a member from a group
+	//
+	// Returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with DELETE /api/v1/tenants/{tenant}/groups/{group}/members/{member} (the `RemoveGroupMember` operationId).
+	RemoveGroupMemberWithResponse(ctx context.Context, tenant string, group openapi_types.UUID, member string, params *RemoveGroupMemberParams, reqEditors ...RequestEditorFn) (*RemoveGroupMemberResponse, error)
+
+	// AddGroupMemberWithResponse Add a member to a group
+	//
+	// Adding a member already in the group changes nothing.
+	//
+	// Returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with PUT /api/v1/tenants/{tenant}/groups/{group}/members/{member} (the `AddGroupMember` operationId).
+	AddGroupMemberWithResponse(ctx context.Context, tenant string, group openapi_types.UUID, member string, params *AddGroupMemberParams, reqEditors ...RequestEditorFn) (*AddGroupMemberResponse, error)
+
+	// ListMembersWithResponse List members
+	//
+	// Every member of the tenant, oldest first.
+	//
+	// Returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with GET /api/v1/tenants/{tenant}/members (the `ListMembers` operationId).
+	ListMembersWithResponse(ctx context.Context, tenant string, params *ListMembersParams, reqEditors ...RequestEditorFn) (*ListMembersResponse, error)
+
+	// CreateMemberWithBodyWithResponse Create a member
+	//
+	// A member is a person as an owner of devices. external_id is the account's own id for the person, unique in the tenant; 409 when it is taken.
+	//
+	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with POST /api/v1/tenants/{tenant}/members (the `CreateMember` operationId).
+	CreateMemberWithBodyWithResponse(ctx context.Context, tenant string, params *CreateMemberParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateMemberResponse, error)
+
+	// CreateMemberWithResponse Create a member
+	//
+	// A member is a person as an owner of devices. external_id is the account's own id for the person, unique in the tenant; 409 when it is taken.
+	//
+	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with POST /api/v1/tenants/{tenant}/members (the `CreateMember` operationId).
+	CreateMemberWithResponse(ctx context.Context, tenant string, params *CreateMemberParams, body CreateMemberJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateMemberResponse, error)
+
+	// DeleteMemberWithResponse Delete a member
+	//
+	// The member leaves its groups and its devices become the tenant's.
+	//
+	// Returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with DELETE /api/v1/tenants/{tenant}/members/{member} (the `DeleteMember` operationId).
+	DeleteMemberWithResponse(ctx context.Context, tenant string, member string, params *DeleteMemberParams, reqEditors ...RequestEditorFn) (*DeleteMemberResponse, error)
+
+	// GetMemberWithResponse Get a member
+	//
+	// Returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with GET /api/v1/tenants/{tenant}/members/{member} (the `GetMember` operationId).
+	GetMemberWithResponse(ctx context.Context, tenant string, member string, params *GetMemberParams, reqEditors ...RequestEditorFn) (*GetMemberResponse, error)
+
+	// UpdateMemberWithBodyWithResponse Update a member
+	//
+	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with PATCH /api/v1/tenants/{tenant}/members/{member} (the `UpdateMember` operationId).
+	UpdateMemberWithBodyWithResponse(ctx context.Context, tenant string, member string, params *UpdateMemberParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateMemberResponse, error)
+
+	// UpdateMemberWithResponse Update a member
+	//
+	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with PATCH /api/v1/tenants/{tenant}/members/{member} (the `UpdateMember` operationId).
+	UpdateMemberWithResponse(ctx context.Context, tenant string, member string, params *UpdateMemberParams, body UpdateMemberJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateMemberResponse, error)
+
+	// ListProfilesWithResponse List profiles
+	//
+	// Every profile of the tenant, oldest first. Secret values show as {"secret": "set"}.
+	//
+	// Returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with GET /api/v1/tenants/{tenant}/profiles (the `ListProfiles` operationId).
+	ListProfilesWithResponse(ctx context.Context, tenant string, params *ListProfilesParams, reqEditors ...RequestEditorFn) (*ListProfilesResponse, error)
+
+	// CreateProfileWithBodyWithResponse Create a profile
+	//
+	// A profile is a named item list of the tenant. It reaches devices through assignments.
+	//
+	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with POST /api/v1/tenants/{tenant}/profiles (the `CreateProfile` operationId).
+	CreateProfileWithBodyWithResponse(ctx context.Context, tenant string, params *CreateProfileParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateProfileResponse, error)
+
+	// CreateProfileWithResponse Create a profile
+	//
+	// A profile is a named item list of the tenant. It reaches devices through assignments.
+	//
+	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with POST /api/v1/tenants/{tenant}/profiles (the `CreateProfile` operationId).
+	CreateProfileWithResponse(ctx context.Context, tenant string, params *CreateProfileParams, body CreateProfileJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateProfileResponse, error)
+
+	// DeleteProfileWithResponse Delete a profile
+	//
+	// Deletes the profile and its assignments; the devices it reached rebuild their effective policies.
+	//
+	// Returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with DELETE /api/v1/tenants/{tenant}/profiles/{profile} (the `DeleteProfile` operationId).
+	DeleteProfileWithResponse(ctx context.Context, tenant string, profile openapi_types.UUID, params *DeleteProfileParams, reqEditors ...RequestEditorFn) (*DeleteProfileResponse, error)
+
+	// GetProfileWithResponse Get a profile
+	//
+	// Returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with GET /api/v1/tenants/{tenant}/profiles/{profile} (the `GetProfile` operationId).
+	GetProfileWithResponse(ctx context.Context, tenant string, profile openapi_types.UUID, params *GetProfileParams, reqEditors ...RequestEditorFn) (*GetProfileResponse, error)
+
+	// UpdateProfileWithBodyWithResponse Replace a profile
+	//
+	// Replaces the name and items. Every device the profile reaches rebuilds its effective policy. A secret sent as {"secret": "set"} keeps the stored value.
+	//
+	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with PUT /api/v1/tenants/{tenant}/profiles/{profile} (the `UpdateProfile` operationId).
+	UpdateProfileWithBodyWithResponse(ctx context.Context, tenant string, profile openapi_types.UUID, params *UpdateProfileParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateProfileResponse, error)
+
+	// UpdateProfileWithResponse Replace a profile
+	//
+	// Replaces the name and items. Every device the profile reaches rebuilds its effective policy. A secret sent as {"secret": "set"} keeps the stored value.
+	//
+	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with PUT /api/v1/tenants/{tenant}/profiles/{profile} (the `UpdateProfile` operationId).
+	UpdateProfileWithResponse(ctx context.Context, tenant string, profile openapi_types.UUID, params *UpdateProfileParams, body UpdateProfileJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateProfileResponse, error)
+
+	// ListAssignmentsWithResponse List a profile's assignments
+	//
+	// Returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with GET /api/v1/tenants/{tenant}/profiles/{profile}/assignments (the `ListAssignments` operationId).
+	ListAssignmentsWithResponse(ctx context.Context, tenant string, profile openapi_types.UUID, params *ListAssignmentsParams, reqEditors ...RequestEditorFn) (*ListAssignmentsResponse, error)
+
+	// CreateAssignmentWithBodyWithResponse Assign a profile
+	//
+	// Assigns the profile to the tenant, a group, a member, or a device, for devices of the listed levels. One assignment per profile and target; 409 when it exists. The devices it reaches rebuild their effective policies.
+	//
+	// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with POST /api/v1/tenants/{tenant}/profiles/{profile}/assignments (the `CreateAssignment` operationId).
+	CreateAssignmentWithBodyWithResponse(ctx context.Context, tenant string, profile openapi_types.UUID, params *CreateAssignmentParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateAssignmentResponse, error)
+
+	// CreateAssignmentWithResponse Assign a profile
+	//
+	// Assigns the profile to the tenant, a group, a member, or a device, for devices of the listed levels. One assignment per profile and target; 409 when it exists. The devices it reaches rebuild their effective policies.
+	//
+	// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with POST /api/v1/tenants/{tenant}/profiles/{profile}/assignments (the `CreateAssignment` operationId).
+	CreateAssignmentWithResponse(ctx context.Context, tenant string, profile openapi_types.UUID, params *CreateAssignmentParams, body CreateAssignmentJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateAssignmentResponse, error)
+
+	// DeleteAssignmentWithResponse Remove an assignment
+	//
+	// Returns a wrapper object for the known response body format(s).
+	//
+	// Corresponds with DELETE /api/v1/tenants/{tenant}/profiles/{profile}/assignments/{assignment} (the `DeleteAssignment` operationId).
+	DeleteAssignmentWithResponse(ctx context.Context, tenant string, profile openapi_types.UUID, assignment openapi_types.UUID, params *DeleteAssignmentParams, reqEditors ...RequestEditorFn) (*DeleteAssignmentResponse, error)
 }
 
 // GetCatalogResponse429Headers the declared response headers of an HTTP 429 response for GetCatalog
@@ -903,6 +6343,3695 @@ func (r GetMeResponse) ContentType() string {
 	return ""
 }
 
+// ListTenantsResponse429Headers the declared response headers of an HTTP 429 response for ListTenants
+type ListTenantsResponse429Headers struct {
+	RetryAfter *int
+}
+
+type ListTenantsResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON200 the response for an HTTP 200 `application/json` response
+	JSON200 *[]Tenant
+	// ApplicationproblemJSON401 the response for an HTTP 401 `application/problem+json` response
+	ApplicationproblemJSON401 *Problem
+	// ApplicationproblemJSON403 the response for an HTTP 403 `application/problem+json` response
+	ApplicationproblemJSON403 *Problem
+	// ApplicationproblemJSON429 the response for an HTTP 429 `application/problem+json` response
+	ApplicationproblemJSON429 *Problem
+	// Headers429 the parsed response headers for an HTTP 429 response
+	Headers429 *ListTenantsResponse429Headers
+}
+
+// GetJSON200 returns the response for an HTTP 200 `application/json` response
+func (r ListTenantsResponse) GetJSON200() *[]Tenant {
+	return r.JSON200
+}
+
+// GetApplicationproblemJSON401 returns the response for an HTTP 401 `application/problem+json` response
+func (r ListTenantsResponse) GetApplicationproblemJSON401() *Problem {
+	return r.ApplicationproblemJSON401
+}
+
+// GetApplicationproblemJSON403 returns the response for an HTTP 403 `application/problem+json` response
+func (r ListTenantsResponse) GetApplicationproblemJSON403() *Problem {
+	return r.ApplicationproblemJSON403
+}
+
+// GetApplicationproblemJSON429 returns the response for an HTTP 429 `application/problem+json` response
+func (r ListTenantsResponse) GetApplicationproblemJSON429() *Problem {
+	return r.ApplicationproblemJSON429
+}
+
+// GetBody returns the raw response body bytes
+func (r ListTenantsResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r ListTenantsResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ListTenantsResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r ListTenantsResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+// CreateTenantResponse429Headers the declared response headers of an HTTP 429 response for CreateTenant
+type CreateTenantResponse429Headers struct {
+	RetryAfter *int
+}
+
+type CreateTenantResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON201 the response for an HTTP 201 `application/json` response
+	JSON201 *Tenant
+	// ApplicationproblemJSON400 the response for an HTTP 400 `application/problem+json` response
+	ApplicationproblemJSON400 *Problem
+	// ApplicationproblemJSON401 the response for an HTTP 401 `application/problem+json` response
+	ApplicationproblemJSON401 *Problem
+	// ApplicationproblemJSON403 the response for an HTTP 403 `application/problem+json` response
+	ApplicationproblemJSON403 *Problem
+	// ApplicationproblemJSON409 the response for an HTTP 409 `application/problem+json` response
+	ApplicationproblemJSON409 *Problem
+	// ApplicationproblemJSON422 the response for an HTTP 422 `application/problem+json` response
+	ApplicationproblemJSON422 *Problem
+	// ApplicationproblemJSON429 the response for an HTTP 429 `application/problem+json` response
+	ApplicationproblemJSON429 *Problem
+	// Headers429 the parsed response headers for an HTTP 429 response
+	Headers429 *CreateTenantResponse429Headers
+}
+
+// GetJSON201 returns the response for an HTTP 201 `application/json` response
+func (r CreateTenantResponse) GetJSON201() *Tenant {
+	return r.JSON201
+}
+
+// GetApplicationproblemJSON400 returns the response for an HTTP 400 `application/problem+json` response
+func (r CreateTenantResponse) GetApplicationproblemJSON400() *Problem {
+	return r.ApplicationproblemJSON400
+}
+
+// GetApplicationproblemJSON401 returns the response for an HTTP 401 `application/problem+json` response
+func (r CreateTenantResponse) GetApplicationproblemJSON401() *Problem {
+	return r.ApplicationproblemJSON401
+}
+
+// GetApplicationproblemJSON403 returns the response for an HTTP 403 `application/problem+json` response
+func (r CreateTenantResponse) GetApplicationproblemJSON403() *Problem {
+	return r.ApplicationproblemJSON403
+}
+
+// GetApplicationproblemJSON409 returns the response for an HTTP 409 `application/problem+json` response
+func (r CreateTenantResponse) GetApplicationproblemJSON409() *Problem {
+	return r.ApplicationproblemJSON409
+}
+
+// GetApplicationproblemJSON422 returns the response for an HTTP 422 `application/problem+json` response
+func (r CreateTenantResponse) GetApplicationproblemJSON422() *Problem {
+	return r.ApplicationproblemJSON422
+}
+
+// GetApplicationproblemJSON429 returns the response for an HTTP 429 `application/problem+json` response
+func (r CreateTenantResponse) GetApplicationproblemJSON429() *Problem {
+	return r.ApplicationproblemJSON429
+}
+
+// GetBody returns the raw response body bytes
+func (r CreateTenantResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r CreateTenantResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r CreateTenantResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r CreateTenantResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+// DeleteTenantResponse429Headers the declared response headers of an HTTP 429 response for DeleteTenant
+type DeleteTenantResponse429Headers struct {
+	RetryAfter *int
+}
+
+type DeleteTenantResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON202 the response for an HTTP 202 `application/json` response
+	JSON202 *Tenant
+	// ApplicationproblemJSON400 the response for an HTTP 400 `application/problem+json` response
+	ApplicationproblemJSON400 *Problem
+	// ApplicationproblemJSON401 the response for an HTTP 401 `application/problem+json` response
+	ApplicationproblemJSON401 *Problem
+	// ApplicationproblemJSON403 the response for an HTTP 403 `application/problem+json` response
+	ApplicationproblemJSON403 *Problem
+	// ApplicationproblemJSON404 the response for an HTTP 404 `application/problem+json` response
+	ApplicationproblemJSON404 *Problem
+	// ApplicationproblemJSON429 the response for an HTTP 429 `application/problem+json` response
+	ApplicationproblemJSON429 *Problem
+	// Headers429 the parsed response headers for an HTTP 429 response
+	Headers429 *DeleteTenantResponse429Headers
+}
+
+// GetJSON202 returns the response for an HTTP 202 `application/json` response
+func (r DeleteTenantResponse) GetJSON202() *Tenant {
+	return r.JSON202
+}
+
+// GetApplicationproblemJSON400 returns the response for an HTTP 400 `application/problem+json` response
+func (r DeleteTenantResponse) GetApplicationproblemJSON400() *Problem {
+	return r.ApplicationproblemJSON400
+}
+
+// GetApplicationproblemJSON401 returns the response for an HTTP 401 `application/problem+json` response
+func (r DeleteTenantResponse) GetApplicationproblemJSON401() *Problem {
+	return r.ApplicationproblemJSON401
+}
+
+// GetApplicationproblemJSON403 returns the response for an HTTP 403 `application/problem+json` response
+func (r DeleteTenantResponse) GetApplicationproblemJSON403() *Problem {
+	return r.ApplicationproblemJSON403
+}
+
+// GetApplicationproblemJSON404 returns the response for an HTTP 404 `application/problem+json` response
+func (r DeleteTenantResponse) GetApplicationproblemJSON404() *Problem {
+	return r.ApplicationproblemJSON404
+}
+
+// GetApplicationproblemJSON429 returns the response for an HTTP 429 `application/problem+json` response
+func (r DeleteTenantResponse) GetApplicationproblemJSON429() *Problem {
+	return r.ApplicationproblemJSON429
+}
+
+// GetBody returns the raw response body bytes
+func (r DeleteTenantResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r DeleteTenantResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r DeleteTenantResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r DeleteTenantResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+// GetTenantResponse429Headers the declared response headers of an HTTP 429 response for GetTenant
+type GetTenantResponse429Headers struct {
+	RetryAfter *int
+}
+
+type GetTenantResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON200 the response for an HTTP 200 `application/json` response
+	JSON200 *Tenant
+	// ApplicationproblemJSON400 the response for an HTTP 400 `application/problem+json` response
+	ApplicationproblemJSON400 *Problem
+	// ApplicationproblemJSON401 the response for an HTTP 401 `application/problem+json` response
+	ApplicationproblemJSON401 *Problem
+	// ApplicationproblemJSON403 the response for an HTTP 403 `application/problem+json` response
+	ApplicationproblemJSON403 *Problem
+	// ApplicationproblemJSON404 the response for an HTTP 404 `application/problem+json` response
+	ApplicationproblemJSON404 *Problem
+	// ApplicationproblemJSON429 the response for an HTTP 429 `application/problem+json` response
+	ApplicationproblemJSON429 *Problem
+	// Headers429 the parsed response headers for an HTTP 429 response
+	Headers429 *GetTenantResponse429Headers
+}
+
+// GetJSON200 returns the response for an HTTP 200 `application/json` response
+func (r GetTenantResponse) GetJSON200() *Tenant {
+	return r.JSON200
+}
+
+// GetApplicationproblemJSON400 returns the response for an HTTP 400 `application/problem+json` response
+func (r GetTenantResponse) GetApplicationproblemJSON400() *Problem {
+	return r.ApplicationproblemJSON400
+}
+
+// GetApplicationproblemJSON401 returns the response for an HTTP 401 `application/problem+json` response
+func (r GetTenantResponse) GetApplicationproblemJSON401() *Problem {
+	return r.ApplicationproblemJSON401
+}
+
+// GetApplicationproblemJSON403 returns the response for an HTTP 403 `application/problem+json` response
+func (r GetTenantResponse) GetApplicationproblemJSON403() *Problem {
+	return r.ApplicationproblemJSON403
+}
+
+// GetApplicationproblemJSON404 returns the response for an HTTP 404 `application/problem+json` response
+func (r GetTenantResponse) GetApplicationproblemJSON404() *Problem {
+	return r.ApplicationproblemJSON404
+}
+
+// GetApplicationproblemJSON429 returns the response for an HTTP 429 `application/problem+json` response
+func (r GetTenantResponse) GetApplicationproblemJSON429() *Problem {
+	return r.ApplicationproblemJSON429
+}
+
+// GetBody returns the raw response body bytes
+func (r GetTenantResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r GetTenantResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetTenantResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r GetTenantResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+// UpdateTenantResponse429Headers the declared response headers of an HTTP 429 response for UpdateTenant
+type UpdateTenantResponse429Headers struct {
+	RetryAfter *int
+}
+
+type UpdateTenantResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON200 the response for an HTTP 200 `application/json` response
+	JSON200 *Tenant
+	// ApplicationproblemJSON400 the response for an HTTP 400 `application/problem+json` response
+	ApplicationproblemJSON400 *Problem
+	// ApplicationproblemJSON401 the response for an HTTP 401 `application/problem+json` response
+	ApplicationproblemJSON401 *Problem
+	// ApplicationproblemJSON403 the response for an HTTP 403 `application/problem+json` response
+	ApplicationproblemJSON403 *Problem
+	// ApplicationproblemJSON404 the response for an HTTP 404 `application/problem+json` response
+	ApplicationproblemJSON404 *Problem
+	// ApplicationproblemJSON409 the response for an HTTP 409 `application/problem+json` response
+	ApplicationproblemJSON409 *Problem
+	// ApplicationproblemJSON422 the response for an HTTP 422 `application/problem+json` response
+	ApplicationproblemJSON422 *Problem
+	// ApplicationproblemJSON429 the response for an HTTP 429 `application/problem+json` response
+	ApplicationproblemJSON429 *Problem
+	// Headers429 the parsed response headers for an HTTP 429 response
+	Headers429 *UpdateTenantResponse429Headers
+}
+
+// GetJSON200 returns the response for an HTTP 200 `application/json` response
+func (r UpdateTenantResponse) GetJSON200() *Tenant {
+	return r.JSON200
+}
+
+// GetApplicationproblemJSON400 returns the response for an HTTP 400 `application/problem+json` response
+func (r UpdateTenantResponse) GetApplicationproblemJSON400() *Problem {
+	return r.ApplicationproblemJSON400
+}
+
+// GetApplicationproblemJSON401 returns the response for an HTTP 401 `application/problem+json` response
+func (r UpdateTenantResponse) GetApplicationproblemJSON401() *Problem {
+	return r.ApplicationproblemJSON401
+}
+
+// GetApplicationproblemJSON403 returns the response for an HTTP 403 `application/problem+json` response
+func (r UpdateTenantResponse) GetApplicationproblemJSON403() *Problem {
+	return r.ApplicationproblemJSON403
+}
+
+// GetApplicationproblemJSON404 returns the response for an HTTP 404 `application/problem+json` response
+func (r UpdateTenantResponse) GetApplicationproblemJSON404() *Problem {
+	return r.ApplicationproblemJSON404
+}
+
+// GetApplicationproblemJSON409 returns the response for an HTTP 409 `application/problem+json` response
+func (r UpdateTenantResponse) GetApplicationproblemJSON409() *Problem {
+	return r.ApplicationproblemJSON409
+}
+
+// GetApplicationproblemJSON422 returns the response for an HTTP 422 `application/problem+json` response
+func (r UpdateTenantResponse) GetApplicationproblemJSON422() *Problem {
+	return r.ApplicationproblemJSON422
+}
+
+// GetApplicationproblemJSON429 returns the response for an HTTP 429 `application/problem+json` response
+func (r UpdateTenantResponse) GetApplicationproblemJSON429() *Problem {
+	return r.ApplicationproblemJSON429
+}
+
+// GetBody returns the raw response body bytes
+func (r UpdateTenantResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r UpdateTenantResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r UpdateTenantResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r UpdateTenantResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+// ListDevicesResponse429Headers the declared response headers of an HTTP 429 response for ListDevices
+type ListDevicesResponse429Headers struct {
+	RetryAfter *int
+}
+
+type ListDevicesResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON200 the response for an HTTP 200 `application/json` response
+	JSON200 *[]Device
+	// ApplicationproblemJSON400 the response for an HTTP 400 `application/problem+json` response
+	ApplicationproblemJSON400 *Problem
+	// ApplicationproblemJSON401 the response for an HTTP 401 `application/problem+json` response
+	ApplicationproblemJSON401 *Problem
+	// ApplicationproblemJSON403 the response for an HTTP 403 `application/problem+json` response
+	ApplicationproblemJSON403 *Problem
+	// ApplicationproblemJSON404 the response for an HTTP 404 `application/problem+json` response
+	ApplicationproblemJSON404 *Problem
+	// ApplicationproblemJSON429 the response for an HTTP 429 `application/problem+json` response
+	ApplicationproblemJSON429 *Problem
+	// Headers429 the parsed response headers for an HTTP 429 response
+	Headers429 *ListDevicesResponse429Headers
+}
+
+// GetJSON200 returns the response for an HTTP 200 `application/json` response
+func (r ListDevicesResponse) GetJSON200() *[]Device {
+	return r.JSON200
+}
+
+// GetApplicationproblemJSON400 returns the response for an HTTP 400 `application/problem+json` response
+func (r ListDevicesResponse) GetApplicationproblemJSON400() *Problem {
+	return r.ApplicationproblemJSON400
+}
+
+// GetApplicationproblemJSON401 returns the response for an HTTP 401 `application/problem+json` response
+func (r ListDevicesResponse) GetApplicationproblemJSON401() *Problem {
+	return r.ApplicationproblemJSON401
+}
+
+// GetApplicationproblemJSON403 returns the response for an HTTP 403 `application/problem+json` response
+func (r ListDevicesResponse) GetApplicationproblemJSON403() *Problem {
+	return r.ApplicationproblemJSON403
+}
+
+// GetApplicationproblemJSON404 returns the response for an HTTP 404 `application/problem+json` response
+func (r ListDevicesResponse) GetApplicationproblemJSON404() *Problem {
+	return r.ApplicationproblemJSON404
+}
+
+// GetApplicationproblemJSON429 returns the response for an HTTP 429 `application/problem+json` response
+func (r ListDevicesResponse) GetApplicationproblemJSON429() *Problem {
+	return r.ApplicationproblemJSON429
+}
+
+// GetBody returns the raw response body bytes
+func (r ListDevicesResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r ListDevicesResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ListDevicesResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r ListDevicesResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+// CreateDeviceResponse429Headers the declared response headers of an HTTP 429 response for CreateDevice
+type CreateDeviceResponse429Headers struct {
+	RetryAfter *int
+}
+
+type CreateDeviceResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON201 the response for an HTTP 201 `application/json` response
+	JSON201 *EnrollmentResponse
+	// ApplicationproblemJSON400 the response for an HTTP 400 `application/problem+json` response
+	ApplicationproblemJSON400 *Problem
+	// ApplicationproblemJSON401 the response for an HTTP 401 `application/problem+json` response
+	ApplicationproblemJSON401 *Problem
+	// ApplicationproblemJSON403 the response for an HTTP 403 `application/problem+json` response
+	ApplicationproblemJSON403 *Problem
+	// ApplicationproblemJSON404 the response for an HTTP 404 `application/problem+json` response
+	ApplicationproblemJSON404 *Problem
+	// ApplicationproblemJSON409 the response for an HTTP 409 `application/problem+json` response
+	ApplicationproblemJSON409 *Problem
+	// ApplicationproblemJSON422 the response for an HTTP 422 `application/problem+json` response
+	ApplicationproblemJSON422 *Problem
+	// ApplicationproblemJSON429 the response for an HTTP 429 `application/problem+json` response
+	ApplicationproblemJSON429 *Problem
+	// Headers429 the parsed response headers for an HTTP 429 response
+	Headers429 *CreateDeviceResponse429Headers
+}
+
+// GetJSON201 returns the response for an HTTP 201 `application/json` response
+func (r CreateDeviceResponse) GetJSON201() *EnrollmentResponse {
+	return r.JSON201
+}
+
+// GetApplicationproblemJSON400 returns the response for an HTTP 400 `application/problem+json` response
+func (r CreateDeviceResponse) GetApplicationproblemJSON400() *Problem {
+	return r.ApplicationproblemJSON400
+}
+
+// GetApplicationproblemJSON401 returns the response for an HTTP 401 `application/problem+json` response
+func (r CreateDeviceResponse) GetApplicationproblemJSON401() *Problem {
+	return r.ApplicationproblemJSON401
+}
+
+// GetApplicationproblemJSON403 returns the response for an HTTP 403 `application/problem+json` response
+func (r CreateDeviceResponse) GetApplicationproblemJSON403() *Problem {
+	return r.ApplicationproblemJSON403
+}
+
+// GetApplicationproblemJSON404 returns the response for an HTTP 404 `application/problem+json` response
+func (r CreateDeviceResponse) GetApplicationproblemJSON404() *Problem {
+	return r.ApplicationproblemJSON404
+}
+
+// GetApplicationproblemJSON409 returns the response for an HTTP 409 `application/problem+json` response
+func (r CreateDeviceResponse) GetApplicationproblemJSON409() *Problem {
+	return r.ApplicationproblemJSON409
+}
+
+// GetApplicationproblemJSON422 returns the response for an HTTP 422 `application/problem+json` response
+func (r CreateDeviceResponse) GetApplicationproblemJSON422() *Problem {
+	return r.ApplicationproblemJSON422
+}
+
+// GetApplicationproblemJSON429 returns the response for an HTTP 429 `application/problem+json` response
+func (r CreateDeviceResponse) GetApplicationproblemJSON429() *Problem {
+	return r.ApplicationproblemJSON429
+}
+
+// GetBody returns the raw response body bytes
+func (r CreateDeviceResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r CreateDeviceResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r CreateDeviceResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r CreateDeviceResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+// DeleteDeviceResponse429Headers the declared response headers of an HTTP 429 response for DeleteDevice
+type DeleteDeviceResponse429Headers struct {
+	RetryAfter *int
+}
+
+type DeleteDeviceResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// ApplicationproblemJSON400 the response for an HTTP 400 `application/problem+json` response
+	ApplicationproblemJSON400 *Problem
+	// ApplicationproblemJSON401 the response for an HTTP 401 `application/problem+json` response
+	ApplicationproblemJSON401 *Problem
+	// ApplicationproblemJSON403 the response for an HTTP 403 `application/problem+json` response
+	ApplicationproblemJSON403 *Problem
+	// ApplicationproblemJSON404 the response for an HTTP 404 `application/problem+json` response
+	ApplicationproblemJSON404 *Problem
+	// ApplicationproblemJSON409 the response for an HTTP 409 `application/problem+json` response
+	ApplicationproblemJSON409 *Problem
+	// ApplicationproblemJSON429 the response for an HTTP 429 `application/problem+json` response
+	ApplicationproblemJSON429 *Problem
+	// Headers429 the parsed response headers for an HTTP 429 response
+	Headers429 *DeleteDeviceResponse429Headers
+}
+
+// GetApplicationproblemJSON400 returns the response for an HTTP 400 `application/problem+json` response
+func (r DeleteDeviceResponse) GetApplicationproblemJSON400() *Problem {
+	return r.ApplicationproblemJSON400
+}
+
+// GetApplicationproblemJSON401 returns the response for an HTTP 401 `application/problem+json` response
+func (r DeleteDeviceResponse) GetApplicationproblemJSON401() *Problem {
+	return r.ApplicationproblemJSON401
+}
+
+// GetApplicationproblemJSON403 returns the response for an HTTP 403 `application/problem+json` response
+func (r DeleteDeviceResponse) GetApplicationproblemJSON403() *Problem {
+	return r.ApplicationproblemJSON403
+}
+
+// GetApplicationproblemJSON404 returns the response for an HTTP 404 `application/problem+json` response
+func (r DeleteDeviceResponse) GetApplicationproblemJSON404() *Problem {
+	return r.ApplicationproblemJSON404
+}
+
+// GetApplicationproblemJSON409 returns the response for an HTTP 409 `application/problem+json` response
+func (r DeleteDeviceResponse) GetApplicationproblemJSON409() *Problem {
+	return r.ApplicationproblemJSON409
+}
+
+// GetApplicationproblemJSON429 returns the response for an HTTP 429 `application/problem+json` response
+func (r DeleteDeviceResponse) GetApplicationproblemJSON429() *Problem {
+	return r.ApplicationproblemJSON429
+}
+
+// GetBody returns the raw response body bytes
+func (r DeleteDeviceResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r DeleteDeviceResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r DeleteDeviceResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r DeleteDeviceResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+// GetDeviceResponse429Headers the declared response headers of an HTTP 429 response for GetDevice
+type GetDeviceResponse429Headers struct {
+	RetryAfter *int
+}
+
+type GetDeviceResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON200 the response for an HTTP 200 `application/json` response
+	JSON200 *Device
+	// ApplicationproblemJSON400 the response for an HTTP 400 `application/problem+json` response
+	ApplicationproblemJSON400 *Problem
+	// ApplicationproblemJSON401 the response for an HTTP 401 `application/problem+json` response
+	ApplicationproblemJSON401 *Problem
+	// ApplicationproblemJSON403 the response for an HTTP 403 `application/problem+json` response
+	ApplicationproblemJSON403 *Problem
+	// ApplicationproblemJSON404 the response for an HTTP 404 `application/problem+json` response
+	ApplicationproblemJSON404 *Problem
+	// ApplicationproblemJSON429 the response for an HTTP 429 `application/problem+json` response
+	ApplicationproblemJSON429 *Problem
+	// Headers429 the parsed response headers for an HTTP 429 response
+	Headers429 *GetDeviceResponse429Headers
+}
+
+// GetJSON200 returns the response for an HTTP 200 `application/json` response
+func (r GetDeviceResponse) GetJSON200() *Device {
+	return r.JSON200
+}
+
+// GetApplicationproblemJSON400 returns the response for an HTTP 400 `application/problem+json` response
+func (r GetDeviceResponse) GetApplicationproblemJSON400() *Problem {
+	return r.ApplicationproblemJSON400
+}
+
+// GetApplicationproblemJSON401 returns the response for an HTTP 401 `application/problem+json` response
+func (r GetDeviceResponse) GetApplicationproblemJSON401() *Problem {
+	return r.ApplicationproblemJSON401
+}
+
+// GetApplicationproblemJSON403 returns the response for an HTTP 403 `application/problem+json` response
+func (r GetDeviceResponse) GetApplicationproblemJSON403() *Problem {
+	return r.ApplicationproblemJSON403
+}
+
+// GetApplicationproblemJSON404 returns the response for an HTTP 404 `application/problem+json` response
+func (r GetDeviceResponse) GetApplicationproblemJSON404() *Problem {
+	return r.ApplicationproblemJSON404
+}
+
+// GetApplicationproblemJSON429 returns the response for an HTTP 429 `application/problem+json` response
+func (r GetDeviceResponse) GetApplicationproblemJSON429() *Problem {
+	return r.ApplicationproblemJSON429
+}
+
+// GetBody returns the raw response body bytes
+func (r GetDeviceResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r GetDeviceResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetDeviceResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r GetDeviceResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+// ListCommandsResponse429Headers the declared response headers of an HTTP 429 response for ListCommands
+type ListCommandsResponse429Headers struct {
+	RetryAfter *int
+}
+
+type ListCommandsResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON200 the response for an HTTP 200 `application/json` response
+	JSON200 *[]Command
+	// ApplicationproblemJSON400 the response for an HTTP 400 `application/problem+json` response
+	ApplicationproblemJSON400 *Problem
+	// ApplicationproblemJSON401 the response for an HTTP 401 `application/problem+json` response
+	ApplicationproblemJSON401 *Problem
+	// ApplicationproblemJSON403 the response for an HTTP 403 `application/problem+json` response
+	ApplicationproblemJSON403 *Problem
+	// ApplicationproblemJSON404 the response for an HTTP 404 `application/problem+json` response
+	ApplicationproblemJSON404 *Problem
+	// ApplicationproblemJSON429 the response for an HTTP 429 `application/problem+json` response
+	ApplicationproblemJSON429 *Problem
+	// Headers429 the parsed response headers for an HTTP 429 response
+	Headers429 *ListCommandsResponse429Headers
+}
+
+// GetJSON200 returns the response for an HTTP 200 `application/json` response
+func (r ListCommandsResponse) GetJSON200() *[]Command {
+	return r.JSON200
+}
+
+// GetApplicationproblemJSON400 returns the response for an HTTP 400 `application/problem+json` response
+func (r ListCommandsResponse) GetApplicationproblemJSON400() *Problem {
+	return r.ApplicationproblemJSON400
+}
+
+// GetApplicationproblemJSON401 returns the response for an HTTP 401 `application/problem+json` response
+func (r ListCommandsResponse) GetApplicationproblemJSON401() *Problem {
+	return r.ApplicationproblemJSON401
+}
+
+// GetApplicationproblemJSON403 returns the response for an HTTP 403 `application/problem+json` response
+func (r ListCommandsResponse) GetApplicationproblemJSON403() *Problem {
+	return r.ApplicationproblemJSON403
+}
+
+// GetApplicationproblemJSON404 returns the response for an HTTP 404 `application/problem+json` response
+func (r ListCommandsResponse) GetApplicationproblemJSON404() *Problem {
+	return r.ApplicationproblemJSON404
+}
+
+// GetApplicationproblemJSON429 returns the response for an HTTP 429 `application/problem+json` response
+func (r ListCommandsResponse) GetApplicationproblemJSON429() *Problem {
+	return r.ApplicationproblemJSON429
+}
+
+// GetBody returns the raw response body bytes
+func (r ListCommandsResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r ListCommandsResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ListCommandsResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r ListCommandsResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+// CreateCommandResponse429Headers the declared response headers of an HTTP 429 response for CreateCommand
+type CreateCommandResponse429Headers struct {
+	RetryAfter *int
+}
+
+type CreateCommandResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON202 the response for an HTTP 202 `application/json` response
+	JSON202 *CommandAccepted
+	// ApplicationproblemJSON400 the response for an HTTP 400 `application/problem+json` response
+	ApplicationproblemJSON400 *Problem
+	// ApplicationproblemJSON401 the response for an HTTP 401 `application/problem+json` response
+	ApplicationproblemJSON401 *Problem
+	// ApplicationproblemJSON403 the response for an HTTP 403 `application/problem+json` response
+	ApplicationproblemJSON403 *Problem
+	// ApplicationproblemJSON404 the response for an HTTP 404 `application/problem+json` response
+	ApplicationproblemJSON404 *Problem
+	// ApplicationproblemJSON409 the response for an HTTP 409 `application/problem+json` response
+	ApplicationproblemJSON409 *Problem
+	// ApplicationproblemJSON422 the response for an HTTP 422 `application/problem+json` response
+	ApplicationproblemJSON422 *Problem
+	// ApplicationproblemJSON429 the response for an HTTP 429 `application/problem+json` response
+	ApplicationproblemJSON429 *Problem
+	// Headers429 the parsed response headers for an HTTP 429 response
+	Headers429 *CreateCommandResponse429Headers
+}
+
+// GetJSON202 returns the response for an HTTP 202 `application/json` response
+func (r CreateCommandResponse) GetJSON202() *CommandAccepted {
+	return r.JSON202
+}
+
+// GetApplicationproblemJSON400 returns the response for an HTTP 400 `application/problem+json` response
+func (r CreateCommandResponse) GetApplicationproblemJSON400() *Problem {
+	return r.ApplicationproblemJSON400
+}
+
+// GetApplicationproblemJSON401 returns the response for an HTTP 401 `application/problem+json` response
+func (r CreateCommandResponse) GetApplicationproblemJSON401() *Problem {
+	return r.ApplicationproblemJSON401
+}
+
+// GetApplicationproblemJSON403 returns the response for an HTTP 403 `application/problem+json` response
+func (r CreateCommandResponse) GetApplicationproblemJSON403() *Problem {
+	return r.ApplicationproblemJSON403
+}
+
+// GetApplicationproblemJSON404 returns the response for an HTTP 404 `application/problem+json` response
+func (r CreateCommandResponse) GetApplicationproblemJSON404() *Problem {
+	return r.ApplicationproblemJSON404
+}
+
+// GetApplicationproblemJSON409 returns the response for an HTTP 409 `application/problem+json` response
+func (r CreateCommandResponse) GetApplicationproblemJSON409() *Problem {
+	return r.ApplicationproblemJSON409
+}
+
+// GetApplicationproblemJSON422 returns the response for an HTTP 422 `application/problem+json` response
+func (r CreateCommandResponse) GetApplicationproblemJSON422() *Problem {
+	return r.ApplicationproblemJSON422
+}
+
+// GetApplicationproblemJSON429 returns the response for an HTTP 429 `application/problem+json` response
+func (r CreateCommandResponse) GetApplicationproblemJSON429() *Problem {
+	return r.ApplicationproblemJSON429
+}
+
+// GetBody returns the raw response body bytes
+func (r CreateCommandResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r CreateCommandResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r CreateCommandResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r CreateCommandResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+// GetCommandResponse429Headers the declared response headers of an HTTP 429 response for GetCommand
+type GetCommandResponse429Headers struct {
+	RetryAfter *int
+}
+
+type GetCommandResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON200 the response for an HTTP 200 `application/json` response
+	JSON200 *Command
+	// ApplicationproblemJSON400 the response for an HTTP 400 `application/problem+json` response
+	ApplicationproblemJSON400 *Problem
+	// ApplicationproblemJSON401 the response for an HTTP 401 `application/problem+json` response
+	ApplicationproblemJSON401 *Problem
+	// ApplicationproblemJSON403 the response for an HTTP 403 `application/problem+json` response
+	ApplicationproblemJSON403 *Problem
+	// ApplicationproblemJSON404 the response for an HTTP 404 `application/problem+json` response
+	ApplicationproblemJSON404 *Problem
+	// ApplicationproblemJSON429 the response for an HTTP 429 `application/problem+json` response
+	ApplicationproblemJSON429 *Problem
+	// Headers429 the parsed response headers for an HTTP 429 response
+	Headers429 *GetCommandResponse429Headers
+}
+
+// GetJSON200 returns the response for an HTTP 200 `application/json` response
+func (r GetCommandResponse) GetJSON200() *Command {
+	return r.JSON200
+}
+
+// GetApplicationproblemJSON400 returns the response for an HTTP 400 `application/problem+json` response
+func (r GetCommandResponse) GetApplicationproblemJSON400() *Problem {
+	return r.ApplicationproblemJSON400
+}
+
+// GetApplicationproblemJSON401 returns the response for an HTTP 401 `application/problem+json` response
+func (r GetCommandResponse) GetApplicationproblemJSON401() *Problem {
+	return r.ApplicationproblemJSON401
+}
+
+// GetApplicationproblemJSON403 returns the response for an HTTP 403 `application/problem+json` response
+func (r GetCommandResponse) GetApplicationproblemJSON403() *Problem {
+	return r.ApplicationproblemJSON403
+}
+
+// GetApplicationproblemJSON404 returns the response for an HTTP 404 `application/problem+json` response
+func (r GetCommandResponse) GetApplicationproblemJSON404() *Problem {
+	return r.ApplicationproblemJSON404
+}
+
+// GetApplicationproblemJSON429 returns the response for an HTTP 429 `application/problem+json` response
+func (r GetCommandResponse) GetApplicationproblemJSON429() *Problem {
+	return r.ApplicationproblemJSON429
+}
+
+// GetBody returns the raw response body bytes
+func (r GetCommandResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r GetCommandResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetCommandResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r GetCommandResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+// GetDeviceDDMResponse429Headers the declared response headers of an HTTP 429 response for GetDeviceDDM
+type GetDeviceDDMResponse429Headers struct {
+	RetryAfter *int
+}
+
+type GetDeviceDDMResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON200 the response for an HTTP 200 `application/json` response
+	JSON200 *DeviceDDM
+	// ApplicationproblemJSON400 the response for an HTTP 400 `application/problem+json` response
+	ApplicationproblemJSON400 *Problem
+	// ApplicationproblemJSON401 the response for an HTTP 401 `application/problem+json` response
+	ApplicationproblemJSON401 *Problem
+	// ApplicationproblemJSON403 the response for an HTTP 403 `application/problem+json` response
+	ApplicationproblemJSON403 *Problem
+	// ApplicationproblemJSON404 the response for an HTTP 404 `application/problem+json` response
+	ApplicationproblemJSON404 *Problem
+	// ApplicationproblemJSON429 the response for an HTTP 429 `application/problem+json` response
+	ApplicationproblemJSON429 *Problem
+	// Headers429 the parsed response headers for an HTTP 429 response
+	Headers429 *GetDeviceDDMResponse429Headers
+}
+
+// GetJSON200 returns the response for an HTTP 200 `application/json` response
+func (r GetDeviceDDMResponse) GetJSON200() *DeviceDDM {
+	return r.JSON200
+}
+
+// GetApplicationproblemJSON400 returns the response for an HTTP 400 `application/problem+json` response
+func (r GetDeviceDDMResponse) GetApplicationproblemJSON400() *Problem {
+	return r.ApplicationproblemJSON400
+}
+
+// GetApplicationproblemJSON401 returns the response for an HTTP 401 `application/problem+json` response
+func (r GetDeviceDDMResponse) GetApplicationproblemJSON401() *Problem {
+	return r.ApplicationproblemJSON401
+}
+
+// GetApplicationproblemJSON403 returns the response for an HTTP 403 `application/problem+json` response
+func (r GetDeviceDDMResponse) GetApplicationproblemJSON403() *Problem {
+	return r.ApplicationproblemJSON403
+}
+
+// GetApplicationproblemJSON404 returns the response for an HTTP 404 `application/problem+json` response
+func (r GetDeviceDDMResponse) GetApplicationproblemJSON404() *Problem {
+	return r.ApplicationproblemJSON404
+}
+
+// GetApplicationproblemJSON429 returns the response for an HTTP 429 `application/problem+json` response
+func (r GetDeviceDDMResponse) GetApplicationproblemJSON429() *Problem {
+	return r.ApplicationproblemJSON429
+}
+
+// GetBody returns the raw response body bytes
+func (r GetDeviceDDMResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r GetDeviceDDMResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetDeviceDDMResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r GetDeviceDDMResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+// GetEffectivePolicyResponse429Headers the declared response headers of an HTTP 429 response for GetEffectivePolicy
+type GetEffectivePolicyResponse429Headers struct {
+	RetryAfter *int
+}
+
+type GetEffectivePolicyResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON200 the response for an HTTP 200 `application/json` response
+	JSON200 *EffectivePolicy
+	// ApplicationproblemJSON400 the response for an HTTP 400 `application/problem+json` response
+	ApplicationproblemJSON400 *Problem
+	// ApplicationproblemJSON401 the response for an HTTP 401 `application/problem+json` response
+	ApplicationproblemJSON401 *Problem
+	// ApplicationproblemJSON403 the response for an HTTP 403 `application/problem+json` response
+	ApplicationproblemJSON403 *Problem
+	// ApplicationproblemJSON404 the response for an HTTP 404 `application/problem+json` response
+	ApplicationproblemJSON404 *Problem
+	// ApplicationproblemJSON429 the response for an HTTP 429 `application/problem+json` response
+	ApplicationproblemJSON429 *Problem
+	// Headers429 the parsed response headers for an HTTP 429 response
+	Headers429 *GetEffectivePolicyResponse429Headers
+}
+
+// GetJSON200 returns the response for an HTTP 200 `application/json` response
+func (r GetEffectivePolicyResponse) GetJSON200() *EffectivePolicy {
+	return r.JSON200
+}
+
+// GetApplicationproblemJSON400 returns the response for an HTTP 400 `application/problem+json` response
+func (r GetEffectivePolicyResponse) GetApplicationproblemJSON400() *Problem {
+	return r.ApplicationproblemJSON400
+}
+
+// GetApplicationproblemJSON401 returns the response for an HTTP 401 `application/problem+json` response
+func (r GetEffectivePolicyResponse) GetApplicationproblemJSON401() *Problem {
+	return r.ApplicationproblemJSON401
+}
+
+// GetApplicationproblemJSON403 returns the response for an HTTP 403 `application/problem+json` response
+func (r GetEffectivePolicyResponse) GetApplicationproblemJSON403() *Problem {
+	return r.ApplicationproblemJSON403
+}
+
+// GetApplicationproblemJSON404 returns the response for an HTTP 404 `application/problem+json` response
+func (r GetEffectivePolicyResponse) GetApplicationproblemJSON404() *Problem {
+	return r.ApplicationproblemJSON404
+}
+
+// GetApplicationproblemJSON429 returns the response for an HTTP 429 `application/problem+json` response
+func (r GetEffectivePolicyResponse) GetApplicationproblemJSON429() *Problem {
+	return r.ApplicationproblemJSON429
+}
+
+// GetBody returns the raw response body bytes
+func (r GetEffectivePolicyResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r GetEffectivePolicyResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetEffectivePolicyResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r GetEffectivePolicyResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+// CreateEnrollmentLinkResponse429Headers the declared response headers of an HTTP 429 response for CreateEnrollmentLink
+type CreateEnrollmentLinkResponse429Headers struct {
+	RetryAfter *int
+}
+
+type CreateEnrollmentLinkResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON201 the response for an HTTP 201 `application/json` response
+	JSON201 *EnrollmentLinkResponse
+	// ApplicationproblemJSON400 the response for an HTTP 400 `application/problem+json` response
+	ApplicationproblemJSON400 *Problem
+	// ApplicationproblemJSON401 the response for an HTTP 401 `application/problem+json` response
+	ApplicationproblemJSON401 *Problem
+	// ApplicationproblemJSON403 the response for an HTTP 403 `application/problem+json` response
+	ApplicationproblemJSON403 *Problem
+	// ApplicationproblemJSON404 the response for an HTTP 404 `application/problem+json` response
+	ApplicationproblemJSON404 *Problem
+	// ApplicationproblemJSON409 the response for an HTTP 409 `application/problem+json` response
+	ApplicationproblemJSON409 *Problem
+	// ApplicationproblemJSON422 the response for an HTTP 422 `application/problem+json` response
+	ApplicationproblemJSON422 *Problem
+	// ApplicationproblemJSON429 the response for an HTTP 429 `application/problem+json` response
+	ApplicationproblemJSON429 *Problem
+	// Headers429 the parsed response headers for an HTTP 429 response
+	Headers429 *CreateEnrollmentLinkResponse429Headers
+}
+
+// GetJSON201 returns the response for an HTTP 201 `application/json` response
+func (r CreateEnrollmentLinkResponse) GetJSON201() *EnrollmentLinkResponse {
+	return r.JSON201
+}
+
+// GetApplicationproblemJSON400 returns the response for an HTTP 400 `application/problem+json` response
+func (r CreateEnrollmentLinkResponse) GetApplicationproblemJSON400() *Problem {
+	return r.ApplicationproblemJSON400
+}
+
+// GetApplicationproblemJSON401 returns the response for an HTTP 401 `application/problem+json` response
+func (r CreateEnrollmentLinkResponse) GetApplicationproblemJSON401() *Problem {
+	return r.ApplicationproblemJSON401
+}
+
+// GetApplicationproblemJSON403 returns the response for an HTTP 403 `application/problem+json` response
+func (r CreateEnrollmentLinkResponse) GetApplicationproblemJSON403() *Problem {
+	return r.ApplicationproblemJSON403
+}
+
+// GetApplicationproblemJSON404 returns the response for an HTTP 404 `application/problem+json` response
+func (r CreateEnrollmentLinkResponse) GetApplicationproblemJSON404() *Problem {
+	return r.ApplicationproblemJSON404
+}
+
+// GetApplicationproblemJSON409 returns the response for an HTTP 409 `application/problem+json` response
+func (r CreateEnrollmentLinkResponse) GetApplicationproblemJSON409() *Problem {
+	return r.ApplicationproblemJSON409
+}
+
+// GetApplicationproblemJSON422 returns the response for an HTTP 422 `application/problem+json` response
+func (r CreateEnrollmentLinkResponse) GetApplicationproblemJSON422() *Problem {
+	return r.ApplicationproblemJSON422
+}
+
+// GetApplicationproblemJSON429 returns the response for an HTTP 429 `application/problem+json` response
+func (r CreateEnrollmentLinkResponse) GetApplicationproblemJSON429() *Problem {
+	return r.ApplicationproblemJSON429
+}
+
+// GetBody returns the raw response body bytes
+func (r CreateEnrollmentLinkResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r CreateEnrollmentLinkResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r CreateEnrollmentLinkResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r CreateEnrollmentLinkResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+// ReissueEnrollmentProfileResponse429Headers the declared response headers of an HTTP 429 response for ReissueEnrollmentProfile
+type ReissueEnrollmentProfileResponse429Headers struct {
+	RetryAfter *int
+}
+
+type ReissueEnrollmentProfileResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON200 the response for an HTTP 200 `application/json` response
+	JSON200 *EnrollmentResponse
+	// ApplicationproblemJSON400 the response for an HTTP 400 `application/problem+json` response
+	ApplicationproblemJSON400 *Problem
+	// ApplicationproblemJSON401 the response for an HTTP 401 `application/problem+json` response
+	ApplicationproblemJSON401 *Problem
+	// ApplicationproblemJSON403 the response for an HTTP 403 `application/problem+json` response
+	ApplicationproblemJSON403 *Problem
+	// ApplicationproblemJSON404 the response for an HTTP 404 `application/problem+json` response
+	ApplicationproblemJSON404 *Problem
+	// ApplicationproblemJSON409 the response for an HTTP 409 `application/problem+json` response
+	ApplicationproblemJSON409 *Problem
+	// ApplicationproblemJSON422 the response for an HTTP 422 `application/problem+json` response
+	ApplicationproblemJSON422 *Problem
+	// ApplicationproblemJSON429 the response for an HTTP 429 `application/problem+json` response
+	ApplicationproblemJSON429 *Problem
+	// Headers429 the parsed response headers for an HTTP 429 response
+	Headers429 *ReissueEnrollmentProfileResponse429Headers
+}
+
+// GetJSON200 returns the response for an HTTP 200 `application/json` response
+func (r ReissueEnrollmentProfileResponse) GetJSON200() *EnrollmentResponse {
+	return r.JSON200
+}
+
+// GetApplicationproblemJSON400 returns the response for an HTTP 400 `application/problem+json` response
+func (r ReissueEnrollmentProfileResponse) GetApplicationproblemJSON400() *Problem {
+	return r.ApplicationproblemJSON400
+}
+
+// GetApplicationproblemJSON401 returns the response for an HTTP 401 `application/problem+json` response
+func (r ReissueEnrollmentProfileResponse) GetApplicationproblemJSON401() *Problem {
+	return r.ApplicationproblemJSON401
+}
+
+// GetApplicationproblemJSON403 returns the response for an HTTP 403 `application/problem+json` response
+func (r ReissueEnrollmentProfileResponse) GetApplicationproblemJSON403() *Problem {
+	return r.ApplicationproblemJSON403
+}
+
+// GetApplicationproblemJSON404 returns the response for an HTTP 404 `application/problem+json` response
+func (r ReissueEnrollmentProfileResponse) GetApplicationproblemJSON404() *Problem {
+	return r.ApplicationproblemJSON404
+}
+
+// GetApplicationproblemJSON409 returns the response for an HTTP 409 `application/problem+json` response
+func (r ReissueEnrollmentProfileResponse) GetApplicationproblemJSON409() *Problem {
+	return r.ApplicationproblemJSON409
+}
+
+// GetApplicationproblemJSON422 returns the response for an HTTP 422 `application/problem+json` response
+func (r ReissueEnrollmentProfileResponse) GetApplicationproblemJSON422() *Problem {
+	return r.ApplicationproblemJSON422
+}
+
+// GetApplicationproblemJSON429 returns the response for an HTTP 429 `application/problem+json` response
+func (r ReissueEnrollmentProfileResponse) GetApplicationproblemJSON429() *Problem {
+	return r.ApplicationproblemJSON429
+}
+
+// GetBody returns the raw response body bytes
+func (r ReissueEnrollmentProfileResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r ReissueEnrollmentProfileResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ReissueEnrollmentProfileResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r ReissueEnrollmentProfileResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+// ClearDeviceMemberResponse429Headers the declared response headers of an HTTP 429 response for ClearDeviceMember
+type ClearDeviceMemberResponse429Headers struct {
+	RetryAfter *int
+}
+
+type ClearDeviceMemberResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON200 the response for an HTTP 200 `application/json` response
+	JSON200 *Device
+	// ApplicationproblemJSON400 the response for an HTTP 400 `application/problem+json` response
+	ApplicationproblemJSON400 *Problem
+	// ApplicationproblemJSON401 the response for an HTTP 401 `application/problem+json` response
+	ApplicationproblemJSON401 *Problem
+	// ApplicationproblemJSON403 the response for an HTTP 403 `application/problem+json` response
+	ApplicationproblemJSON403 *Problem
+	// ApplicationproblemJSON404 the response for an HTTP 404 `application/problem+json` response
+	ApplicationproblemJSON404 *Problem
+	// ApplicationproblemJSON409 the response for an HTTP 409 `application/problem+json` response
+	ApplicationproblemJSON409 *Problem
+	// ApplicationproblemJSON429 the response for an HTTP 429 `application/problem+json` response
+	ApplicationproblemJSON429 *Problem
+	// Headers429 the parsed response headers for an HTTP 429 response
+	Headers429 *ClearDeviceMemberResponse429Headers
+}
+
+// GetJSON200 returns the response for an HTTP 200 `application/json` response
+func (r ClearDeviceMemberResponse) GetJSON200() *Device {
+	return r.JSON200
+}
+
+// GetApplicationproblemJSON400 returns the response for an HTTP 400 `application/problem+json` response
+func (r ClearDeviceMemberResponse) GetApplicationproblemJSON400() *Problem {
+	return r.ApplicationproblemJSON400
+}
+
+// GetApplicationproblemJSON401 returns the response for an HTTP 401 `application/problem+json` response
+func (r ClearDeviceMemberResponse) GetApplicationproblemJSON401() *Problem {
+	return r.ApplicationproblemJSON401
+}
+
+// GetApplicationproblemJSON403 returns the response for an HTTP 403 `application/problem+json` response
+func (r ClearDeviceMemberResponse) GetApplicationproblemJSON403() *Problem {
+	return r.ApplicationproblemJSON403
+}
+
+// GetApplicationproblemJSON404 returns the response for an HTTP 404 `application/problem+json` response
+func (r ClearDeviceMemberResponse) GetApplicationproblemJSON404() *Problem {
+	return r.ApplicationproblemJSON404
+}
+
+// GetApplicationproblemJSON409 returns the response for an HTTP 409 `application/problem+json` response
+func (r ClearDeviceMemberResponse) GetApplicationproblemJSON409() *Problem {
+	return r.ApplicationproblemJSON409
+}
+
+// GetApplicationproblemJSON429 returns the response for an HTTP 429 `application/problem+json` response
+func (r ClearDeviceMemberResponse) GetApplicationproblemJSON429() *Problem {
+	return r.ApplicationproblemJSON429
+}
+
+// GetBody returns the raw response body bytes
+func (r ClearDeviceMemberResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r ClearDeviceMemberResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ClearDeviceMemberResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r ClearDeviceMemberResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+// SetDeviceMemberResponse429Headers the declared response headers of an HTTP 429 response for SetDeviceMember
+type SetDeviceMemberResponse429Headers struct {
+	RetryAfter *int
+}
+
+type SetDeviceMemberResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON200 the response for an HTTP 200 `application/json` response
+	JSON200 *Device
+	// ApplicationproblemJSON400 the response for an HTTP 400 `application/problem+json` response
+	ApplicationproblemJSON400 *Problem
+	// ApplicationproblemJSON401 the response for an HTTP 401 `application/problem+json` response
+	ApplicationproblemJSON401 *Problem
+	// ApplicationproblemJSON403 the response for an HTTP 403 `application/problem+json` response
+	ApplicationproblemJSON403 *Problem
+	// ApplicationproblemJSON404 the response for an HTTP 404 `application/problem+json` response
+	ApplicationproblemJSON404 *Problem
+	// ApplicationproblemJSON409 the response for an HTTP 409 `application/problem+json` response
+	ApplicationproblemJSON409 *Problem
+	// ApplicationproblemJSON422 the response for an HTTP 422 `application/problem+json` response
+	ApplicationproblemJSON422 *Problem
+	// ApplicationproblemJSON429 the response for an HTTP 429 `application/problem+json` response
+	ApplicationproblemJSON429 *Problem
+	// Headers429 the parsed response headers for an HTTP 429 response
+	Headers429 *SetDeviceMemberResponse429Headers
+}
+
+// GetJSON200 returns the response for an HTTP 200 `application/json` response
+func (r SetDeviceMemberResponse) GetJSON200() *Device {
+	return r.JSON200
+}
+
+// GetApplicationproblemJSON400 returns the response for an HTTP 400 `application/problem+json` response
+func (r SetDeviceMemberResponse) GetApplicationproblemJSON400() *Problem {
+	return r.ApplicationproblemJSON400
+}
+
+// GetApplicationproblemJSON401 returns the response for an HTTP 401 `application/problem+json` response
+func (r SetDeviceMemberResponse) GetApplicationproblemJSON401() *Problem {
+	return r.ApplicationproblemJSON401
+}
+
+// GetApplicationproblemJSON403 returns the response for an HTTP 403 `application/problem+json` response
+func (r SetDeviceMemberResponse) GetApplicationproblemJSON403() *Problem {
+	return r.ApplicationproblemJSON403
+}
+
+// GetApplicationproblemJSON404 returns the response for an HTTP 404 `application/problem+json` response
+func (r SetDeviceMemberResponse) GetApplicationproblemJSON404() *Problem {
+	return r.ApplicationproblemJSON404
+}
+
+// GetApplicationproblemJSON409 returns the response for an HTTP 409 `application/problem+json` response
+func (r SetDeviceMemberResponse) GetApplicationproblemJSON409() *Problem {
+	return r.ApplicationproblemJSON409
+}
+
+// GetApplicationproblemJSON422 returns the response for an HTTP 422 `application/problem+json` response
+func (r SetDeviceMemberResponse) GetApplicationproblemJSON422() *Problem {
+	return r.ApplicationproblemJSON422
+}
+
+// GetApplicationproblemJSON429 returns the response for an HTTP 429 `application/problem+json` response
+func (r SetDeviceMemberResponse) GetApplicationproblemJSON429() *Problem {
+	return r.ApplicationproblemJSON429
+}
+
+// GetBody returns the raw response body bytes
+func (r SetDeviceMemberResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r SetDeviceMemberResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r SetDeviceMemberResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r SetDeviceMemberResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+// DeleteDeviceSettingsResponse429Headers the declared response headers of an HTTP 429 response for DeleteDeviceSettings
+type DeleteDeviceSettingsResponse429Headers struct {
+	RetryAfter *int
+}
+
+type DeleteDeviceSettingsResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON202 the response for an HTTP 202 `application/json` response
+	JSON202 *Device
+	// ApplicationproblemJSON400 the response for an HTTP 400 `application/problem+json` response
+	ApplicationproblemJSON400 *Problem
+	// ApplicationproblemJSON401 the response for an HTTP 401 `application/problem+json` response
+	ApplicationproblemJSON401 *Problem
+	// ApplicationproblemJSON403 the response for an HTTP 403 `application/problem+json` response
+	ApplicationproblemJSON403 *Problem
+	// ApplicationproblemJSON404 the response for an HTTP 404 `application/problem+json` response
+	ApplicationproblemJSON404 *Problem
+	// ApplicationproblemJSON409 the response for an HTTP 409 `application/problem+json` response
+	ApplicationproblemJSON409 *Problem
+	// ApplicationproblemJSON429 the response for an HTTP 429 `application/problem+json` response
+	ApplicationproblemJSON429 *Problem
+	// Headers429 the parsed response headers for an HTTP 429 response
+	Headers429 *DeleteDeviceSettingsResponse429Headers
+}
+
+// GetJSON202 returns the response for an HTTP 202 `application/json` response
+func (r DeleteDeviceSettingsResponse) GetJSON202() *Device {
+	return r.JSON202
+}
+
+// GetApplicationproblemJSON400 returns the response for an HTTP 400 `application/problem+json` response
+func (r DeleteDeviceSettingsResponse) GetApplicationproblemJSON400() *Problem {
+	return r.ApplicationproblemJSON400
+}
+
+// GetApplicationproblemJSON401 returns the response for an HTTP 401 `application/problem+json` response
+func (r DeleteDeviceSettingsResponse) GetApplicationproblemJSON401() *Problem {
+	return r.ApplicationproblemJSON401
+}
+
+// GetApplicationproblemJSON403 returns the response for an HTTP 403 `application/problem+json` response
+func (r DeleteDeviceSettingsResponse) GetApplicationproblemJSON403() *Problem {
+	return r.ApplicationproblemJSON403
+}
+
+// GetApplicationproblemJSON404 returns the response for an HTTP 404 `application/problem+json` response
+func (r DeleteDeviceSettingsResponse) GetApplicationproblemJSON404() *Problem {
+	return r.ApplicationproblemJSON404
+}
+
+// GetApplicationproblemJSON409 returns the response for an HTTP 409 `application/problem+json` response
+func (r DeleteDeviceSettingsResponse) GetApplicationproblemJSON409() *Problem {
+	return r.ApplicationproblemJSON409
+}
+
+// GetApplicationproblemJSON429 returns the response for an HTTP 429 `application/problem+json` response
+func (r DeleteDeviceSettingsResponse) GetApplicationproblemJSON429() *Problem {
+	return r.ApplicationproblemJSON429
+}
+
+// GetBody returns the raw response body bytes
+func (r DeleteDeviceSettingsResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r DeleteDeviceSettingsResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r DeleteDeviceSettingsResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r DeleteDeviceSettingsResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+// GetDeviceSettingsResponse429Headers the declared response headers of an HTTP 429 response for GetDeviceSettings
+type GetDeviceSettingsResponse429Headers struct {
+	RetryAfter *int
+}
+
+type GetDeviceSettingsResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON200 the response for an HTTP 200 `application/json` response
+	JSON200 *Policy
+	// ApplicationproblemJSON400 the response for an HTTP 400 `application/problem+json` response
+	ApplicationproblemJSON400 *Problem
+	// ApplicationproblemJSON401 the response for an HTTP 401 `application/problem+json` response
+	ApplicationproblemJSON401 *Problem
+	// ApplicationproblemJSON403 the response for an HTTP 403 `application/problem+json` response
+	ApplicationproblemJSON403 *Problem
+	// ApplicationproblemJSON404 the response for an HTTP 404 `application/problem+json` response
+	ApplicationproblemJSON404 *Problem
+	// ApplicationproblemJSON429 the response for an HTTP 429 `application/problem+json` response
+	ApplicationproblemJSON429 *Problem
+	// Headers429 the parsed response headers for an HTTP 429 response
+	Headers429 *GetDeviceSettingsResponse429Headers
+}
+
+// GetJSON200 returns the response for an HTTP 200 `application/json` response
+func (r GetDeviceSettingsResponse) GetJSON200() *Policy {
+	return r.JSON200
+}
+
+// GetApplicationproblemJSON400 returns the response for an HTTP 400 `application/problem+json` response
+func (r GetDeviceSettingsResponse) GetApplicationproblemJSON400() *Problem {
+	return r.ApplicationproblemJSON400
+}
+
+// GetApplicationproblemJSON401 returns the response for an HTTP 401 `application/problem+json` response
+func (r GetDeviceSettingsResponse) GetApplicationproblemJSON401() *Problem {
+	return r.ApplicationproblemJSON401
+}
+
+// GetApplicationproblemJSON403 returns the response for an HTTP 403 `application/problem+json` response
+func (r GetDeviceSettingsResponse) GetApplicationproblemJSON403() *Problem {
+	return r.ApplicationproblemJSON403
+}
+
+// GetApplicationproblemJSON404 returns the response for an HTTP 404 `application/problem+json` response
+func (r GetDeviceSettingsResponse) GetApplicationproblemJSON404() *Problem {
+	return r.ApplicationproblemJSON404
+}
+
+// GetApplicationproblemJSON429 returns the response for an HTTP 429 `application/problem+json` response
+func (r GetDeviceSettingsResponse) GetApplicationproblemJSON429() *Problem {
+	return r.ApplicationproblemJSON429
+}
+
+// GetBody returns the raw response body bytes
+func (r GetDeviceSettingsResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r GetDeviceSettingsResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetDeviceSettingsResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r GetDeviceSettingsResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+// PutDeviceSettingsResponse429Headers the declared response headers of an HTTP 429 response for PutDeviceSettings
+type PutDeviceSettingsResponse429Headers struct {
+	RetryAfter *int
+}
+
+type PutDeviceSettingsResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON202 the response for an HTTP 202 `application/json` response
+	JSON202 *Device
+	// ApplicationproblemJSON400 the response for an HTTP 400 `application/problem+json` response
+	ApplicationproblemJSON400 *Problem
+	// ApplicationproblemJSON401 the response for an HTTP 401 `application/problem+json` response
+	ApplicationproblemJSON401 *Problem
+	// ApplicationproblemJSON403 the response for an HTTP 403 `application/problem+json` response
+	ApplicationproblemJSON403 *Problem
+	// ApplicationproblemJSON404 the response for an HTTP 404 `application/problem+json` response
+	ApplicationproblemJSON404 *Problem
+	// ApplicationproblemJSON409 the response for an HTTP 409 `application/problem+json` response
+	ApplicationproblemJSON409 *Problem
+	// ApplicationproblemJSON422 the response for an HTTP 422 `application/problem+json` response
+	ApplicationproblemJSON422 *Problem
+	// ApplicationproblemJSON429 the response for an HTTP 429 `application/problem+json` response
+	ApplicationproblemJSON429 *Problem
+	// Headers429 the parsed response headers for an HTTP 429 response
+	Headers429 *PutDeviceSettingsResponse429Headers
+}
+
+// GetJSON202 returns the response for an HTTP 202 `application/json` response
+func (r PutDeviceSettingsResponse) GetJSON202() *Device {
+	return r.JSON202
+}
+
+// GetApplicationproblemJSON400 returns the response for an HTTP 400 `application/problem+json` response
+func (r PutDeviceSettingsResponse) GetApplicationproblemJSON400() *Problem {
+	return r.ApplicationproblemJSON400
+}
+
+// GetApplicationproblemJSON401 returns the response for an HTTP 401 `application/problem+json` response
+func (r PutDeviceSettingsResponse) GetApplicationproblemJSON401() *Problem {
+	return r.ApplicationproblemJSON401
+}
+
+// GetApplicationproblemJSON403 returns the response for an HTTP 403 `application/problem+json` response
+func (r PutDeviceSettingsResponse) GetApplicationproblemJSON403() *Problem {
+	return r.ApplicationproblemJSON403
+}
+
+// GetApplicationproblemJSON404 returns the response for an HTTP 404 `application/problem+json` response
+func (r PutDeviceSettingsResponse) GetApplicationproblemJSON404() *Problem {
+	return r.ApplicationproblemJSON404
+}
+
+// GetApplicationproblemJSON409 returns the response for an HTTP 409 `application/problem+json` response
+func (r PutDeviceSettingsResponse) GetApplicationproblemJSON409() *Problem {
+	return r.ApplicationproblemJSON409
+}
+
+// GetApplicationproblemJSON422 returns the response for an HTTP 422 `application/problem+json` response
+func (r PutDeviceSettingsResponse) GetApplicationproblemJSON422() *Problem {
+	return r.ApplicationproblemJSON422
+}
+
+// GetApplicationproblemJSON429 returns the response for an HTTP 429 `application/problem+json` response
+func (r PutDeviceSettingsResponse) GetApplicationproblemJSON429() *Problem {
+	return r.ApplicationproblemJSON429
+}
+
+// GetBody returns the raw response body bytes
+func (r PutDeviceSettingsResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r PutDeviceSettingsResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r PutDeviceSettingsResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r PutDeviceSettingsResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+// ListGroupsResponse429Headers the declared response headers of an HTTP 429 response for ListGroups
+type ListGroupsResponse429Headers struct {
+	RetryAfter *int
+}
+
+type ListGroupsResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON200 the response for an HTTP 200 `application/json` response
+	JSON200 *[]Group
+	// ApplicationproblemJSON400 the response for an HTTP 400 `application/problem+json` response
+	ApplicationproblemJSON400 *Problem
+	// ApplicationproblemJSON401 the response for an HTTP 401 `application/problem+json` response
+	ApplicationproblemJSON401 *Problem
+	// ApplicationproblemJSON403 the response for an HTTP 403 `application/problem+json` response
+	ApplicationproblemJSON403 *Problem
+	// ApplicationproblemJSON404 the response for an HTTP 404 `application/problem+json` response
+	ApplicationproblemJSON404 *Problem
+	// ApplicationproblemJSON429 the response for an HTTP 429 `application/problem+json` response
+	ApplicationproblemJSON429 *Problem
+	// Headers429 the parsed response headers for an HTTP 429 response
+	Headers429 *ListGroupsResponse429Headers
+}
+
+// GetJSON200 returns the response for an HTTP 200 `application/json` response
+func (r ListGroupsResponse) GetJSON200() *[]Group {
+	return r.JSON200
+}
+
+// GetApplicationproblemJSON400 returns the response for an HTTP 400 `application/problem+json` response
+func (r ListGroupsResponse) GetApplicationproblemJSON400() *Problem {
+	return r.ApplicationproblemJSON400
+}
+
+// GetApplicationproblemJSON401 returns the response for an HTTP 401 `application/problem+json` response
+func (r ListGroupsResponse) GetApplicationproblemJSON401() *Problem {
+	return r.ApplicationproblemJSON401
+}
+
+// GetApplicationproblemJSON403 returns the response for an HTTP 403 `application/problem+json` response
+func (r ListGroupsResponse) GetApplicationproblemJSON403() *Problem {
+	return r.ApplicationproblemJSON403
+}
+
+// GetApplicationproblemJSON404 returns the response for an HTTP 404 `application/problem+json` response
+func (r ListGroupsResponse) GetApplicationproblemJSON404() *Problem {
+	return r.ApplicationproblemJSON404
+}
+
+// GetApplicationproblemJSON429 returns the response for an HTTP 429 `application/problem+json` response
+func (r ListGroupsResponse) GetApplicationproblemJSON429() *Problem {
+	return r.ApplicationproblemJSON429
+}
+
+// GetBody returns the raw response body bytes
+func (r ListGroupsResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r ListGroupsResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ListGroupsResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r ListGroupsResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+// CreateGroupResponse429Headers the declared response headers of an HTTP 429 response for CreateGroup
+type CreateGroupResponse429Headers struct {
+	RetryAfter *int
+}
+
+type CreateGroupResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON201 the response for an HTTP 201 `application/json` response
+	JSON201 *Group
+	// ApplicationproblemJSON400 the response for an HTTP 400 `application/problem+json` response
+	ApplicationproblemJSON400 *Problem
+	// ApplicationproblemJSON401 the response for an HTTP 401 `application/problem+json` response
+	ApplicationproblemJSON401 *Problem
+	// ApplicationproblemJSON403 the response for an HTTP 403 `application/problem+json` response
+	ApplicationproblemJSON403 *Problem
+	// ApplicationproblemJSON404 the response for an HTTP 404 `application/problem+json` response
+	ApplicationproblemJSON404 *Problem
+	// ApplicationproblemJSON409 the response for an HTTP 409 `application/problem+json` response
+	ApplicationproblemJSON409 *Problem
+	// ApplicationproblemJSON422 the response for an HTTP 422 `application/problem+json` response
+	ApplicationproblemJSON422 *Problem
+	// ApplicationproblemJSON429 the response for an HTTP 429 `application/problem+json` response
+	ApplicationproblemJSON429 *Problem
+	// Headers429 the parsed response headers for an HTTP 429 response
+	Headers429 *CreateGroupResponse429Headers
+}
+
+// GetJSON201 returns the response for an HTTP 201 `application/json` response
+func (r CreateGroupResponse) GetJSON201() *Group {
+	return r.JSON201
+}
+
+// GetApplicationproblemJSON400 returns the response for an HTTP 400 `application/problem+json` response
+func (r CreateGroupResponse) GetApplicationproblemJSON400() *Problem {
+	return r.ApplicationproblemJSON400
+}
+
+// GetApplicationproblemJSON401 returns the response for an HTTP 401 `application/problem+json` response
+func (r CreateGroupResponse) GetApplicationproblemJSON401() *Problem {
+	return r.ApplicationproblemJSON401
+}
+
+// GetApplicationproblemJSON403 returns the response for an HTTP 403 `application/problem+json` response
+func (r CreateGroupResponse) GetApplicationproblemJSON403() *Problem {
+	return r.ApplicationproblemJSON403
+}
+
+// GetApplicationproblemJSON404 returns the response for an HTTP 404 `application/problem+json` response
+func (r CreateGroupResponse) GetApplicationproblemJSON404() *Problem {
+	return r.ApplicationproblemJSON404
+}
+
+// GetApplicationproblemJSON409 returns the response for an HTTP 409 `application/problem+json` response
+func (r CreateGroupResponse) GetApplicationproblemJSON409() *Problem {
+	return r.ApplicationproblemJSON409
+}
+
+// GetApplicationproblemJSON422 returns the response for an HTTP 422 `application/problem+json` response
+func (r CreateGroupResponse) GetApplicationproblemJSON422() *Problem {
+	return r.ApplicationproblemJSON422
+}
+
+// GetApplicationproblemJSON429 returns the response for an HTTP 429 `application/problem+json` response
+func (r CreateGroupResponse) GetApplicationproblemJSON429() *Problem {
+	return r.ApplicationproblemJSON429
+}
+
+// GetBody returns the raw response body bytes
+func (r CreateGroupResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r CreateGroupResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r CreateGroupResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r CreateGroupResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+// DeleteGroupResponse429Headers the declared response headers of an HTTP 429 response for DeleteGroup
+type DeleteGroupResponse429Headers struct {
+	RetryAfter *int
+}
+
+type DeleteGroupResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// ApplicationproblemJSON400 the response for an HTTP 400 `application/problem+json` response
+	ApplicationproblemJSON400 *Problem
+	// ApplicationproblemJSON401 the response for an HTTP 401 `application/problem+json` response
+	ApplicationproblemJSON401 *Problem
+	// ApplicationproblemJSON403 the response for an HTTP 403 `application/problem+json` response
+	ApplicationproblemJSON403 *Problem
+	// ApplicationproblemJSON404 the response for an HTTP 404 `application/problem+json` response
+	ApplicationproblemJSON404 *Problem
+	// ApplicationproblemJSON409 the response for an HTTP 409 `application/problem+json` response
+	ApplicationproblemJSON409 *Problem
+	// ApplicationproblemJSON429 the response for an HTTP 429 `application/problem+json` response
+	ApplicationproblemJSON429 *Problem
+	// Headers429 the parsed response headers for an HTTP 429 response
+	Headers429 *DeleteGroupResponse429Headers
+}
+
+// GetApplicationproblemJSON400 returns the response for an HTTP 400 `application/problem+json` response
+func (r DeleteGroupResponse) GetApplicationproblemJSON400() *Problem {
+	return r.ApplicationproblemJSON400
+}
+
+// GetApplicationproblemJSON401 returns the response for an HTTP 401 `application/problem+json` response
+func (r DeleteGroupResponse) GetApplicationproblemJSON401() *Problem {
+	return r.ApplicationproblemJSON401
+}
+
+// GetApplicationproblemJSON403 returns the response for an HTTP 403 `application/problem+json` response
+func (r DeleteGroupResponse) GetApplicationproblemJSON403() *Problem {
+	return r.ApplicationproblemJSON403
+}
+
+// GetApplicationproblemJSON404 returns the response for an HTTP 404 `application/problem+json` response
+func (r DeleteGroupResponse) GetApplicationproblemJSON404() *Problem {
+	return r.ApplicationproblemJSON404
+}
+
+// GetApplicationproblemJSON409 returns the response for an HTTP 409 `application/problem+json` response
+func (r DeleteGroupResponse) GetApplicationproblemJSON409() *Problem {
+	return r.ApplicationproblemJSON409
+}
+
+// GetApplicationproblemJSON429 returns the response for an HTTP 429 `application/problem+json` response
+func (r DeleteGroupResponse) GetApplicationproblemJSON429() *Problem {
+	return r.ApplicationproblemJSON429
+}
+
+// GetBody returns the raw response body bytes
+func (r DeleteGroupResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r DeleteGroupResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r DeleteGroupResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r DeleteGroupResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+// GetGroupResponse429Headers the declared response headers of an HTTP 429 response for GetGroup
+type GetGroupResponse429Headers struct {
+	RetryAfter *int
+}
+
+type GetGroupResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON200 the response for an HTTP 200 `application/json` response
+	JSON200 *Group
+	// ApplicationproblemJSON400 the response for an HTTP 400 `application/problem+json` response
+	ApplicationproblemJSON400 *Problem
+	// ApplicationproblemJSON401 the response for an HTTP 401 `application/problem+json` response
+	ApplicationproblemJSON401 *Problem
+	// ApplicationproblemJSON403 the response for an HTTP 403 `application/problem+json` response
+	ApplicationproblemJSON403 *Problem
+	// ApplicationproblemJSON404 the response for an HTTP 404 `application/problem+json` response
+	ApplicationproblemJSON404 *Problem
+	// ApplicationproblemJSON429 the response for an HTTP 429 `application/problem+json` response
+	ApplicationproblemJSON429 *Problem
+	// Headers429 the parsed response headers for an HTTP 429 response
+	Headers429 *GetGroupResponse429Headers
+}
+
+// GetJSON200 returns the response for an HTTP 200 `application/json` response
+func (r GetGroupResponse) GetJSON200() *Group {
+	return r.JSON200
+}
+
+// GetApplicationproblemJSON400 returns the response for an HTTP 400 `application/problem+json` response
+func (r GetGroupResponse) GetApplicationproblemJSON400() *Problem {
+	return r.ApplicationproblemJSON400
+}
+
+// GetApplicationproblemJSON401 returns the response for an HTTP 401 `application/problem+json` response
+func (r GetGroupResponse) GetApplicationproblemJSON401() *Problem {
+	return r.ApplicationproblemJSON401
+}
+
+// GetApplicationproblemJSON403 returns the response for an HTTP 403 `application/problem+json` response
+func (r GetGroupResponse) GetApplicationproblemJSON403() *Problem {
+	return r.ApplicationproblemJSON403
+}
+
+// GetApplicationproblemJSON404 returns the response for an HTTP 404 `application/problem+json` response
+func (r GetGroupResponse) GetApplicationproblemJSON404() *Problem {
+	return r.ApplicationproblemJSON404
+}
+
+// GetApplicationproblemJSON429 returns the response for an HTTP 429 `application/problem+json` response
+func (r GetGroupResponse) GetApplicationproblemJSON429() *Problem {
+	return r.ApplicationproblemJSON429
+}
+
+// GetBody returns the raw response body bytes
+func (r GetGroupResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r GetGroupResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetGroupResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r GetGroupResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+// UpdateGroupResponse429Headers the declared response headers of an HTTP 429 response for UpdateGroup
+type UpdateGroupResponse429Headers struct {
+	RetryAfter *int
+}
+
+type UpdateGroupResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON200 the response for an HTTP 200 `application/json` response
+	JSON200 *Group
+	// ApplicationproblemJSON400 the response for an HTTP 400 `application/problem+json` response
+	ApplicationproblemJSON400 *Problem
+	// ApplicationproblemJSON401 the response for an HTTP 401 `application/problem+json` response
+	ApplicationproblemJSON401 *Problem
+	// ApplicationproblemJSON403 the response for an HTTP 403 `application/problem+json` response
+	ApplicationproblemJSON403 *Problem
+	// ApplicationproblemJSON404 the response for an HTTP 404 `application/problem+json` response
+	ApplicationproblemJSON404 *Problem
+	// ApplicationproblemJSON409 the response for an HTTP 409 `application/problem+json` response
+	ApplicationproblemJSON409 *Problem
+	// ApplicationproblemJSON422 the response for an HTTP 422 `application/problem+json` response
+	ApplicationproblemJSON422 *Problem
+	// ApplicationproblemJSON429 the response for an HTTP 429 `application/problem+json` response
+	ApplicationproblemJSON429 *Problem
+	// Headers429 the parsed response headers for an HTTP 429 response
+	Headers429 *UpdateGroupResponse429Headers
+}
+
+// GetJSON200 returns the response for an HTTP 200 `application/json` response
+func (r UpdateGroupResponse) GetJSON200() *Group {
+	return r.JSON200
+}
+
+// GetApplicationproblemJSON400 returns the response for an HTTP 400 `application/problem+json` response
+func (r UpdateGroupResponse) GetApplicationproblemJSON400() *Problem {
+	return r.ApplicationproblemJSON400
+}
+
+// GetApplicationproblemJSON401 returns the response for an HTTP 401 `application/problem+json` response
+func (r UpdateGroupResponse) GetApplicationproblemJSON401() *Problem {
+	return r.ApplicationproblemJSON401
+}
+
+// GetApplicationproblemJSON403 returns the response for an HTTP 403 `application/problem+json` response
+func (r UpdateGroupResponse) GetApplicationproblemJSON403() *Problem {
+	return r.ApplicationproblemJSON403
+}
+
+// GetApplicationproblemJSON404 returns the response for an HTTP 404 `application/problem+json` response
+func (r UpdateGroupResponse) GetApplicationproblemJSON404() *Problem {
+	return r.ApplicationproblemJSON404
+}
+
+// GetApplicationproblemJSON409 returns the response for an HTTP 409 `application/problem+json` response
+func (r UpdateGroupResponse) GetApplicationproblemJSON409() *Problem {
+	return r.ApplicationproblemJSON409
+}
+
+// GetApplicationproblemJSON422 returns the response for an HTTP 422 `application/problem+json` response
+func (r UpdateGroupResponse) GetApplicationproblemJSON422() *Problem {
+	return r.ApplicationproblemJSON422
+}
+
+// GetApplicationproblemJSON429 returns the response for an HTTP 429 `application/problem+json` response
+func (r UpdateGroupResponse) GetApplicationproblemJSON429() *Problem {
+	return r.ApplicationproblemJSON429
+}
+
+// GetBody returns the raw response body bytes
+func (r UpdateGroupResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r UpdateGroupResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r UpdateGroupResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r UpdateGroupResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+// ListGroupMembersResponse429Headers the declared response headers of an HTTP 429 response for ListGroupMembers
+type ListGroupMembersResponse429Headers struct {
+	RetryAfter *int
+}
+
+type ListGroupMembersResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON200 the response for an HTTP 200 `application/json` response
+	JSON200 *[]Member
+	// ApplicationproblemJSON400 the response for an HTTP 400 `application/problem+json` response
+	ApplicationproblemJSON400 *Problem
+	// ApplicationproblemJSON401 the response for an HTTP 401 `application/problem+json` response
+	ApplicationproblemJSON401 *Problem
+	// ApplicationproblemJSON403 the response for an HTTP 403 `application/problem+json` response
+	ApplicationproblemJSON403 *Problem
+	// ApplicationproblemJSON404 the response for an HTTP 404 `application/problem+json` response
+	ApplicationproblemJSON404 *Problem
+	// ApplicationproblemJSON429 the response for an HTTP 429 `application/problem+json` response
+	ApplicationproblemJSON429 *Problem
+	// Headers429 the parsed response headers for an HTTP 429 response
+	Headers429 *ListGroupMembersResponse429Headers
+}
+
+// GetJSON200 returns the response for an HTTP 200 `application/json` response
+func (r ListGroupMembersResponse) GetJSON200() *[]Member {
+	return r.JSON200
+}
+
+// GetApplicationproblemJSON400 returns the response for an HTTP 400 `application/problem+json` response
+func (r ListGroupMembersResponse) GetApplicationproblemJSON400() *Problem {
+	return r.ApplicationproblemJSON400
+}
+
+// GetApplicationproblemJSON401 returns the response for an HTTP 401 `application/problem+json` response
+func (r ListGroupMembersResponse) GetApplicationproblemJSON401() *Problem {
+	return r.ApplicationproblemJSON401
+}
+
+// GetApplicationproblemJSON403 returns the response for an HTTP 403 `application/problem+json` response
+func (r ListGroupMembersResponse) GetApplicationproblemJSON403() *Problem {
+	return r.ApplicationproblemJSON403
+}
+
+// GetApplicationproblemJSON404 returns the response for an HTTP 404 `application/problem+json` response
+func (r ListGroupMembersResponse) GetApplicationproblemJSON404() *Problem {
+	return r.ApplicationproblemJSON404
+}
+
+// GetApplicationproblemJSON429 returns the response for an HTTP 429 `application/problem+json` response
+func (r ListGroupMembersResponse) GetApplicationproblemJSON429() *Problem {
+	return r.ApplicationproblemJSON429
+}
+
+// GetBody returns the raw response body bytes
+func (r ListGroupMembersResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r ListGroupMembersResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ListGroupMembersResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r ListGroupMembersResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+// RemoveGroupMemberResponse429Headers the declared response headers of an HTTP 429 response for RemoveGroupMember
+type RemoveGroupMemberResponse429Headers struct {
+	RetryAfter *int
+}
+
+type RemoveGroupMemberResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// ApplicationproblemJSON400 the response for an HTTP 400 `application/problem+json` response
+	ApplicationproblemJSON400 *Problem
+	// ApplicationproblemJSON401 the response for an HTTP 401 `application/problem+json` response
+	ApplicationproblemJSON401 *Problem
+	// ApplicationproblemJSON403 the response for an HTTP 403 `application/problem+json` response
+	ApplicationproblemJSON403 *Problem
+	// ApplicationproblemJSON404 the response for an HTTP 404 `application/problem+json` response
+	ApplicationproblemJSON404 *Problem
+	// ApplicationproblemJSON409 the response for an HTTP 409 `application/problem+json` response
+	ApplicationproblemJSON409 *Problem
+	// ApplicationproblemJSON429 the response for an HTTP 429 `application/problem+json` response
+	ApplicationproblemJSON429 *Problem
+	// Headers429 the parsed response headers for an HTTP 429 response
+	Headers429 *RemoveGroupMemberResponse429Headers
+}
+
+// GetApplicationproblemJSON400 returns the response for an HTTP 400 `application/problem+json` response
+func (r RemoveGroupMemberResponse) GetApplicationproblemJSON400() *Problem {
+	return r.ApplicationproblemJSON400
+}
+
+// GetApplicationproblemJSON401 returns the response for an HTTP 401 `application/problem+json` response
+func (r RemoveGroupMemberResponse) GetApplicationproblemJSON401() *Problem {
+	return r.ApplicationproblemJSON401
+}
+
+// GetApplicationproblemJSON403 returns the response for an HTTP 403 `application/problem+json` response
+func (r RemoveGroupMemberResponse) GetApplicationproblemJSON403() *Problem {
+	return r.ApplicationproblemJSON403
+}
+
+// GetApplicationproblemJSON404 returns the response for an HTTP 404 `application/problem+json` response
+func (r RemoveGroupMemberResponse) GetApplicationproblemJSON404() *Problem {
+	return r.ApplicationproblemJSON404
+}
+
+// GetApplicationproblemJSON409 returns the response for an HTTP 409 `application/problem+json` response
+func (r RemoveGroupMemberResponse) GetApplicationproblemJSON409() *Problem {
+	return r.ApplicationproblemJSON409
+}
+
+// GetApplicationproblemJSON429 returns the response for an HTTP 429 `application/problem+json` response
+func (r RemoveGroupMemberResponse) GetApplicationproblemJSON429() *Problem {
+	return r.ApplicationproblemJSON429
+}
+
+// GetBody returns the raw response body bytes
+func (r RemoveGroupMemberResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r RemoveGroupMemberResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r RemoveGroupMemberResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r RemoveGroupMemberResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+// AddGroupMemberResponse429Headers the declared response headers of an HTTP 429 response for AddGroupMember
+type AddGroupMemberResponse429Headers struct {
+	RetryAfter *int
+}
+
+type AddGroupMemberResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// ApplicationproblemJSON400 the response for an HTTP 400 `application/problem+json` response
+	ApplicationproblemJSON400 *Problem
+	// ApplicationproblemJSON401 the response for an HTTP 401 `application/problem+json` response
+	ApplicationproblemJSON401 *Problem
+	// ApplicationproblemJSON403 the response for an HTTP 403 `application/problem+json` response
+	ApplicationproblemJSON403 *Problem
+	// ApplicationproblemJSON404 the response for an HTTP 404 `application/problem+json` response
+	ApplicationproblemJSON404 *Problem
+	// ApplicationproblemJSON409 the response for an HTTP 409 `application/problem+json` response
+	ApplicationproblemJSON409 *Problem
+	// ApplicationproblemJSON429 the response for an HTTP 429 `application/problem+json` response
+	ApplicationproblemJSON429 *Problem
+	// Headers429 the parsed response headers for an HTTP 429 response
+	Headers429 *AddGroupMemberResponse429Headers
+}
+
+// GetApplicationproblemJSON400 returns the response for an HTTP 400 `application/problem+json` response
+func (r AddGroupMemberResponse) GetApplicationproblemJSON400() *Problem {
+	return r.ApplicationproblemJSON400
+}
+
+// GetApplicationproblemJSON401 returns the response for an HTTP 401 `application/problem+json` response
+func (r AddGroupMemberResponse) GetApplicationproblemJSON401() *Problem {
+	return r.ApplicationproblemJSON401
+}
+
+// GetApplicationproblemJSON403 returns the response for an HTTP 403 `application/problem+json` response
+func (r AddGroupMemberResponse) GetApplicationproblemJSON403() *Problem {
+	return r.ApplicationproblemJSON403
+}
+
+// GetApplicationproblemJSON404 returns the response for an HTTP 404 `application/problem+json` response
+func (r AddGroupMemberResponse) GetApplicationproblemJSON404() *Problem {
+	return r.ApplicationproblemJSON404
+}
+
+// GetApplicationproblemJSON409 returns the response for an HTTP 409 `application/problem+json` response
+func (r AddGroupMemberResponse) GetApplicationproblemJSON409() *Problem {
+	return r.ApplicationproblemJSON409
+}
+
+// GetApplicationproblemJSON429 returns the response for an HTTP 429 `application/problem+json` response
+func (r AddGroupMemberResponse) GetApplicationproblemJSON429() *Problem {
+	return r.ApplicationproblemJSON429
+}
+
+// GetBody returns the raw response body bytes
+func (r AddGroupMemberResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r AddGroupMemberResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r AddGroupMemberResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r AddGroupMemberResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+// ListMembersResponse429Headers the declared response headers of an HTTP 429 response for ListMembers
+type ListMembersResponse429Headers struct {
+	RetryAfter *int
+}
+
+type ListMembersResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON200 the response for an HTTP 200 `application/json` response
+	JSON200 *[]Member
+	// ApplicationproblemJSON400 the response for an HTTP 400 `application/problem+json` response
+	ApplicationproblemJSON400 *Problem
+	// ApplicationproblemJSON401 the response for an HTTP 401 `application/problem+json` response
+	ApplicationproblemJSON401 *Problem
+	// ApplicationproblemJSON403 the response for an HTTP 403 `application/problem+json` response
+	ApplicationproblemJSON403 *Problem
+	// ApplicationproblemJSON404 the response for an HTTP 404 `application/problem+json` response
+	ApplicationproblemJSON404 *Problem
+	// ApplicationproblemJSON429 the response for an HTTP 429 `application/problem+json` response
+	ApplicationproblemJSON429 *Problem
+	// Headers429 the parsed response headers for an HTTP 429 response
+	Headers429 *ListMembersResponse429Headers
+}
+
+// GetJSON200 returns the response for an HTTP 200 `application/json` response
+func (r ListMembersResponse) GetJSON200() *[]Member {
+	return r.JSON200
+}
+
+// GetApplicationproblemJSON400 returns the response for an HTTP 400 `application/problem+json` response
+func (r ListMembersResponse) GetApplicationproblemJSON400() *Problem {
+	return r.ApplicationproblemJSON400
+}
+
+// GetApplicationproblemJSON401 returns the response for an HTTP 401 `application/problem+json` response
+func (r ListMembersResponse) GetApplicationproblemJSON401() *Problem {
+	return r.ApplicationproblemJSON401
+}
+
+// GetApplicationproblemJSON403 returns the response for an HTTP 403 `application/problem+json` response
+func (r ListMembersResponse) GetApplicationproblemJSON403() *Problem {
+	return r.ApplicationproblemJSON403
+}
+
+// GetApplicationproblemJSON404 returns the response for an HTTP 404 `application/problem+json` response
+func (r ListMembersResponse) GetApplicationproblemJSON404() *Problem {
+	return r.ApplicationproblemJSON404
+}
+
+// GetApplicationproblemJSON429 returns the response for an HTTP 429 `application/problem+json` response
+func (r ListMembersResponse) GetApplicationproblemJSON429() *Problem {
+	return r.ApplicationproblemJSON429
+}
+
+// GetBody returns the raw response body bytes
+func (r ListMembersResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r ListMembersResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ListMembersResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r ListMembersResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+// CreateMemberResponse429Headers the declared response headers of an HTTP 429 response for CreateMember
+type CreateMemberResponse429Headers struct {
+	RetryAfter *int
+}
+
+type CreateMemberResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON201 the response for an HTTP 201 `application/json` response
+	JSON201 *Member
+	// ApplicationproblemJSON400 the response for an HTTP 400 `application/problem+json` response
+	ApplicationproblemJSON400 *Problem
+	// ApplicationproblemJSON401 the response for an HTTP 401 `application/problem+json` response
+	ApplicationproblemJSON401 *Problem
+	// ApplicationproblemJSON403 the response for an HTTP 403 `application/problem+json` response
+	ApplicationproblemJSON403 *Problem
+	// ApplicationproblemJSON404 the response for an HTTP 404 `application/problem+json` response
+	ApplicationproblemJSON404 *Problem
+	// ApplicationproblemJSON409 the response for an HTTP 409 `application/problem+json` response
+	ApplicationproblemJSON409 *Problem
+	// ApplicationproblemJSON422 the response for an HTTP 422 `application/problem+json` response
+	ApplicationproblemJSON422 *Problem
+	// ApplicationproblemJSON429 the response for an HTTP 429 `application/problem+json` response
+	ApplicationproblemJSON429 *Problem
+	// Headers429 the parsed response headers for an HTTP 429 response
+	Headers429 *CreateMemberResponse429Headers
+}
+
+// GetJSON201 returns the response for an HTTP 201 `application/json` response
+func (r CreateMemberResponse) GetJSON201() *Member {
+	return r.JSON201
+}
+
+// GetApplicationproblemJSON400 returns the response for an HTTP 400 `application/problem+json` response
+func (r CreateMemberResponse) GetApplicationproblemJSON400() *Problem {
+	return r.ApplicationproblemJSON400
+}
+
+// GetApplicationproblemJSON401 returns the response for an HTTP 401 `application/problem+json` response
+func (r CreateMemberResponse) GetApplicationproblemJSON401() *Problem {
+	return r.ApplicationproblemJSON401
+}
+
+// GetApplicationproblemJSON403 returns the response for an HTTP 403 `application/problem+json` response
+func (r CreateMemberResponse) GetApplicationproblemJSON403() *Problem {
+	return r.ApplicationproblemJSON403
+}
+
+// GetApplicationproblemJSON404 returns the response for an HTTP 404 `application/problem+json` response
+func (r CreateMemberResponse) GetApplicationproblemJSON404() *Problem {
+	return r.ApplicationproblemJSON404
+}
+
+// GetApplicationproblemJSON409 returns the response for an HTTP 409 `application/problem+json` response
+func (r CreateMemberResponse) GetApplicationproblemJSON409() *Problem {
+	return r.ApplicationproblemJSON409
+}
+
+// GetApplicationproblemJSON422 returns the response for an HTTP 422 `application/problem+json` response
+func (r CreateMemberResponse) GetApplicationproblemJSON422() *Problem {
+	return r.ApplicationproblemJSON422
+}
+
+// GetApplicationproblemJSON429 returns the response for an HTTP 429 `application/problem+json` response
+func (r CreateMemberResponse) GetApplicationproblemJSON429() *Problem {
+	return r.ApplicationproblemJSON429
+}
+
+// GetBody returns the raw response body bytes
+func (r CreateMemberResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r CreateMemberResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r CreateMemberResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r CreateMemberResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+// DeleteMemberResponse429Headers the declared response headers of an HTTP 429 response for DeleteMember
+type DeleteMemberResponse429Headers struct {
+	RetryAfter *int
+}
+
+type DeleteMemberResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// ApplicationproblemJSON400 the response for an HTTP 400 `application/problem+json` response
+	ApplicationproblemJSON400 *Problem
+	// ApplicationproblemJSON401 the response for an HTTP 401 `application/problem+json` response
+	ApplicationproblemJSON401 *Problem
+	// ApplicationproblemJSON403 the response for an HTTP 403 `application/problem+json` response
+	ApplicationproblemJSON403 *Problem
+	// ApplicationproblemJSON404 the response for an HTTP 404 `application/problem+json` response
+	ApplicationproblemJSON404 *Problem
+	// ApplicationproblemJSON409 the response for an HTTP 409 `application/problem+json` response
+	ApplicationproblemJSON409 *Problem
+	// ApplicationproblemJSON429 the response for an HTTP 429 `application/problem+json` response
+	ApplicationproblemJSON429 *Problem
+	// Headers429 the parsed response headers for an HTTP 429 response
+	Headers429 *DeleteMemberResponse429Headers
+}
+
+// GetApplicationproblemJSON400 returns the response for an HTTP 400 `application/problem+json` response
+func (r DeleteMemberResponse) GetApplicationproblemJSON400() *Problem {
+	return r.ApplicationproblemJSON400
+}
+
+// GetApplicationproblemJSON401 returns the response for an HTTP 401 `application/problem+json` response
+func (r DeleteMemberResponse) GetApplicationproblemJSON401() *Problem {
+	return r.ApplicationproblemJSON401
+}
+
+// GetApplicationproblemJSON403 returns the response for an HTTP 403 `application/problem+json` response
+func (r DeleteMemberResponse) GetApplicationproblemJSON403() *Problem {
+	return r.ApplicationproblemJSON403
+}
+
+// GetApplicationproblemJSON404 returns the response for an HTTP 404 `application/problem+json` response
+func (r DeleteMemberResponse) GetApplicationproblemJSON404() *Problem {
+	return r.ApplicationproblemJSON404
+}
+
+// GetApplicationproblemJSON409 returns the response for an HTTP 409 `application/problem+json` response
+func (r DeleteMemberResponse) GetApplicationproblemJSON409() *Problem {
+	return r.ApplicationproblemJSON409
+}
+
+// GetApplicationproblemJSON429 returns the response for an HTTP 429 `application/problem+json` response
+func (r DeleteMemberResponse) GetApplicationproblemJSON429() *Problem {
+	return r.ApplicationproblemJSON429
+}
+
+// GetBody returns the raw response body bytes
+func (r DeleteMemberResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r DeleteMemberResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r DeleteMemberResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r DeleteMemberResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+// GetMemberResponse429Headers the declared response headers of an HTTP 429 response for GetMember
+type GetMemberResponse429Headers struct {
+	RetryAfter *int
+}
+
+type GetMemberResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON200 the response for an HTTP 200 `application/json` response
+	JSON200 *Member
+	// ApplicationproblemJSON400 the response for an HTTP 400 `application/problem+json` response
+	ApplicationproblemJSON400 *Problem
+	// ApplicationproblemJSON401 the response for an HTTP 401 `application/problem+json` response
+	ApplicationproblemJSON401 *Problem
+	// ApplicationproblemJSON403 the response for an HTTP 403 `application/problem+json` response
+	ApplicationproblemJSON403 *Problem
+	// ApplicationproblemJSON404 the response for an HTTP 404 `application/problem+json` response
+	ApplicationproblemJSON404 *Problem
+	// ApplicationproblemJSON429 the response for an HTTP 429 `application/problem+json` response
+	ApplicationproblemJSON429 *Problem
+	// Headers429 the parsed response headers for an HTTP 429 response
+	Headers429 *GetMemberResponse429Headers
+}
+
+// GetJSON200 returns the response for an HTTP 200 `application/json` response
+func (r GetMemberResponse) GetJSON200() *Member {
+	return r.JSON200
+}
+
+// GetApplicationproblemJSON400 returns the response for an HTTP 400 `application/problem+json` response
+func (r GetMemberResponse) GetApplicationproblemJSON400() *Problem {
+	return r.ApplicationproblemJSON400
+}
+
+// GetApplicationproblemJSON401 returns the response for an HTTP 401 `application/problem+json` response
+func (r GetMemberResponse) GetApplicationproblemJSON401() *Problem {
+	return r.ApplicationproblemJSON401
+}
+
+// GetApplicationproblemJSON403 returns the response for an HTTP 403 `application/problem+json` response
+func (r GetMemberResponse) GetApplicationproblemJSON403() *Problem {
+	return r.ApplicationproblemJSON403
+}
+
+// GetApplicationproblemJSON404 returns the response for an HTTP 404 `application/problem+json` response
+func (r GetMemberResponse) GetApplicationproblemJSON404() *Problem {
+	return r.ApplicationproblemJSON404
+}
+
+// GetApplicationproblemJSON429 returns the response for an HTTP 429 `application/problem+json` response
+func (r GetMemberResponse) GetApplicationproblemJSON429() *Problem {
+	return r.ApplicationproblemJSON429
+}
+
+// GetBody returns the raw response body bytes
+func (r GetMemberResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r GetMemberResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetMemberResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r GetMemberResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+// UpdateMemberResponse429Headers the declared response headers of an HTTP 429 response for UpdateMember
+type UpdateMemberResponse429Headers struct {
+	RetryAfter *int
+}
+
+type UpdateMemberResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON200 the response for an HTTP 200 `application/json` response
+	JSON200 *Member
+	// ApplicationproblemJSON400 the response for an HTTP 400 `application/problem+json` response
+	ApplicationproblemJSON400 *Problem
+	// ApplicationproblemJSON401 the response for an HTTP 401 `application/problem+json` response
+	ApplicationproblemJSON401 *Problem
+	// ApplicationproblemJSON403 the response for an HTTP 403 `application/problem+json` response
+	ApplicationproblemJSON403 *Problem
+	// ApplicationproblemJSON404 the response for an HTTP 404 `application/problem+json` response
+	ApplicationproblemJSON404 *Problem
+	// ApplicationproblemJSON409 the response for an HTTP 409 `application/problem+json` response
+	ApplicationproblemJSON409 *Problem
+	// ApplicationproblemJSON422 the response for an HTTP 422 `application/problem+json` response
+	ApplicationproblemJSON422 *Problem
+	// ApplicationproblemJSON429 the response for an HTTP 429 `application/problem+json` response
+	ApplicationproblemJSON429 *Problem
+	// Headers429 the parsed response headers for an HTTP 429 response
+	Headers429 *UpdateMemberResponse429Headers
+}
+
+// GetJSON200 returns the response for an HTTP 200 `application/json` response
+func (r UpdateMemberResponse) GetJSON200() *Member {
+	return r.JSON200
+}
+
+// GetApplicationproblemJSON400 returns the response for an HTTP 400 `application/problem+json` response
+func (r UpdateMemberResponse) GetApplicationproblemJSON400() *Problem {
+	return r.ApplicationproblemJSON400
+}
+
+// GetApplicationproblemJSON401 returns the response for an HTTP 401 `application/problem+json` response
+func (r UpdateMemberResponse) GetApplicationproblemJSON401() *Problem {
+	return r.ApplicationproblemJSON401
+}
+
+// GetApplicationproblemJSON403 returns the response for an HTTP 403 `application/problem+json` response
+func (r UpdateMemberResponse) GetApplicationproblemJSON403() *Problem {
+	return r.ApplicationproblemJSON403
+}
+
+// GetApplicationproblemJSON404 returns the response for an HTTP 404 `application/problem+json` response
+func (r UpdateMemberResponse) GetApplicationproblemJSON404() *Problem {
+	return r.ApplicationproblemJSON404
+}
+
+// GetApplicationproblemJSON409 returns the response for an HTTP 409 `application/problem+json` response
+func (r UpdateMemberResponse) GetApplicationproblemJSON409() *Problem {
+	return r.ApplicationproblemJSON409
+}
+
+// GetApplicationproblemJSON422 returns the response for an HTTP 422 `application/problem+json` response
+func (r UpdateMemberResponse) GetApplicationproblemJSON422() *Problem {
+	return r.ApplicationproblemJSON422
+}
+
+// GetApplicationproblemJSON429 returns the response for an HTTP 429 `application/problem+json` response
+func (r UpdateMemberResponse) GetApplicationproblemJSON429() *Problem {
+	return r.ApplicationproblemJSON429
+}
+
+// GetBody returns the raw response body bytes
+func (r UpdateMemberResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r UpdateMemberResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r UpdateMemberResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r UpdateMemberResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+// ListProfilesResponse429Headers the declared response headers of an HTTP 429 response for ListProfiles
+type ListProfilesResponse429Headers struct {
+	RetryAfter *int
+}
+
+type ListProfilesResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON200 the response for an HTTP 200 `application/json` response
+	JSON200 *[]Profile
+	// ApplicationproblemJSON400 the response for an HTTP 400 `application/problem+json` response
+	ApplicationproblemJSON400 *Problem
+	// ApplicationproblemJSON401 the response for an HTTP 401 `application/problem+json` response
+	ApplicationproblemJSON401 *Problem
+	// ApplicationproblemJSON403 the response for an HTTP 403 `application/problem+json` response
+	ApplicationproblemJSON403 *Problem
+	// ApplicationproblemJSON404 the response for an HTTP 404 `application/problem+json` response
+	ApplicationproblemJSON404 *Problem
+	// ApplicationproblemJSON429 the response for an HTTP 429 `application/problem+json` response
+	ApplicationproblemJSON429 *Problem
+	// Headers429 the parsed response headers for an HTTP 429 response
+	Headers429 *ListProfilesResponse429Headers
+}
+
+// GetJSON200 returns the response for an HTTP 200 `application/json` response
+func (r ListProfilesResponse) GetJSON200() *[]Profile {
+	return r.JSON200
+}
+
+// GetApplicationproblemJSON400 returns the response for an HTTP 400 `application/problem+json` response
+func (r ListProfilesResponse) GetApplicationproblemJSON400() *Problem {
+	return r.ApplicationproblemJSON400
+}
+
+// GetApplicationproblemJSON401 returns the response for an HTTP 401 `application/problem+json` response
+func (r ListProfilesResponse) GetApplicationproblemJSON401() *Problem {
+	return r.ApplicationproblemJSON401
+}
+
+// GetApplicationproblemJSON403 returns the response for an HTTP 403 `application/problem+json` response
+func (r ListProfilesResponse) GetApplicationproblemJSON403() *Problem {
+	return r.ApplicationproblemJSON403
+}
+
+// GetApplicationproblemJSON404 returns the response for an HTTP 404 `application/problem+json` response
+func (r ListProfilesResponse) GetApplicationproblemJSON404() *Problem {
+	return r.ApplicationproblemJSON404
+}
+
+// GetApplicationproblemJSON429 returns the response for an HTTP 429 `application/problem+json` response
+func (r ListProfilesResponse) GetApplicationproblemJSON429() *Problem {
+	return r.ApplicationproblemJSON429
+}
+
+// GetBody returns the raw response body bytes
+func (r ListProfilesResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r ListProfilesResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ListProfilesResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r ListProfilesResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+// CreateProfileResponse429Headers the declared response headers of an HTTP 429 response for CreateProfile
+type CreateProfileResponse429Headers struct {
+	RetryAfter *int
+}
+
+type CreateProfileResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON201 the response for an HTTP 201 `application/json` response
+	JSON201 *Profile
+	// ApplicationproblemJSON400 the response for an HTTP 400 `application/problem+json` response
+	ApplicationproblemJSON400 *Problem
+	// ApplicationproblemJSON401 the response for an HTTP 401 `application/problem+json` response
+	ApplicationproblemJSON401 *Problem
+	// ApplicationproblemJSON403 the response for an HTTP 403 `application/problem+json` response
+	ApplicationproblemJSON403 *Problem
+	// ApplicationproblemJSON404 the response for an HTTP 404 `application/problem+json` response
+	ApplicationproblemJSON404 *Problem
+	// ApplicationproblemJSON409 the response for an HTTP 409 `application/problem+json` response
+	ApplicationproblemJSON409 *Problem
+	// ApplicationproblemJSON422 the response for an HTTP 422 `application/problem+json` response
+	ApplicationproblemJSON422 *Problem
+	// ApplicationproblemJSON429 the response for an HTTP 429 `application/problem+json` response
+	ApplicationproblemJSON429 *Problem
+	// Headers429 the parsed response headers for an HTTP 429 response
+	Headers429 *CreateProfileResponse429Headers
+}
+
+// GetJSON201 returns the response for an HTTP 201 `application/json` response
+func (r CreateProfileResponse) GetJSON201() *Profile {
+	return r.JSON201
+}
+
+// GetApplicationproblemJSON400 returns the response for an HTTP 400 `application/problem+json` response
+func (r CreateProfileResponse) GetApplicationproblemJSON400() *Problem {
+	return r.ApplicationproblemJSON400
+}
+
+// GetApplicationproblemJSON401 returns the response for an HTTP 401 `application/problem+json` response
+func (r CreateProfileResponse) GetApplicationproblemJSON401() *Problem {
+	return r.ApplicationproblemJSON401
+}
+
+// GetApplicationproblemJSON403 returns the response for an HTTP 403 `application/problem+json` response
+func (r CreateProfileResponse) GetApplicationproblemJSON403() *Problem {
+	return r.ApplicationproblemJSON403
+}
+
+// GetApplicationproblemJSON404 returns the response for an HTTP 404 `application/problem+json` response
+func (r CreateProfileResponse) GetApplicationproblemJSON404() *Problem {
+	return r.ApplicationproblemJSON404
+}
+
+// GetApplicationproblemJSON409 returns the response for an HTTP 409 `application/problem+json` response
+func (r CreateProfileResponse) GetApplicationproblemJSON409() *Problem {
+	return r.ApplicationproblemJSON409
+}
+
+// GetApplicationproblemJSON422 returns the response for an HTTP 422 `application/problem+json` response
+func (r CreateProfileResponse) GetApplicationproblemJSON422() *Problem {
+	return r.ApplicationproblemJSON422
+}
+
+// GetApplicationproblemJSON429 returns the response for an HTTP 429 `application/problem+json` response
+func (r CreateProfileResponse) GetApplicationproblemJSON429() *Problem {
+	return r.ApplicationproblemJSON429
+}
+
+// GetBody returns the raw response body bytes
+func (r CreateProfileResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r CreateProfileResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r CreateProfileResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r CreateProfileResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+// DeleteProfileResponse429Headers the declared response headers of an HTTP 429 response for DeleteProfile
+type DeleteProfileResponse429Headers struct {
+	RetryAfter *int
+}
+
+type DeleteProfileResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// ApplicationproblemJSON400 the response for an HTTP 400 `application/problem+json` response
+	ApplicationproblemJSON400 *Problem
+	// ApplicationproblemJSON401 the response for an HTTP 401 `application/problem+json` response
+	ApplicationproblemJSON401 *Problem
+	// ApplicationproblemJSON403 the response for an HTTP 403 `application/problem+json` response
+	ApplicationproblemJSON403 *Problem
+	// ApplicationproblemJSON404 the response for an HTTP 404 `application/problem+json` response
+	ApplicationproblemJSON404 *Problem
+	// ApplicationproblemJSON409 the response for an HTTP 409 `application/problem+json` response
+	ApplicationproblemJSON409 *Problem
+	// ApplicationproblemJSON429 the response for an HTTP 429 `application/problem+json` response
+	ApplicationproblemJSON429 *Problem
+	// Headers429 the parsed response headers for an HTTP 429 response
+	Headers429 *DeleteProfileResponse429Headers
+}
+
+// GetApplicationproblemJSON400 returns the response for an HTTP 400 `application/problem+json` response
+func (r DeleteProfileResponse) GetApplicationproblemJSON400() *Problem {
+	return r.ApplicationproblemJSON400
+}
+
+// GetApplicationproblemJSON401 returns the response for an HTTP 401 `application/problem+json` response
+func (r DeleteProfileResponse) GetApplicationproblemJSON401() *Problem {
+	return r.ApplicationproblemJSON401
+}
+
+// GetApplicationproblemJSON403 returns the response for an HTTP 403 `application/problem+json` response
+func (r DeleteProfileResponse) GetApplicationproblemJSON403() *Problem {
+	return r.ApplicationproblemJSON403
+}
+
+// GetApplicationproblemJSON404 returns the response for an HTTP 404 `application/problem+json` response
+func (r DeleteProfileResponse) GetApplicationproblemJSON404() *Problem {
+	return r.ApplicationproblemJSON404
+}
+
+// GetApplicationproblemJSON409 returns the response for an HTTP 409 `application/problem+json` response
+func (r DeleteProfileResponse) GetApplicationproblemJSON409() *Problem {
+	return r.ApplicationproblemJSON409
+}
+
+// GetApplicationproblemJSON429 returns the response for an HTTP 429 `application/problem+json` response
+func (r DeleteProfileResponse) GetApplicationproblemJSON429() *Problem {
+	return r.ApplicationproblemJSON429
+}
+
+// GetBody returns the raw response body bytes
+func (r DeleteProfileResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r DeleteProfileResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r DeleteProfileResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r DeleteProfileResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+// GetProfileResponse429Headers the declared response headers of an HTTP 429 response for GetProfile
+type GetProfileResponse429Headers struct {
+	RetryAfter *int
+}
+
+type GetProfileResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON200 the response for an HTTP 200 `application/json` response
+	JSON200 *Profile
+	// ApplicationproblemJSON400 the response for an HTTP 400 `application/problem+json` response
+	ApplicationproblemJSON400 *Problem
+	// ApplicationproblemJSON401 the response for an HTTP 401 `application/problem+json` response
+	ApplicationproblemJSON401 *Problem
+	// ApplicationproblemJSON403 the response for an HTTP 403 `application/problem+json` response
+	ApplicationproblemJSON403 *Problem
+	// ApplicationproblemJSON404 the response for an HTTP 404 `application/problem+json` response
+	ApplicationproblemJSON404 *Problem
+	// ApplicationproblemJSON429 the response for an HTTP 429 `application/problem+json` response
+	ApplicationproblemJSON429 *Problem
+	// Headers429 the parsed response headers for an HTTP 429 response
+	Headers429 *GetProfileResponse429Headers
+}
+
+// GetJSON200 returns the response for an HTTP 200 `application/json` response
+func (r GetProfileResponse) GetJSON200() *Profile {
+	return r.JSON200
+}
+
+// GetApplicationproblemJSON400 returns the response for an HTTP 400 `application/problem+json` response
+func (r GetProfileResponse) GetApplicationproblemJSON400() *Problem {
+	return r.ApplicationproblemJSON400
+}
+
+// GetApplicationproblemJSON401 returns the response for an HTTP 401 `application/problem+json` response
+func (r GetProfileResponse) GetApplicationproblemJSON401() *Problem {
+	return r.ApplicationproblemJSON401
+}
+
+// GetApplicationproblemJSON403 returns the response for an HTTP 403 `application/problem+json` response
+func (r GetProfileResponse) GetApplicationproblemJSON403() *Problem {
+	return r.ApplicationproblemJSON403
+}
+
+// GetApplicationproblemJSON404 returns the response for an HTTP 404 `application/problem+json` response
+func (r GetProfileResponse) GetApplicationproblemJSON404() *Problem {
+	return r.ApplicationproblemJSON404
+}
+
+// GetApplicationproblemJSON429 returns the response for an HTTP 429 `application/problem+json` response
+func (r GetProfileResponse) GetApplicationproblemJSON429() *Problem {
+	return r.ApplicationproblemJSON429
+}
+
+// GetBody returns the raw response body bytes
+func (r GetProfileResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r GetProfileResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r GetProfileResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r GetProfileResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+// UpdateProfileResponse429Headers the declared response headers of an HTTP 429 response for UpdateProfile
+type UpdateProfileResponse429Headers struct {
+	RetryAfter *int
+}
+
+type UpdateProfileResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON200 the response for an HTTP 200 `application/json` response
+	JSON200 *Profile
+	// ApplicationproblemJSON400 the response for an HTTP 400 `application/problem+json` response
+	ApplicationproblemJSON400 *Problem
+	// ApplicationproblemJSON401 the response for an HTTP 401 `application/problem+json` response
+	ApplicationproblemJSON401 *Problem
+	// ApplicationproblemJSON403 the response for an HTTP 403 `application/problem+json` response
+	ApplicationproblemJSON403 *Problem
+	// ApplicationproblemJSON404 the response for an HTTP 404 `application/problem+json` response
+	ApplicationproblemJSON404 *Problem
+	// ApplicationproblemJSON409 the response for an HTTP 409 `application/problem+json` response
+	ApplicationproblemJSON409 *Problem
+	// ApplicationproblemJSON422 the response for an HTTP 422 `application/problem+json` response
+	ApplicationproblemJSON422 *Problem
+	// ApplicationproblemJSON429 the response for an HTTP 429 `application/problem+json` response
+	ApplicationproblemJSON429 *Problem
+	// Headers429 the parsed response headers for an HTTP 429 response
+	Headers429 *UpdateProfileResponse429Headers
+}
+
+// GetJSON200 returns the response for an HTTP 200 `application/json` response
+func (r UpdateProfileResponse) GetJSON200() *Profile {
+	return r.JSON200
+}
+
+// GetApplicationproblemJSON400 returns the response for an HTTP 400 `application/problem+json` response
+func (r UpdateProfileResponse) GetApplicationproblemJSON400() *Problem {
+	return r.ApplicationproblemJSON400
+}
+
+// GetApplicationproblemJSON401 returns the response for an HTTP 401 `application/problem+json` response
+func (r UpdateProfileResponse) GetApplicationproblemJSON401() *Problem {
+	return r.ApplicationproblemJSON401
+}
+
+// GetApplicationproblemJSON403 returns the response for an HTTP 403 `application/problem+json` response
+func (r UpdateProfileResponse) GetApplicationproblemJSON403() *Problem {
+	return r.ApplicationproblemJSON403
+}
+
+// GetApplicationproblemJSON404 returns the response for an HTTP 404 `application/problem+json` response
+func (r UpdateProfileResponse) GetApplicationproblemJSON404() *Problem {
+	return r.ApplicationproblemJSON404
+}
+
+// GetApplicationproblemJSON409 returns the response for an HTTP 409 `application/problem+json` response
+func (r UpdateProfileResponse) GetApplicationproblemJSON409() *Problem {
+	return r.ApplicationproblemJSON409
+}
+
+// GetApplicationproblemJSON422 returns the response for an HTTP 422 `application/problem+json` response
+func (r UpdateProfileResponse) GetApplicationproblemJSON422() *Problem {
+	return r.ApplicationproblemJSON422
+}
+
+// GetApplicationproblemJSON429 returns the response for an HTTP 429 `application/problem+json` response
+func (r UpdateProfileResponse) GetApplicationproblemJSON429() *Problem {
+	return r.ApplicationproblemJSON429
+}
+
+// GetBody returns the raw response body bytes
+func (r UpdateProfileResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r UpdateProfileResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r UpdateProfileResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r UpdateProfileResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+// ListAssignmentsResponse429Headers the declared response headers of an HTTP 429 response for ListAssignments
+type ListAssignmentsResponse429Headers struct {
+	RetryAfter *int
+}
+
+type ListAssignmentsResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON200 the response for an HTTP 200 `application/json` response
+	JSON200 *[]Assignment
+	// ApplicationproblemJSON400 the response for an HTTP 400 `application/problem+json` response
+	ApplicationproblemJSON400 *Problem
+	// ApplicationproblemJSON401 the response for an HTTP 401 `application/problem+json` response
+	ApplicationproblemJSON401 *Problem
+	// ApplicationproblemJSON403 the response for an HTTP 403 `application/problem+json` response
+	ApplicationproblemJSON403 *Problem
+	// ApplicationproblemJSON404 the response for an HTTP 404 `application/problem+json` response
+	ApplicationproblemJSON404 *Problem
+	// ApplicationproblemJSON429 the response for an HTTP 429 `application/problem+json` response
+	ApplicationproblemJSON429 *Problem
+	// Headers429 the parsed response headers for an HTTP 429 response
+	Headers429 *ListAssignmentsResponse429Headers
+}
+
+// GetJSON200 returns the response for an HTTP 200 `application/json` response
+func (r ListAssignmentsResponse) GetJSON200() *[]Assignment {
+	return r.JSON200
+}
+
+// GetApplicationproblemJSON400 returns the response for an HTTP 400 `application/problem+json` response
+func (r ListAssignmentsResponse) GetApplicationproblemJSON400() *Problem {
+	return r.ApplicationproblemJSON400
+}
+
+// GetApplicationproblemJSON401 returns the response for an HTTP 401 `application/problem+json` response
+func (r ListAssignmentsResponse) GetApplicationproblemJSON401() *Problem {
+	return r.ApplicationproblemJSON401
+}
+
+// GetApplicationproblemJSON403 returns the response for an HTTP 403 `application/problem+json` response
+func (r ListAssignmentsResponse) GetApplicationproblemJSON403() *Problem {
+	return r.ApplicationproblemJSON403
+}
+
+// GetApplicationproblemJSON404 returns the response for an HTTP 404 `application/problem+json` response
+func (r ListAssignmentsResponse) GetApplicationproblemJSON404() *Problem {
+	return r.ApplicationproblemJSON404
+}
+
+// GetApplicationproblemJSON429 returns the response for an HTTP 429 `application/problem+json` response
+func (r ListAssignmentsResponse) GetApplicationproblemJSON429() *Problem {
+	return r.ApplicationproblemJSON429
+}
+
+// GetBody returns the raw response body bytes
+func (r ListAssignmentsResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r ListAssignmentsResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r ListAssignmentsResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r ListAssignmentsResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+// CreateAssignmentResponse429Headers the declared response headers of an HTTP 429 response for CreateAssignment
+type CreateAssignmentResponse429Headers struct {
+	RetryAfter *int
+}
+
+type CreateAssignmentResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// JSON201 the response for an HTTP 201 `application/json` response
+	JSON201 *Assignment
+	// ApplicationproblemJSON400 the response for an HTTP 400 `application/problem+json` response
+	ApplicationproblemJSON400 *Problem
+	// ApplicationproblemJSON401 the response for an HTTP 401 `application/problem+json` response
+	ApplicationproblemJSON401 *Problem
+	// ApplicationproblemJSON403 the response for an HTTP 403 `application/problem+json` response
+	ApplicationproblemJSON403 *Problem
+	// ApplicationproblemJSON404 the response for an HTTP 404 `application/problem+json` response
+	ApplicationproblemJSON404 *Problem
+	// ApplicationproblemJSON409 the response for an HTTP 409 `application/problem+json` response
+	ApplicationproblemJSON409 *Problem
+	// ApplicationproblemJSON422 the response for an HTTP 422 `application/problem+json` response
+	ApplicationproblemJSON422 *Problem
+	// ApplicationproblemJSON429 the response for an HTTP 429 `application/problem+json` response
+	ApplicationproblemJSON429 *Problem
+	// Headers429 the parsed response headers for an HTTP 429 response
+	Headers429 *CreateAssignmentResponse429Headers
+}
+
+// GetJSON201 returns the response for an HTTP 201 `application/json` response
+func (r CreateAssignmentResponse) GetJSON201() *Assignment {
+	return r.JSON201
+}
+
+// GetApplicationproblemJSON400 returns the response for an HTTP 400 `application/problem+json` response
+func (r CreateAssignmentResponse) GetApplicationproblemJSON400() *Problem {
+	return r.ApplicationproblemJSON400
+}
+
+// GetApplicationproblemJSON401 returns the response for an HTTP 401 `application/problem+json` response
+func (r CreateAssignmentResponse) GetApplicationproblemJSON401() *Problem {
+	return r.ApplicationproblemJSON401
+}
+
+// GetApplicationproblemJSON403 returns the response for an HTTP 403 `application/problem+json` response
+func (r CreateAssignmentResponse) GetApplicationproblemJSON403() *Problem {
+	return r.ApplicationproblemJSON403
+}
+
+// GetApplicationproblemJSON404 returns the response for an HTTP 404 `application/problem+json` response
+func (r CreateAssignmentResponse) GetApplicationproblemJSON404() *Problem {
+	return r.ApplicationproblemJSON404
+}
+
+// GetApplicationproblemJSON409 returns the response for an HTTP 409 `application/problem+json` response
+func (r CreateAssignmentResponse) GetApplicationproblemJSON409() *Problem {
+	return r.ApplicationproblemJSON409
+}
+
+// GetApplicationproblemJSON422 returns the response for an HTTP 422 `application/problem+json` response
+func (r CreateAssignmentResponse) GetApplicationproblemJSON422() *Problem {
+	return r.ApplicationproblemJSON422
+}
+
+// GetApplicationproblemJSON429 returns the response for an HTTP 429 `application/problem+json` response
+func (r CreateAssignmentResponse) GetApplicationproblemJSON429() *Problem {
+	return r.ApplicationproblemJSON429
+}
+
+// GetBody returns the raw response body bytes
+func (r CreateAssignmentResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r CreateAssignmentResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r CreateAssignmentResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r CreateAssignmentResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
+// DeleteAssignmentResponse429Headers the declared response headers of an HTTP 429 response for DeleteAssignment
+type DeleteAssignmentResponse429Headers struct {
+	RetryAfter *int
+}
+
+type DeleteAssignmentResponse struct {
+	Body         []byte
+	HTTPResponse *http.Response
+	// ApplicationproblemJSON400 the response for an HTTP 400 `application/problem+json` response
+	ApplicationproblemJSON400 *Problem
+	// ApplicationproblemJSON401 the response for an HTTP 401 `application/problem+json` response
+	ApplicationproblemJSON401 *Problem
+	// ApplicationproblemJSON403 the response for an HTTP 403 `application/problem+json` response
+	ApplicationproblemJSON403 *Problem
+	// ApplicationproblemJSON404 the response for an HTTP 404 `application/problem+json` response
+	ApplicationproblemJSON404 *Problem
+	// ApplicationproblemJSON409 the response for an HTTP 409 `application/problem+json` response
+	ApplicationproblemJSON409 *Problem
+	// ApplicationproblemJSON429 the response for an HTTP 429 `application/problem+json` response
+	ApplicationproblemJSON429 *Problem
+	// Headers429 the parsed response headers for an HTTP 429 response
+	Headers429 *DeleteAssignmentResponse429Headers
+}
+
+// GetApplicationproblemJSON400 returns the response for an HTTP 400 `application/problem+json` response
+func (r DeleteAssignmentResponse) GetApplicationproblemJSON400() *Problem {
+	return r.ApplicationproblemJSON400
+}
+
+// GetApplicationproblemJSON401 returns the response for an HTTP 401 `application/problem+json` response
+func (r DeleteAssignmentResponse) GetApplicationproblemJSON401() *Problem {
+	return r.ApplicationproblemJSON401
+}
+
+// GetApplicationproblemJSON403 returns the response for an HTTP 403 `application/problem+json` response
+func (r DeleteAssignmentResponse) GetApplicationproblemJSON403() *Problem {
+	return r.ApplicationproblemJSON403
+}
+
+// GetApplicationproblemJSON404 returns the response for an HTTP 404 `application/problem+json` response
+func (r DeleteAssignmentResponse) GetApplicationproblemJSON404() *Problem {
+	return r.ApplicationproblemJSON404
+}
+
+// GetApplicationproblemJSON409 returns the response for an HTTP 409 `application/problem+json` response
+func (r DeleteAssignmentResponse) GetApplicationproblemJSON409() *Problem {
+	return r.ApplicationproblemJSON409
+}
+
+// GetApplicationproblemJSON429 returns the response for an HTTP 429 `application/problem+json` response
+func (r DeleteAssignmentResponse) GetApplicationproblemJSON429() *Problem {
+	return r.ApplicationproblemJSON429
+}
+
+// GetBody returns the raw response body bytes
+func (r DeleteAssignmentResponse) GetBody() []byte {
+	return r.Body
+}
+
+// Status returns HTTPResponse.Status
+func (r DeleteAssignmentResponse) Status() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Status
+	}
+	return http.StatusText(0)
+}
+
+// StatusCode returns HTTPResponse.StatusCode
+func (r DeleteAssignmentResponse) StatusCode() int {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.StatusCode
+	}
+	return 0
+}
+
+// ContentType is a convenience method to retrieve the Content-Type value from the HTTP response headers
+func (r DeleteAssignmentResponse) ContentType() string {
+	if r.HTTPResponse != nil {
+		return r.HTTPResponse.Header.Get("Content-Type")
+	}
+	return ""
+}
+
 // GetCatalogWithResponse Settings a device can take
 //
 // Every setting mdm can manage, from Apple's device-management schema (Release-v27.2). With level, only entries that level can take; with os too, only those that iOS version has. Keys carry their own level and version limits.
@@ -931,6 +10060,799 @@ func (c *ClientWithResponses) GetMeWithResponse(ctx context.Context, params *Get
 		return nil, err
 	}
 	return ParseGetMeResponse(rsp)
+}
+
+// ListTenantsWithResponse Tenants the caller reaches
+//
+// An account client: every tenant of its account (tenants:read), oldest first. An admin app token: its organization's tenant, with the caller's role.
+//
+// Returns a wrapper object for the known response body format(s).
+//
+// Corresponds with GET /api/v1/tenants (the `ListTenants` operationId).
+func (c *ClientWithResponses) ListTenantsWithResponse(ctx context.Context, params *ListTenantsParams, reqEditors ...RequestEditorFn) (*ListTenantsResponse, error) {
+	rsp, err := c.ListTenants(ctx, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseListTenantsResponse(rsp)
+}
+
+// CreateTenantWithBodyWithResponse Create a tenant
+//
+// Account clients only (tenants:write). external_id is the account's own id for the tenant, unique in the account; 409 when it is taken.
+//
+// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
+//
+// Corresponds with POST /api/v1/tenants (the `CreateTenant` operationId).
+func (c *ClientWithResponses) CreateTenantWithBodyWithResponse(ctx context.Context, params *CreateTenantParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateTenantResponse, error) {
+	rsp, err := c.CreateTenantWithBody(ctx, params, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateTenantResponse(rsp)
+}
+
+// CreateTenantWithResponse Create a tenant
+//
+// Account clients only (tenants:write). external_id is the account's own id for the tenant, unique in the account; 409 when it is taken.
+//
+// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
+//
+// Corresponds with POST /api/v1/tenants (the `CreateTenant` operationId).
+func (c *ClientWithResponses) CreateTenantWithResponse(ctx context.Context, params *CreateTenantParams, body CreateTenantJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateTenantResponse, error) {
+	rsp, err := c.CreateTenant(ctx, params, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateTenantResponse(rsp)
+}
+
+// DeleteTenantWithResponse Delete a tenant
+//
+// Account clients only (tenants:write). Starts the deletion and answers at once: tenant.deleting fires, writes to the tenant answer 409 from then on (reads keep working), delegated tokens are no longer issued for it, and every enrolled device is asked to remove its enrollment profile. Once each device has, checked out, or stayed silent for 30 days, the tenant and everything in it are deleted and tenant.deleted fires. Calling it again changes nothing.
+//
+// Returns a wrapper object for the known response body format(s).
+//
+// Corresponds with DELETE /api/v1/tenants/{tenant} (the `DeleteTenant` operationId).
+func (c *ClientWithResponses) DeleteTenantWithResponse(ctx context.Context, tenant string, params *DeleteTenantParams, reqEditors ...RequestEditorFn) (*DeleteTenantResponse, error) {
+	rsp, err := c.DeleteTenant(ctx, tenant, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseDeleteTenantResponse(rsp)
+}
+
+// GetTenantWithResponse Get a tenant
+//
+// Returns a wrapper object for the known response body format(s).
+//
+// Corresponds with GET /api/v1/tenants/{tenant} (the `GetTenant` operationId).
+func (c *ClientWithResponses) GetTenantWithResponse(ctx context.Context, tenant string, params *GetTenantParams, reqEditors ...RequestEditorFn) (*GetTenantResponse, error) {
+	rsp, err := c.GetTenant(ctx, tenant, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetTenantResponse(rsp)
+}
+
+// UpdateTenantWithBodyWithResponse Rename a tenant or change its credential holder
+//
+// Account clients only (tenants:write).
+//
+// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
+//
+// Corresponds with PATCH /api/v1/tenants/{tenant} (the `UpdateTenant` operationId).
+func (c *ClientWithResponses) UpdateTenantWithBodyWithResponse(ctx context.Context, tenant string, params *UpdateTenantParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateTenantResponse, error) {
+	rsp, err := c.UpdateTenantWithBody(ctx, tenant, params, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseUpdateTenantResponse(rsp)
+}
+
+// UpdateTenantWithResponse Rename a tenant or change its credential holder
+//
+// Account clients only (tenants:write).
+//
+// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
+//
+// Corresponds with PATCH /api/v1/tenants/{tenant} (the `UpdateTenant` operationId).
+func (c *ClientWithResponses) UpdateTenantWithResponse(ctx context.Context, tenant string, params *UpdateTenantParams, body UpdateTenantJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateTenantResponse, error) {
+	rsp, err := c.UpdateTenant(ctx, tenant, params, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseUpdateTenantResponse(rsp)
+}
+
+// ListDevicesWithResponse List devices
+//
+// Every device that has not been removed, oldest first; with member, that member's only (404 when the member is not in the tenant).
+//
+// Returns a wrapper object for the known response body format(s).
+//
+// Corresponds with GET /api/v1/tenants/{tenant}/devices (the `ListDevices` operationId).
+func (c *ClientWithResponses) ListDevicesWithResponse(ctx context.Context, tenant string, params *ListDevicesParams, reqEditors ...RequestEditorFn) (*ListDevicesResponse, error) {
+	rsp, err := c.ListDevices(ctx, tenant, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseListDevicesResponse(rsp)
+}
+
+// CreateDeviceWithBodyWithResponse Register a device
+//
+// Creates a device in status pending with a fresh enrollment token and SCEP challenge, both valid for 7 days, and returns its enrollment profile. settings are the device's own items (PUT .../settings); its effective policy is installed once the enrolled device reports its level and OS through DeviceInformation.
+//
+// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
+//
+// Corresponds with POST /api/v1/tenants/{tenant}/devices (the `CreateDevice` operationId).
+func (c *ClientWithResponses) CreateDeviceWithBodyWithResponse(ctx context.Context, tenant string, params *CreateDeviceParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateDeviceResponse, error) {
+	rsp, err := c.CreateDeviceWithBody(ctx, tenant, params, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateDeviceResponse(rsp)
+}
+
+// CreateDeviceWithResponse Register a device
+//
+// Creates a device in status pending with a fresh enrollment token and SCEP challenge, both valid for 7 days, and returns its enrollment profile. settings are the device's own items (PUT .../settings); its effective policy is installed once the enrolled device reports its level and OS through DeviceInformation.
+//
+// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
+//
+// Corresponds with POST /api/v1/tenants/{tenant}/devices (the `CreateDevice` operationId).
+func (c *ClientWithResponses) CreateDeviceWithResponse(ctx context.Context, tenant string, params *CreateDeviceParams, body CreateDeviceJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateDeviceResponse, error) {
+	rsp, err := c.CreateDevice(ctx, tenant, params, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateDeviceResponse(rsp)
+}
+
+// DeleteDeviceWithResponse Remove a device
+//
+// Marks the device removed. Later webhooks for its enrollment are ignored and API calls on it return 404. The MDM server keeps the enrollment until the device is erased or its enrollment profile is removed.
+//
+// Returns a wrapper object for the known response body format(s).
+//
+// Corresponds with DELETE /api/v1/tenants/{tenant}/devices/{id} (the `DeleteDevice` operationId).
+func (c *ClientWithResponses) DeleteDeviceWithResponse(ctx context.Context, tenant string, id openapi_types.UUID, params *DeleteDeviceParams, reqEditors ...RequestEditorFn) (*DeleteDeviceResponse, error) {
+	rsp, err := c.DeleteDevice(ctx, tenant, id, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseDeleteDeviceResponse(rsp)
+}
+
+// GetDeviceWithResponse Get a device
+//
+// Returns a wrapper object for the known response body format(s).
+//
+// Corresponds with GET /api/v1/tenants/{tenant}/devices/{id} (the `GetDevice` operationId).
+func (c *ClientWithResponses) GetDeviceWithResponse(ctx context.Context, tenant string, id openapi_types.UUID, params *GetDeviceParams, reqEditors ...RequestEditorFn) (*GetDeviceResponse, error) {
+	rsp, err := c.GetDevice(ctx, tenant, id, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetDeviceResponse(rsp)
+}
+
+// ListCommandsWithResponse Command history
+//
+// Every command sent to the device, newest first.
+//
+// Returns a wrapper object for the known response body format(s).
+//
+// Corresponds with GET /api/v1/tenants/{tenant}/devices/{id}/commands (the `ListCommands` operationId).
+func (c *ClientWithResponses) ListCommandsWithResponse(ctx context.Context, tenant string, id openapi_types.UUID, params *ListCommandsParams, reqEditors ...RequestEditorFn) (*ListCommandsResponse, error) {
+	rsp, err := c.ListCommands(ctx, tenant, id, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseListCommandsResponse(rsp)
+}
+
+// CreateCommandWithBodyWithResponse Send a command
+//
+// Accepts a command for an enrolled device. It is handed to the MDM server after the request commits; its status says where it is (GET .../commands/{command}). Returns 409 for any other device.
+//
+// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
+//
+// Corresponds with POST /api/v1/tenants/{tenant}/devices/{id}/commands (the `CreateCommand` operationId).
+func (c *ClientWithResponses) CreateCommandWithBodyWithResponse(ctx context.Context, tenant string, id openapi_types.UUID, params *CreateCommandParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateCommandResponse, error) {
+	rsp, err := c.CreateCommandWithBody(ctx, tenant, id, params, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateCommandResponse(rsp)
+}
+
+// CreateCommandWithResponse Send a command
+//
+// Accepts a command for an enrolled device. It is handed to the MDM server after the request commits; its status says where it is (GET .../commands/{command}). Returns 409 for any other device.
+//
+// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
+//
+// Corresponds with POST /api/v1/tenants/{tenant}/devices/{id}/commands (the `CreateCommand` operationId).
+func (c *ClientWithResponses) CreateCommandWithResponse(ctx context.Context, tenant string, id openapi_types.UUID, params *CreateCommandParams, body CreateCommandJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateCommandResponse, error) {
+	rsp, err := c.CreateCommand(ctx, tenant, id, params, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateCommandResponse(rsp)
+}
+
+// GetCommandWithResponse Get a command
+//
+// One command sent to the device, by the command_uuid it was accepted with: the same record the command history lists. 404 when the device has no such command.
+//
+// Returns a wrapper object for the known response body format(s).
+//
+// Corresponds with GET /api/v1/tenants/{tenant}/devices/{id}/commands/{command} (the `GetCommand` operationId).
+func (c *ClientWithResponses) GetCommandWithResponse(ctx context.Context, tenant string, id openapi_types.UUID, command openapi_types.UUID, params *GetCommandParams, reqEditors ...RequestEditorFn) (*GetCommandResponse, error) {
+	rsp, err := c.GetCommand(ctx, tenant, id, command, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetCommandResponse(rsp)
+}
+
+// GetDeviceDDMWithResponse Declarative management state
+//
+// The device's declarative management stage and the state it reported for each current declaration (from management.declarations).
+//
+// Returns a wrapper object for the known response body format(s).
+//
+// Corresponds with GET /api/v1/tenants/{tenant}/devices/{id}/ddm (the `GetDeviceDDM` operationId).
+func (c *ClientWithResponses) GetDeviceDDMWithResponse(ctx context.Context, tenant string, id openapi_types.UUID, params *GetDeviceDDMParams, reqEditors ...RequestEditorFn) (*GetDeviceDDMResponse, error) {
+	rsp, err := c.GetDeviceDDM(ctx, tenant, id, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetDeviceDDMResponse(rsp)
+}
+
+// GetEffectivePolicyWithResponse Get the device's effective policy with provenance
+//
+// Each effective item with its source (a profile assigned to the tenant, a group, the member, or the device, or the device's own settings), the sources it overrode, and the sources in its own layer that set the same item and lost (conflicts: the lower profile id wins). Profiles assigned to the tenant, the member's groups (the higher priority wins between groups), the member, and the device merge in that order for the device's level, then the device's own settings. Until the level is known only the device's own settings apply.
+//
+// Returns a wrapper object for the known response body format(s).
+//
+// Corresponds with GET /api/v1/tenants/{tenant}/devices/{id}/effective-policy (the `GetEffectivePolicy` operationId).
+func (c *ClientWithResponses) GetEffectivePolicyWithResponse(ctx context.Context, tenant string, id openapi_types.UUID, params *GetEffectivePolicyParams, reqEditors ...RequestEditorFn) (*GetEffectivePolicyResponse, error) {
+	rsp, err := c.GetEffectivePolicy(ctx, tenant, id, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetEffectivePolicyResponse(rsp)
+}
+
+// CreateEnrollmentLinkWithResponse Create a one-time enrollment link
+//
+// Issues a new enrollment token and SCEP challenge, which invalidates earlier profiles and links, and returns a public link that serves the profile built from them, plus the same profile for a direct download. The link works for 24 hours, until the device enrolls, or until a new link or profile is issued. Open it on the iPhone (scan it as a QR code) to download the profile. Returns 409 once the device is bound to an enrollment.
+//
+// Returns a wrapper object for the known response body format(s).
+//
+// Corresponds with POST /api/v1/tenants/{tenant}/devices/{id}/enrollment-link (the `CreateEnrollmentLink` operationId).
+func (c *ClientWithResponses) CreateEnrollmentLinkWithResponse(ctx context.Context, tenant string, id openapi_types.UUID, params *CreateEnrollmentLinkParams, reqEditors ...RequestEditorFn) (*CreateEnrollmentLinkResponse, error) {
+	rsp, err := c.CreateEnrollmentLink(ctx, tenant, id, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateEnrollmentLinkResponse(rsp)
+}
+
+// ReissueEnrollmentProfileWithResponse Issue a fresh enrollment profile
+//
+// Issues a new enrollment token and SCEP challenge, which invalidates the previous ones, and returns the new profile. Returns 409 once the device is bound to an enrollment.
+//
+// Returns a wrapper object for the known response body format(s).
+//
+// Corresponds with POST /api/v1/tenants/{tenant}/devices/{id}/enrollment-profile (the `ReissueEnrollmentProfile` operationId).
+func (c *ClientWithResponses) ReissueEnrollmentProfileWithResponse(ctx context.Context, tenant string, id openapi_types.UUID, params *ReissueEnrollmentProfileParams, reqEditors ...RequestEditorFn) (*ReissueEnrollmentProfileResponse, error) {
+	rsp, err := c.ReissueEnrollmentProfile(ctx, tenant, id, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseReissueEnrollmentProfileResponse(rsp)
+}
+
+// ClearDeviceMemberWithResponse Give a device back to the tenant
+//
+// Returns a wrapper object for the known response body format(s).
+//
+// Corresponds with DELETE /api/v1/tenants/{tenant}/devices/{id}/member (the `ClearDeviceMember` operationId).
+func (c *ClientWithResponses) ClearDeviceMemberWithResponse(ctx context.Context, tenant string, id openapi_types.UUID, params *ClearDeviceMemberParams, reqEditors ...RequestEditorFn) (*ClearDeviceMemberResponse, error) {
+	rsp, err := c.ClearDeviceMember(ctx, tenant, id, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseClearDeviceMemberResponse(rsp)
+}
+
+// SetDeviceMemberWithBodyWithResponse Give a device to a member
+//
+// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
+//
+// Corresponds with PUT /api/v1/tenants/{tenant}/devices/{id}/member (the `SetDeviceMember` operationId).
+func (c *ClientWithResponses) SetDeviceMemberWithBodyWithResponse(ctx context.Context, tenant string, id openapi_types.UUID, params *SetDeviceMemberParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*SetDeviceMemberResponse, error) {
+	rsp, err := c.SetDeviceMemberWithBody(ctx, tenant, id, params, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseSetDeviceMemberResponse(rsp)
+}
+
+// SetDeviceMemberWithResponse Give a device to a member
+//
+// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
+//
+// Corresponds with PUT /api/v1/tenants/{tenant}/devices/{id}/member (the `SetDeviceMember` operationId).
+func (c *ClientWithResponses) SetDeviceMemberWithResponse(ctx context.Context, tenant string, id openapi_types.UUID, params *SetDeviceMemberParams, body SetDeviceMemberJSONRequestBody, reqEditors ...RequestEditorFn) (*SetDeviceMemberResponse, error) {
+	rsp, err := c.SetDeviceMember(ctx, tenant, id, params, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseSetDeviceMemberResponse(rsp)
+}
+
+// DeleteDeviceSettingsWithResponse Remove the device's own settings
+//
+// Removes the device's own items and rebuilds its effective policy. When nothing is left, the policy's revision increments, its status turns removing, and its declarations leave an enrolled device's set; the device removes what they installed, and the policy is deleted once the device reports them gone. A policy never deployed is deleted at once.
+//
+// Returns a wrapper object for the known response body format(s).
+//
+// Corresponds with DELETE /api/v1/tenants/{tenant}/devices/{id}/settings (the `DeleteDeviceSettings` operationId).
+func (c *ClientWithResponses) DeleteDeviceSettingsWithResponse(ctx context.Context, tenant string, id openapi_types.UUID, params *DeleteDeviceSettingsParams, reqEditors ...RequestEditorFn) (*DeleteDeviceSettingsResponse, error) {
+	rsp, err := c.DeleteDeviceSettings(ctx, tenant, id, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseDeleteDeviceSettingsResponse(rsp)
+}
+
+// GetDeviceSettingsWithResponse Get the device's own settings
+//
+// The device's own items, the most specific layer of its effective policy. Secret values show as {"secret": "set"}.
+//
+// Returns a wrapper object for the known response body format(s).
+//
+// Corresponds with GET /api/v1/tenants/{tenant}/devices/{id}/settings (the `GetDeviceSettings` operationId).
+func (c *ClientWithResponses) GetDeviceSettingsWithResponse(ctx context.Context, tenant string, id openapi_types.UUID, params *GetDeviceSettingsParams, reqEditors ...RequestEditorFn) (*GetDeviceSettingsResponse, error) {
+	rsp, err := c.GetDeviceSettings(ctx, tenant, id, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetDeviceSettingsResponse(rsp)
+}
+
+// PutDeviceSettingsWithBodyWithResponse Set the device's own settings
+//
+// Replaces the device's own items and rebuilds its effective policy (its assigned profiles, then these items). When the result changes its revision increments and its status turns pending. An enrolled device whose level and OS are known gets it as declarations built for its level now, announced with a DeclarativeManagement command. Any other device gets them once DeviceInformation reports its level and OS. Devices below iOS and iPadOS 17 get none. The status turns applied when the device reports every declaration valid and active. An empty list removes the settings.
+//
+// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
+//
+// Corresponds with PUT /api/v1/tenants/{tenant}/devices/{id}/settings (the `PutDeviceSettings` operationId).
+func (c *ClientWithResponses) PutDeviceSettingsWithBodyWithResponse(ctx context.Context, tenant string, id openapi_types.UUID, params *PutDeviceSettingsParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*PutDeviceSettingsResponse, error) {
+	rsp, err := c.PutDeviceSettingsWithBody(ctx, tenant, id, params, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParsePutDeviceSettingsResponse(rsp)
+}
+
+// PutDeviceSettingsWithResponse Set the device's own settings
+//
+// Replaces the device's own items and rebuilds its effective policy (its assigned profiles, then these items). When the result changes its revision increments and its status turns pending. An enrolled device whose level and OS are known gets it as declarations built for its level now, announced with a DeclarativeManagement command. Any other device gets them once DeviceInformation reports its level and OS. Devices below iOS and iPadOS 17 get none. The status turns applied when the device reports every declaration valid and active. An empty list removes the settings.
+//
+// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
+//
+// Corresponds with PUT /api/v1/tenants/{tenant}/devices/{id}/settings (the `PutDeviceSettings` operationId).
+func (c *ClientWithResponses) PutDeviceSettingsWithResponse(ctx context.Context, tenant string, id openapi_types.UUID, params *PutDeviceSettingsParams, body PutDeviceSettingsJSONRequestBody, reqEditors ...RequestEditorFn) (*PutDeviceSettingsResponse, error) {
+	rsp, err := c.PutDeviceSettings(ctx, tenant, id, params, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParsePutDeviceSettingsResponse(rsp)
+}
+
+// ListGroupsWithResponse List groups
+//
+// Every group of the tenant, highest priority first.
+//
+// Returns a wrapper object for the known response body format(s).
+//
+// Corresponds with GET /api/v1/tenants/{tenant}/groups (the `ListGroups` operationId).
+func (c *ClientWithResponses) ListGroupsWithResponse(ctx context.Context, tenant string, params *ListGroupsParams, reqEditors ...RequestEditorFn) (*ListGroupsResponse, error) {
+	rsp, err := c.ListGroups(ctx, tenant, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseListGroupsResponse(rsp)
+}
+
+// CreateGroupWithBodyWithResponse Create a group
+//
+// A group is a flat set of members. When profiles assigned to two groups set the same item, the higher priority wins. Priorities are unique in the tenant; 409 when it is taken.
+//
+// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
+//
+// Corresponds with POST /api/v1/tenants/{tenant}/groups (the `CreateGroup` operationId).
+func (c *ClientWithResponses) CreateGroupWithBodyWithResponse(ctx context.Context, tenant string, params *CreateGroupParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateGroupResponse, error) {
+	rsp, err := c.CreateGroupWithBody(ctx, tenant, params, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateGroupResponse(rsp)
+}
+
+// CreateGroupWithResponse Create a group
+//
+// A group is a flat set of members. When profiles assigned to two groups set the same item, the higher priority wins. Priorities are unique in the tenant; 409 when it is taken.
+//
+// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
+//
+// Corresponds with POST /api/v1/tenants/{tenant}/groups (the `CreateGroup` operationId).
+func (c *ClientWithResponses) CreateGroupWithResponse(ctx context.Context, tenant string, params *CreateGroupParams, body CreateGroupJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateGroupResponse, error) {
+	rsp, err := c.CreateGroup(ctx, tenant, params, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateGroupResponse(rsp)
+}
+
+// DeleteGroupWithResponse Delete a group
+//
+// Its members stay; only the memberships go.
+//
+// Returns a wrapper object for the known response body format(s).
+//
+// Corresponds with DELETE /api/v1/tenants/{tenant}/groups/{group} (the `DeleteGroup` operationId).
+func (c *ClientWithResponses) DeleteGroupWithResponse(ctx context.Context, tenant string, group openapi_types.UUID, params *DeleteGroupParams, reqEditors ...RequestEditorFn) (*DeleteGroupResponse, error) {
+	rsp, err := c.DeleteGroup(ctx, tenant, group, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseDeleteGroupResponse(rsp)
+}
+
+// GetGroupWithResponse Get a group
+//
+// Returns a wrapper object for the known response body format(s).
+//
+// Corresponds with GET /api/v1/tenants/{tenant}/groups/{group} (the `GetGroup` operationId).
+func (c *ClientWithResponses) GetGroupWithResponse(ctx context.Context, tenant string, group openapi_types.UUID, params *GetGroupParams, reqEditors ...RequestEditorFn) (*GetGroupResponse, error) {
+	rsp, err := c.GetGroup(ctx, tenant, group, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetGroupResponse(rsp)
+}
+
+// UpdateGroupWithBodyWithResponse Update a group
+//
+// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
+//
+// Corresponds with PATCH /api/v1/tenants/{tenant}/groups/{group} (the `UpdateGroup` operationId).
+func (c *ClientWithResponses) UpdateGroupWithBodyWithResponse(ctx context.Context, tenant string, group openapi_types.UUID, params *UpdateGroupParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateGroupResponse, error) {
+	rsp, err := c.UpdateGroupWithBody(ctx, tenant, group, params, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseUpdateGroupResponse(rsp)
+}
+
+// UpdateGroupWithResponse Update a group
+//
+// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
+//
+// Corresponds with PATCH /api/v1/tenants/{tenant}/groups/{group} (the `UpdateGroup` operationId).
+func (c *ClientWithResponses) UpdateGroupWithResponse(ctx context.Context, tenant string, group openapi_types.UUID, params *UpdateGroupParams, body UpdateGroupJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateGroupResponse, error) {
+	rsp, err := c.UpdateGroup(ctx, tenant, group, params, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseUpdateGroupResponse(rsp)
+}
+
+// ListGroupMembersWithResponse List a group's members
+//
+// Returns a wrapper object for the known response body format(s).
+//
+// Corresponds with GET /api/v1/tenants/{tenant}/groups/{group}/members (the `ListGroupMembers` operationId).
+func (c *ClientWithResponses) ListGroupMembersWithResponse(ctx context.Context, tenant string, group openapi_types.UUID, params *ListGroupMembersParams, reqEditors ...RequestEditorFn) (*ListGroupMembersResponse, error) {
+	rsp, err := c.ListGroupMembers(ctx, tenant, group, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseListGroupMembersResponse(rsp)
+}
+
+// RemoveGroupMemberWithResponse Remove a member from a group
+//
+// Returns a wrapper object for the known response body format(s).
+//
+// Corresponds with DELETE /api/v1/tenants/{tenant}/groups/{group}/members/{member} (the `RemoveGroupMember` operationId).
+func (c *ClientWithResponses) RemoveGroupMemberWithResponse(ctx context.Context, tenant string, group openapi_types.UUID, member string, params *RemoveGroupMemberParams, reqEditors ...RequestEditorFn) (*RemoveGroupMemberResponse, error) {
+	rsp, err := c.RemoveGroupMember(ctx, tenant, group, member, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseRemoveGroupMemberResponse(rsp)
+}
+
+// AddGroupMemberWithResponse Add a member to a group
+//
+// Adding a member already in the group changes nothing.
+//
+// Returns a wrapper object for the known response body format(s).
+//
+// Corresponds with PUT /api/v1/tenants/{tenant}/groups/{group}/members/{member} (the `AddGroupMember` operationId).
+func (c *ClientWithResponses) AddGroupMemberWithResponse(ctx context.Context, tenant string, group openapi_types.UUID, member string, params *AddGroupMemberParams, reqEditors ...RequestEditorFn) (*AddGroupMemberResponse, error) {
+	rsp, err := c.AddGroupMember(ctx, tenant, group, member, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseAddGroupMemberResponse(rsp)
+}
+
+// ListMembersWithResponse List members
+//
+// Every member of the tenant, oldest first.
+//
+// Returns a wrapper object for the known response body format(s).
+//
+// Corresponds with GET /api/v1/tenants/{tenant}/members (the `ListMembers` operationId).
+func (c *ClientWithResponses) ListMembersWithResponse(ctx context.Context, tenant string, params *ListMembersParams, reqEditors ...RequestEditorFn) (*ListMembersResponse, error) {
+	rsp, err := c.ListMembers(ctx, tenant, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseListMembersResponse(rsp)
+}
+
+// CreateMemberWithBodyWithResponse Create a member
+//
+// A member is a person as an owner of devices. external_id is the account's own id for the person, unique in the tenant; 409 when it is taken.
+//
+// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
+//
+// Corresponds with POST /api/v1/tenants/{tenant}/members (the `CreateMember` operationId).
+func (c *ClientWithResponses) CreateMemberWithBodyWithResponse(ctx context.Context, tenant string, params *CreateMemberParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateMemberResponse, error) {
+	rsp, err := c.CreateMemberWithBody(ctx, tenant, params, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateMemberResponse(rsp)
+}
+
+// CreateMemberWithResponse Create a member
+//
+// A member is a person as an owner of devices. external_id is the account's own id for the person, unique in the tenant; 409 when it is taken.
+//
+// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
+//
+// Corresponds with POST /api/v1/tenants/{tenant}/members (the `CreateMember` operationId).
+func (c *ClientWithResponses) CreateMemberWithResponse(ctx context.Context, tenant string, params *CreateMemberParams, body CreateMemberJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateMemberResponse, error) {
+	rsp, err := c.CreateMember(ctx, tenant, params, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateMemberResponse(rsp)
+}
+
+// DeleteMemberWithResponse Delete a member
+//
+// The member leaves its groups and its devices become the tenant's.
+//
+// Returns a wrapper object for the known response body format(s).
+//
+// Corresponds with DELETE /api/v1/tenants/{tenant}/members/{member} (the `DeleteMember` operationId).
+func (c *ClientWithResponses) DeleteMemberWithResponse(ctx context.Context, tenant string, member string, params *DeleteMemberParams, reqEditors ...RequestEditorFn) (*DeleteMemberResponse, error) {
+	rsp, err := c.DeleteMember(ctx, tenant, member, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseDeleteMemberResponse(rsp)
+}
+
+// GetMemberWithResponse Get a member
+//
+// Returns a wrapper object for the known response body format(s).
+//
+// Corresponds with GET /api/v1/tenants/{tenant}/members/{member} (the `GetMember` operationId).
+func (c *ClientWithResponses) GetMemberWithResponse(ctx context.Context, tenant string, member string, params *GetMemberParams, reqEditors ...RequestEditorFn) (*GetMemberResponse, error) {
+	rsp, err := c.GetMember(ctx, tenant, member, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetMemberResponse(rsp)
+}
+
+// UpdateMemberWithBodyWithResponse Update a member
+//
+// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
+//
+// Corresponds with PATCH /api/v1/tenants/{tenant}/members/{member} (the `UpdateMember` operationId).
+func (c *ClientWithResponses) UpdateMemberWithBodyWithResponse(ctx context.Context, tenant string, member string, params *UpdateMemberParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateMemberResponse, error) {
+	rsp, err := c.UpdateMemberWithBody(ctx, tenant, member, params, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseUpdateMemberResponse(rsp)
+}
+
+// UpdateMemberWithResponse Update a member
+//
+// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
+//
+// Corresponds with PATCH /api/v1/tenants/{tenant}/members/{member} (the `UpdateMember` operationId).
+func (c *ClientWithResponses) UpdateMemberWithResponse(ctx context.Context, tenant string, member string, params *UpdateMemberParams, body UpdateMemberJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateMemberResponse, error) {
+	rsp, err := c.UpdateMember(ctx, tenant, member, params, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseUpdateMemberResponse(rsp)
+}
+
+// ListProfilesWithResponse List profiles
+//
+// Every profile of the tenant, oldest first. Secret values show as {"secret": "set"}.
+//
+// Returns a wrapper object for the known response body format(s).
+//
+// Corresponds with GET /api/v1/tenants/{tenant}/profiles (the `ListProfiles` operationId).
+func (c *ClientWithResponses) ListProfilesWithResponse(ctx context.Context, tenant string, params *ListProfilesParams, reqEditors ...RequestEditorFn) (*ListProfilesResponse, error) {
+	rsp, err := c.ListProfiles(ctx, tenant, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseListProfilesResponse(rsp)
+}
+
+// CreateProfileWithBodyWithResponse Create a profile
+//
+// A profile is a named item list of the tenant. It reaches devices through assignments.
+//
+// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
+//
+// Corresponds with POST /api/v1/tenants/{tenant}/profiles (the `CreateProfile` operationId).
+func (c *ClientWithResponses) CreateProfileWithBodyWithResponse(ctx context.Context, tenant string, params *CreateProfileParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateProfileResponse, error) {
+	rsp, err := c.CreateProfileWithBody(ctx, tenant, params, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateProfileResponse(rsp)
+}
+
+// CreateProfileWithResponse Create a profile
+//
+// A profile is a named item list of the tenant. It reaches devices through assignments.
+//
+// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
+//
+// Corresponds with POST /api/v1/tenants/{tenant}/profiles (the `CreateProfile` operationId).
+func (c *ClientWithResponses) CreateProfileWithResponse(ctx context.Context, tenant string, params *CreateProfileParams, body CreateProfileJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateProfileResponse, error) {
+	rsp, err := c.CreateProfile(ctx, tenant, params, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateProfileResponse(rsp)
+}
+
+// DeleteProfileWithResponse Delete a profile
+//
+// Deletes the profile and its assignments; the devices it reached rebuild their effective policies.
+//
+// Returns a wrapper object for the known response body format(s).
+//
+// Corresponds with DELETE /api/v1/tenants/{tenant}/profiles/{profile} (the `DeleteProfile` operationId).
+func (c *ClientWithResponses) DeleteProfileWithResponse(ctx context.Context, tenant string, profile openapi_types.UUID, params *DeleteProfileParams, reqEditors ...RequestEditorFn) (*DeleteProfileResponse, error) {
+	rsp, err := c.DeleteProfile(ctx, tenant, profile, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseDeleteProfileResponse(rsp)
+}
+
+// GetProfileWithResponse Get a profile
+//
+// Returns a wrapper object for the known response body format(s).
+//
+// Corresponds with GET /api/v1/tenants/{tenant}/profiles/{profile} (the `GetProfile` operationId).
+func (c *ClientWithResponses) GetProfileWithResponse(ctx context.Context, tenant string, profile openapi_types.UUID, params *GetProfileParams, reqEditors ...RequestEditorFn) (*GetProfileResponse, error) {
+	rsp, err := c.GetProfile(ctx, tenant, profile, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseGetProfileResponse(rsp)
+}
+
+// UpdateProfileWithBodyWithResponse Replace a profile
+//
+// Replaces the name and items. Every device the profile reaches rebuilds its effective policy. A secret sent as {"secret": "set"} keeps the stored value.
+//
+// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
+//
+// Corresponds with PUT /api/v1/tenants/{tenant}/profiles/{profile} (the `UpdateProfile` operationId).
+func (c *ClientWithResponses) UpdateProfileWithBodyWithResponse(ctx context.Context, tenant string, profile openapi_types.UUID, params *UpdateProfileParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*UpdateProfileResponse, error) {
+	rsp, err := c.UpdateProfileWithBody(ctx, tenant, profile, params, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseUpdateProfileResponse(rsp)
+}
+
+// UpdateProfileWithResponse Replace a profile
+//
+// Replaces the name and items. Every device the profile reaches rebuilds its effective policy. A secret sent as {"secret": "set"} keeps the stored value.
+//
+// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
+//
+// Corresponds with PUT /api/v1/tenants/{tenant}/profiles/{profile} (the `UpdateProfile` operationId).
+func (c *ClientWithResponses) UpdateProfileWithResponse(ctx context.Context, tenant string, profile openapi_types.UUID, params *UpdateProfileParams, body UpdateProfileJSONRequestBody, reqEditors ...RequestEditorFn) (*UpdateProfileResponse, error) {
+	rsp, err := c.UpdateProfile(ctx, tenant, profile, params, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseUpdateProfileResponse(rsp)
+}
+
+// ListAssignmentsWithResponse List a profile's assignments
+//
+// Returns a wrapper object for the known response body format(s).
+//
+// Corresponds with GET /api/v1/tenants/{tenant}/profiles/{profile}/assignments (the `ListAssignments` operationId).
+func (c *ClientWithResponses) ListAssignmentsWithResponse(ctx context.Context, tenant string, profile openapi_types.UUID, params *ListAssignmentsParams, reqEditors ...RequestEditorFn) (*ListAssignmentsResponse, error) {
+	rsp, err := c.ListAssignments(ctx, tenant, profile, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseListAssignmentsResponse(rsp)
+}
+
+// CreateAssignmentWithBodyWithResponse Assign a profile
+//
+// Assigns the profile to the tenant, a group, a member, or a device, for devices of the listed levels. One assignment per profile and target; 409 when it exists. The devices it reaches rebuild their effective policies.
+//
+// Takes any type of body and a specified content type, and returns a wrapper object for the known response body format(s).
+//
+// Corresponds with POST /api/v1/tenants/{tenant}/profiles/{profile}/assignments (the `CreateAssignment` operationId).
+func (c *ClientWithResponses) CreateAssignmentWithBodyWithResponse(ctx context.Context, tenant string, profile openapi_types.UUID, params *CreateAssignmentParams, contentType string, body io.Reader, reqEditors ...RequestEditorFn) (*CreateAssignmentResponse, error) {
+	rsp, err := c.CreateAssignmentWithBody(ctx, tenant, profile, params, contentType, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateAssignmentResponse(rsp)
+}
+
+// CreateAssignmentWithResponse Assign a profile
+//
+// Assigns the profile to the tenant, a group, a member, or a device, for devices of the listed levels. One assignment per profile and target; 409 when it exists. The devices it reaches rebuild their effective policies.
+//
+// Takes a body of the `application/json` content type, and returns a wrapper object for the known response body format(s).
+//
+// Corresponds with POST /api/v1/tenants/{tenant}/profiles/{profile}/assignments (the `CreateAssignment` operationId).
+func (c *ClientWithResponses) CreateAssignmentWithResponse(ctx context.Context, tenant string, profile openapi_types.UUID, params *CreateAssignmentParams, body CreateAssignmentJSONRequestBody, reqEditors ...RequestEditorFn) (*CreateAssignmentResponse, error) {
+	rsp, err := c.CreateAssignment(ctx, tenant, profile, params, body, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseCreateAssignmentResponse(rsp)
+}
+
+// DeleteAssignmentWithResponse Remove an assignment
+//
+// Returns a wrapper object for the known response body format(s).
+//
+// Corresponds with DELETE /api/v1/tenants/{tenant}/profiles/{profile}/assignments/{assignment} (the `DeleteAssignment` operationId).
+func (c *ClientWithResponses) DeleteAssignmentWithResponse(ctx context.Context, tenant string, profile openapi_types.UUID, assignment openapi_types.UUID, params *DeleteAssignmentParams, reqEditors ...RequestEditorFn) (*DeleteAssignmentResponse, error) {
+	rsp, err := c.DeleteAssignment(ctx, tenant, profile, assignment, params, reqEditors...)
+	if err != nil {
+		return nil, err
+	}
+	return ParseDeleteAssignmentResponse(rsp)
 }
 
 // ParseGetCatalogResponse parses an HTTP response from a GetCatalogWithResponse call
@@ -1047,6 +10969,3338 @@ func ParseGetMeResponse(rsp *http.Response) (*GetMeResponse, error) {
 	switch {
 	case rsp.StatusCode == 429:
 		var headers GetMeResponse429Headers
+		if values := rsp.Header.Values("Retry-After"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "Retry-After", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.RetryAfter = &value
+		}
+		response.Headers429 = &headers
+	}
+
+	return response, nil
+}
+
+// ParseListTenantsResponse parses an HTTP response from a ListTenantsWithResponse call
+func ParseListTenantsResponse(rsp *http.Response) (*ListTenantsResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ListTenantsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest []Tenant
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 429:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON429 = &dest
+
+	}
+
+	switch {
+	case rsp.StatusCode == 429:
+		var headers ListTenantsResponse429Headers
+		if values := rsp.Header.Values("Retry-After"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "Retry-After", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.RetryAfter = &value
+		}
+		response.Headers429 = &headers
+	}
+
+	return response, nil
+}
+
+// ParseCreateTenantResponse parses an HTTP response from a CreateTenantWithResponse call
+func ParseCreateTenantResponse(rsp *http.Response) (*CreateTenantResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &CreateTenantResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
+		var dest Tenant
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON201 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON409 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON422 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 429:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON429 = &dest
+
+	}
+
+	switch {
+	case rsp.StatusCode == 429:
+		var headers CreateTenantResponse429Headers
+		if values := rsp.Header.Values("Retry-After"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "Retry-After", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.RetryAfter = &value
+		}
+		response.Headers429 = &headers
+	}
+
+	return response, nil
+}
+
+// ParseDeleteTenantResponse parses an HTTP response from a DeleteTenantWithResponse call
+func ParseDeleteTenantResponse(rsp *http.Response) (*DeleteTenantResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &DeleteTenantResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 202:
+		var dest Tenant
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON202 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 429:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON429 = &dest
+
+	}
+
+	switch {
+	case rsp.StatusCode == 429:
+		var headers DeleteTenantResponse429Headers
+		if values := rsp.Header.Values("Retry-After"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "Retry-After", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.RetryAfter = &value
+		}
+		response.Headers429 = &headers
+	}
+
+	return response, nil
+}
+
+// ParseGetTenantResponse parses an HTTP response from a GetTenantWithResponse call
+func ParseGetTenantResponse(rsp *http.Response) (*GetTenantResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetTenantResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest Tenant
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 429:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON429 = &dest
+
+	}
+
+	switch {
+	case rsp.StatusCode == 429:
+		var headers GetTenantResponse429Headers
+		if values := rsp.Header.Values("Retry-After"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "Retry-After", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.RetryAfter = &value
+		}
+		response.Headers429 = &headers
+	}
+
+	return response, nil
+}
+
+// ParseUpdateTenantResponse parses an HTTP response from a UpdateTenantWithResponse call
+func ParseUpdateTenantResponse(rsp *http.Response) (*UpdateTenantResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &UpdateTenantResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest Tenant
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON409 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON422 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 429:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON429 = &dest
+
+	}
+
+	switch {
+	case rsp.StatusCode == 429:
+		var headers UpdateTenantResponse429Headers
+		if values := rsp.Header.Values("Retry-After"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "Retry-After", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.RetryAfter = &value
+		}
+		response.Headers429 = &headers
+	}
+
+	return response, nil
+}
+
+// ParseListDevicesResponse parses an HTTP response from a ListDevicesWithResponse call
+func ParseListDevicesResponse(rsp *http.Response) (*ListDevicesResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ListDevicesResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest []Device
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 429:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON429 = &dest
+
+	}
+
+	switch {
+	case rsp.StatusCode == 429:
+		var headers ListDevicesResponse429Headers
+		if values := rsp.Header.Values("Retry-After"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "Retry-After", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.RetryAfter = &value
+		}
+		response.Headers429 = &headers
+	}
+
+	return response, nil
+}
+
+// ParseCreateDeviceResponse parses an HTTP response from a CreateDeviceWithResponse call
+func ParseCreateDeviceResponse(rsp *http.Response) (*CreateDeviceResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &CreateDeviceResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
+		var dest EnrollmentResponse
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON201 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON409 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON422 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 429:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON429 = &dest
+
+	}
+
+	switch {
+	case rsp.StatusCode == 429:
+		var headers CreateDeviceResponse429Headers
+		if values := rsp.Header.Values("Retry-After"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "Retry-After", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.RetryAfter = &value
+		}
+		response.Headers429 = &headers
+	}
+
+	return response, nil
+}
+
+// ParseDeleteDeviceResponse parses an HTTP response from a DeleteDeviceWithResponse call
+func ParseDeleteDeviceResponse(rsp *http.Response) (*DeleteDeviceResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &DeleteDeviceResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case rsp.StatusCode == 204:
+		break // No content-type
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON409 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 429:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON429 = &dest
+
+	}
+
+	switch {
+	case rsp.StatusCode == 429:
+		var headers DeleteDeviceResponse429Headers
+		if values := rsp.Header.Values("Retry-After"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "Retry-After", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.RetryAfter = &value
+		}
+		response.Headers429 = &headers
+	}
+
+	return response, nil
+}
+
+// ParseGetDeviceResponse parses an HTTP response from a GetDeviceWithResponse call
+func ParseGetDeviceResponse(rsp *http.Response) (*GetDeviceResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetDeviceResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest Device
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 429:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON429 = &dest
+
+	}
+
+	switch {
+	case rsp.StatusCode == 429:
+		var headers GetDeviceResponse429Headers
+		if values := rsp.Header.Values("Retry-After"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "Retry-After", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.RetryAfter = &value
+		}
+		response.Headers429 = &headers
+	}
+
+	return response, nil
+}
+
+// ParseListCommandsResponse parses an HTTP response from a ListCommandsWithResponse call
+func ParseListCommandsResponse(rsp *http.Response) (*ListCommandsResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ListCommandsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest []Command
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 429:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON429 = &dest
+
+	}
+
+	switch {
+	case rsp.StatusCode == 429:
+		var headers ListCommandsResponse429Headers
+		if values := rsp.Header.Values("Retry-After"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "Retry-After", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.RetryAfter = &value
+		}
+		response.Headers429 = &headers
+	}
+
+	return response, nil
+}
+
+// ParseCreateCommandResponse parses an HTTP response from a CreateCommandWithResponse call
+func ParseCreateCommandResponse(rsp *http.Response) (*CreateCommandResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &CreateCommandResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 202:
+		var dest CommandAccepted
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON202 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON409 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON422 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 429:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON429 = &dest
+
+	}
+
+	switch {
+	case rsp.StatusCode == 429:
+		var headers CreateCommandResponse429Headers
+		if values := rsp.Header.Values("Retry-After"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "Retry-After", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.RetryAfter = &value
+		}
+		response.Headers429 = &headers
+	}
+
+	return response, nil
+}
+
+// ParseGetCommandResponse parses an HTTP response from a GetCommandWithResponse call
+func ParseGetCommandResponse(rsp *http.Response) (*GetCommandResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetCommandResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest Command
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 429:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON429 = &dest
+
+	}
+
+	switch {
+	case rsp.StatusCode == 429:
+		var headers GetCommandResponse429Headers
+		if values := rsp.Header.Values("Retry-After"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "Retry-After", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.RetryAfter = &value
+		}
+		response.Headers429 = &headers
+	}
+
+	return response, nil
+}
+
+// ParseGetDeviceDDMResponse parses an HTTP response from a GetDeviceDDMWithResponse call
+func ParseGetDeviceDDMResponse(rsp *http.Response) (*GetDeviceDDMResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetDeviceDDMResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest DeviceDDM
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 429:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON429 = &dest
+
+	}
+
+	switch {
+	case rsp.StatusCode == 429:
+		var headers GetDeviceDDMResponse429Headers
+		if values := rsp.Header.Values("Retry-After"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "Retry-After", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.RetryAfter = &value
+		}
+		response.Headers429 = &headers
+	}
+
+	return response, nil
+}
+
+// ParseGetEffectivePolicyResponse parses an HTTP response from a GetEffectivePolicyWithResponse call
+func ParseGetEffectivePolicyResponse(rsp *http.Response) (*GetEffectivePolicyResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetEffectivePolicyResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest EffectivePolicy
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 429:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON429 = &dest
+
+	}
+
+	switch {
+	case rsp.StatusCode == 429:
+		var headers GetEffectivePolicyResponse429Headers
+		if values := rsp.Header.Values("Retry-After"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "Retry-After", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.RetryAfter = &value
+		}
+		response.Headers429 = &headers
+	}
+
+	return response, nil
+}
+
+// ParseCreateEnrollmentLinkResponse parses an HTTP response from a CreateEnrollmentLinkWithResponse call
+func ParseCreateEnrollmentLinkResponse(rsp *http.Response) (*CreateEnrollmentLinkResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &CreateEnrollmentLinkResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
+		var dest EnrollmentLinkResponse
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON201 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON409 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON422 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 429:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON429 = &dest
+
+	}
+
+	switch {
+	case rsp.StatusCode == 429:
+		var headers CreateEnrollmentLinkResponse429Headers
+		if values := rsp.Header.Values("Retry-After"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "Retry-After", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.RetryAfter = &value
+		}
+		response.Headers429 = &headers
+	}
+
+	return response, nil
+}
+
+// ParseReissueEnrollmentProfileResponse parses an HTTP response from a ReissueEnrollmentProfileWithResponse call
+func ParseReissueEnrollmentProfileResponse(rsp *http.Response) (*ReissueEnrollmentProfileResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ReissueEnrollmentProfileResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest EnrollmentResponse
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON409 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON422 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 429:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON429 = &dest
+
+	}
+
+	switch {
+	case rsp.StatusCode == 429:
+		var headers ReissueEnrollmentProfileResponse429Headers
+		if values := rsp.Header.Values("Retry-After"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "Retry-After", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.RetryAfter = &value
+		}
+		response.Headers429 = &headers
+	}
+
+	return response, nil
+}
+
+// ParseClearDeviceMemberResponse parses an HTTP response from a ClearDeviceMemberWithResponse call
+func ParseClearDeviceMemberResponse(rsp *http.Response) (*ClearDeviceMemberResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ClearDeviceMemberResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest Device
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON409 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 429:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON429 = &dest
+
+	}
+
+	switch {
+	case rsp.StatusCode == 429:
+		var headers ClearDeviceMemberResponse429Headers
+		if values := rsp.Header.Values("Retry-After"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "Retry-After", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.RetryAfter = &value
+		}
+		response.Headers429 = &headers
+	}
+
+	return response, nil
+}
+
+// ParseSetDeviceMemberResponse parses an HTTP response from a SetDeviceMemberWithResponse call
+func ParseSetDeviceMemberResponse(rsp *http.Response) (*SetDeviceMemberResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &SetDeviceMemberResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest Device
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON409 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON422 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 429:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON429 = &dest
+
+	}
+
+	switch {
+	case rsp.StatusCode == 429:
+		var headers SetDeviceMemberResponse429Headers
+		if values := rsp.Header.Values("Retry-After"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "Retry-After", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.RetryAfter = &value
+		}
+		response.Headers429 = &headers
+	}
+
+	return response, nil
+}
+
+// ParseDeleteDeviceSettingsResponse parses an HTTP response from a DeleteDeviceSettingsWithResponse call
+func ParseDeleteDeviceSettingsResponse(rsp *http.Response) (*DeleteDeviceSettingsResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &DeleteDeviceSettingsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 202:
+		var dest Device
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON202 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON409 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 429:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON429 = &dest
+
+	}
+
+	switch {
+	case rsp.StatusCode == 429:
+		var headers DeleteDeviceSettingsResponse429Headers
+		if values := rsp.Header.Values("Retry-After"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "Retry-After", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.RetryAfter = &value
+		}
+		response.Headers429 = &headers
+	}
+
+	return response, nil
+}
+
+// ParseGetDeviceSettingsResponse parses an HTTP response from a GetDeviceSettingsWithResponse call
+func ParseGetDeviceSettingsResponse(rsp *http.Response) (*GetDeviceSettingsResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetDeviceSettingsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest Policy
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 429:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON429 = &dest
+
+	}
+
+	switch {
+	case rsp.StatusCode == 429:
+		var headers GetDeviceSettingsResponse429Headers
+		if values := rsp.Header.Values("Retry-After"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "Retry-After", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.RetryAfter = &value
+		}
+		response.Headers429 = &headers
+	}
+
+	return response, nil
+}
+
+// ParsePutDeviceSettingsResponse parses an HTTP response from a PutDeviceSettingsWithResponse call
+func ParsePutDeviceSettingsResponse(rsp *http.Response) (*PutDeviceSettingsResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &PutDeviceSettingsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 202:
+		var dest Device
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON202 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON409 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON422 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 429:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON429 = &dest
+
+	}
+
+	switch {
+	case rsp.StatusCode == 429:
+		var headers PutDeviceSettingsResponse429Headers
+		if values := rsp.Header.Values("Retry-After"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "Retry-After", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.RetryAfter = &value
+		}
+		response.Headers429 = &headers
+	}
+
+	return response, nil
+}
+
+// ParseListGroupsResponse parses an HTTP response from a ListGroupsWithResponse call
+func ParseListGroupsResponse(rsp *http.Response) (*ListGroupsResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ListGroupsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest []Group
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 429:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON429 = &dest
+
+	}
+
+	switch {
+	case rsp.StatusCode == 429:
+		var headers ListGroupsResponse429Headers
+		if values := rsp.Header.Values("Retry-After"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "Retry-After", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.RetryAfter = &value
+		}
+		response.Headers429 = &headers
+	}
+
+	return response, nil
+}
+
+// ParseCreateGroupResponse parses an HTTP response from a CreateGroupWithResponse call
+func ParseCreateGroupResponse(rsp *http.Response) (*CreateGroupResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &CreateGroupResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
+		var dest Group
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON201 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON409 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON422 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 429:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON429 = &dest
+
+	}
+
+	switch {
+	case rsp.StatusCode == 429:
+		var headers CreateGroupResponse429Headers
+		if values := rsp.Header.Values("Retry-After"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "Retry-After", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.RetryAfter = &value
+		}
+		response.Headers429 = &headers
+	}
+
+	return response, nil
+}
+
+// ParseDeleteGroupResponse parses an HTTP response from a DeleteGroupWithResponse call
+func ParseDeleteGroupResponse(rsp *http.Response) (*DeleteGroupResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &DeleteGroupResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case rsp.StatusCode == 204:
+		break // No content-type
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON409 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 429:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON429 = &dest
+
+	}
+
+	switch {
+	case rsp.StatusCode == 429:
+		var headers DeleteGroupResponse429Headers
+		if values := rsp.Header.Values("Retry-After"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "Retry-After", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.RetryAfter = &value
+		}
+		response.Headers429 = &headers
+	}
+
+	return response, nil
+}
+
+// ParseGetGroupResponse parses an HTTP response from a GetGroupWithResponse call
+func ParseGetGroupResponse(rsp *http.Response) (*GetGroupResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetGroupResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest Group
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 429:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON429 = &dest
+
+	}
+
+	switch {
+	case rsp.StatusCode == 429:
+		var headers GetGroupResponse429Headers
+		if values := rsp.Header.Values("Retry-After"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "Retry-After", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.RetryAfter = &value
+		}
+		response.Headers429 = &headers
+	}
+
+	return response, nil
+}
+
+// ParseUpdateGroupResponse parses an HTTP response from a UpdateGroupWithResponse call
+func ParseUpdateGroupResponse(rsp *http.Response) (*UpdateGroupResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &UpdateGroupResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest Group
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON409 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON422 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 429:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON429 = &dest
+
+	}
+
+	switch {
+	case rsp.StatusCode == 429:
+		var headers UpdateGroupResponse429Headers
+		if values := rsp.Header.Values("Retry-After"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "Retry-After", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.RetryAfter = &value
+		}
+		response.Headers429 = &headers
+	}
+
+	return response, nil
+}
+
+// ParseListGroupMembersResponse parses an HTTP response from a ListGroupMembersWithResponse call
+func ParseListGroupMembersResponse(rsp *http.Response) (*ListGroupMembersResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ListGroupMembersResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest []Member
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 429:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON429 = &dest
+
+	}
+
+	switch {
+	case rsp.StatusCode == 429:
+		var headers ListGroupMembersResponse429Headers
+		if values := rsp.Header.Values("Retry-After"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "Retry-After", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.RetryAfter = &value
+		}
+		response.Headers429 = &headers
+	}
+
+	return response, nil
+}
+
+// ParseRemoveGroupMemberResponse parses an HTTP response from a RemoveGroupMemberWithResponse call
+func ParseRemoveGroupMemberResponse(rsp *http.Response) (*RemoveGroupMemberResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &RemoveGroupMemberResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case rsp.StatusCode == 204:
+		break // No content-type
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON409 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 429:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON429 = &dest
+
+	}
+
+	switch {
+	case rsp.StatusCode == 429:
+		var headers RemoveGroupMemberResponse429Headers
+		if values := rsp.Header.Values("Retry-After"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "Retry-After", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.RetryAfter = &value
+		}
+		response.Headers429 = &headers
+	}
+
+	return response, nil
+}
+
+// ParseAddGroupMemberResponse parses an HTTP response from a AddGroupMemberWithResponse call
+func ParseAddGroupMemberResponse(rsp *http.Response) (*AddGroupMemberResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &AddGroupMemberResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case rsp.StatusCode == 204:
+		break // No content-type
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON409 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 429:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON429 = &dest
+
+	}
+
+	switch {
+	case rsp.StatusCode == 429:
+		var headers AddGroupMemberResponse429Headers
+		if values := rsp.Header.Values("Retry-After"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "Retry-After", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.RetryAfter = &value
+		}
+		response.Headers429 = &headers
+	}
+
+	return response, nil
+}
+
+// ParseListMembersResponse parses an HTTP response from a ListMembersWithResponse call
+func ParseListMembersResponse(rsp *http.Response) (*ListMembersResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ListMembersResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest []Member
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 429:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON429 = &dest
+
+	}
+
+	switch {
+	case rsp.StatusCode == 429:
+		var headers ListMembersResponse429Headers
+		if values := rsp.Header.Values("Retry-After"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "Retry-After", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.RetryAfter = &value
+		}
+		response.Headers429 = &headers
+	}
+
+	return response, nil
+}
+
+// ParseCreateMemberResponse parses an HTTP response from a CreateMemberWithResponse call
+func ParseCreateMemberResponse(rsp *http.Response) (*CreateMemberResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &CreateMemberResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
+		var dest Member
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON201 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON409 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON422 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 429:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON429 = &dest
+
+	}
+
+	switch {
+	case rsp.StatusCode == 429:
+		var headers CreateMemberResponse429Headers
+		if values := rsp.Header.Values("Retry-After"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "Retry-After", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.RetryAfter = &value
+		}
+		response.Headers429 = &headers
+	}
+
+	return response, nil
+}
+
+// ParseDeleteMemberResponse parses an HTTP response from a DeleteMemberWithResponse call
+func ParseDeleteMemberResponse(rsp *http.Response) (*DeleteMemberResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &DeleteMemberResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case rsp.StatusCode == 204:
+		break // No content-type
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON409 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 429:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON429 = &dest
+
+	}
+
+	switch {
+	case rsp.StatusCode == 429:
+		var headers DeleteMemberResponse429Headers
+		if values := rsp.Header.Values("Retry-After"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "Retry-After", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.RetryAfter = &value
+		}
+		response.Headers429 = &headers
+	}
+
+	return response, nil
+}
+
+// ParseGetMemberResponse parses an HTTP response from a GetMemberWithResponse call
+func ParseGetMemberResponse(rsp *http.Response) (*GetMemberResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetMemberResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest Member
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 429:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON429 = &dest
+
+	}
+
+	switch {
+	case rsp.StatusCode == 429:
+		var headers GetMemberResponse429Headers
+		if values := rsp.Header.Values("Retry-After"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "Retry-After", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.RetryAfter = &value
+		}
+		response.Headers429 = &headers
+	}
+
+	return response, nil
+}
+
+// ParseUpdateMemberResponse parses an HTTP response from a UpdateMemberWithResponse call
+func ParseUpdateMemberResponse(rsp *http.Response) (*UpdateMemberResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &UpdateMemberResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest Member
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON409 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON422 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 429:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON429 = &dest
+
+	}
+
+	switch {
+	case rsp.StatusCode == 429:
+		var headers UpdateMemberResponse429Headers
+		if values := rsp.Header.Values("Retry-After"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "Retry-After", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.RetryAfter = &value
+		}
+		response.Headers429 = &headers
+	}
+
+	return response, nil
+}
+
+// ParseListProfilesResponse parses an HTTP response from a ListProfilesWithResponse call
+func ParseListProfilesResponse(rsp *http.Response) (*ListProfilesResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ListProfilesResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest []Profile
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 429:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON429 = &dest
+
+	}
+
+	switch {
+	case rsp.StatusCode == 429:
+		var headers ListProfilesResponse429Headers
+		if values := rsp.Header.Values("Retry-After"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "Retry-After", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.RetryAfter = &value
+		}
+		response.Headers429 = &headers
+	}
+
+	return response, nil
+}
+
+// ParseCreateProfileResponse parses an HTTP response from a CreateProfileWithResponse call
+func ParseCreateProfileResponse(rsp *http.Response) (*CreateProfileResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &CreateProfileResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
+		var dest Profile
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON201 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON409 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON422 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 429:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON429 = &dest
+
+	}
+
+	switch {
+	case rsp.StatusCode == 429:
+		var headers CreateProfileResponse429Headers
+		if values := rsp.Header.Values("Retry-After"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "Retry-After", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.RetryAfter = &value
+		}
+		response.Headers429 = &headers
+	}
+
+	return response, nil
+}
+
+// ParseDeleteProfileResponse parses an HTTP response from a DeleteProfileWithResponse call
+func ParseDeleteProfileResponse(rsp *http.Response) (*DeleteProfileResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &DeleteProfileResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case rsp.StatusCode == 204:
+		break // No content-type
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON409 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 429:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON429 = &dest
+
+	}
+
+	switch {
+	case rsp.StatusCode == 429:
+		var headers DeleteProfileResponse429Headers
+		if values := rsp.Header.Values("Retry-After"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "Retry-After", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.RetryAfter = &value
+		}
+		response.Headers429 = &headers
+	}
+
+	return response, nil
+}
+
+// ParseGetProfileResponse parses an HTTP response from a GetProfileWithResponse call
+func ParseGetProfileResponse(rsp *http.Response) (*GetProfileResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &GetProfileResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest Profile
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 429:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON429 = &dest
+
+	}
+
+	switch {
+	case rsp.StatusCode == 429:
+		var headers GetProfileResponse429Headers
+		if values := rsp.Header.Values("Retry-After"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "Retry-After", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.RetryAfter = &value
+		}
+		response.Headers429 = &headers
+	}
+
+	return response, nil
+}
+
+// ParseUpdateProfileResponse parses an HTTP response from a UpdateProfileWithResponse call
+func ParseUpdateProfileResponse(rsp *http.Response) (*UpdateProfileResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &UpdateProfileResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest Profile
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON409 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON422 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 429:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON429 = &dest
+
+	}
+
+	switch {
+	case rsp.StatusCode == 429:
+		var headers UpdateProfileResponse429Headers
+		if values := rsp.Header.Values("Retry-After"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "Retry-After", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.RetryAfter = &value
+		}
+		response.Headers429 = &headers
+	}
+
+	return response, nil
+}
+
+// ParseListAssignmentsResponse parses an HTTP response from a ListAssignmentsWithResponse call
+func ParseListAssignmentsResponse(rsp *http.Response) (*ListAssignmentsResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &ListAssignmentsResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 200:
+		var dest []Assignment
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON200 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 429:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON429 = &dest
+
+	}
+
+	switch {
+	case rsp.StatusCode == 429:
+		var headers ListAssignmentsResponse429Headers
+		if values := rsp.Header.Values("Retry-After"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "Retry-After", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.RetryAfter = &value
+		}
+		response.Headers429 = &headers
+	}
+
+	return response, nil
+}
+
+// ParseCreateAssignmentResponse parses an HTTP response from a CreateAssignmentWithResponse call
+func ParseCreateAssignmentResponse(rsp *http.Response) (*CreateAssignmentResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &CreateAssignmentResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 201:
+		var dest Assignment
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.JSON201 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON409 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 422:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON422 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 429:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON429 = &dest
+
+	}
+
+	switch {
+	case rsp.StatusCode == 429:
+		var headers CreateAssignmentResponse429Headers
+		if values := rsp.Header.Values("Retry-After"); len(values) > 0 {
+			var value int
+			if err := runtime.BindStyledParameterWithOptions("simple", "Retry-After", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
+				return nil, err
+			}
+			headers.RetryAfter = &value
+		}
+		response.Headers429 = &headers
+	}
+
+	return response, nil
+}
+
+// ParseDeleteAssignmentResponse parses an HTTP response from a DeleteAssignmentWithResponse call
+func ParseDeleteAssignmentResponse(rsp *http.Response) (*DeleteAssignmentResponse, error) {
+	bodyBytes, err := io.ReadAll(rsp.Body)
+	defer func() { _ = rsp.Body.Close() }()
+	if err != nil {
+		return nil, err
+	}
+
+	response := &DeleteAssignmentResponse{
+		Body:         bodyBytes,
+		HTTPResponse: rsp,
+	}
+
+	switch {
+	case rsp.StatusCode == 204:
+		break // No content-type
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 400:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON400 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 401:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON401 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 403:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON403 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 404:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON404 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 409:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON409 = &dest
+
+	case strings.Contains(rsp.Header.Get("Content-Type"), "json") && rsp.StatusCode == 429:
+		var dest Problem
+		if err := runtime.JSONUnmarshal(bodyBytes, &dest); err != nil {
+			return nil, err
+		}
+		response.ApplicationproblemJSON429 = &dest
+
+	}
+
+	switch {
+	case rsp.StatusCode == 429:
+		var headers DeleteAssignmentResponse429Headers
 		if values := rsp.Header.Values("Retry-After"); len(values) > 0 {
 			var value int
 			if err := runtime.BindStyledParameterWithOptions("simple", "Retry-After", values[0], &value, runtime.BindStyledParameterOptions{ParamLocation: runtime.ParamLocationHeader, Explode: false, Required: false, Type: "integer", Format: ""}); err != nil {
