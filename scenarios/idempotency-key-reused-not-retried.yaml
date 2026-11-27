@@ -1,0 +1,9 @@
+name: 422 idempotency_key_reused is final
+call: {operation: createMember, args: {tenant: t1, body: {name: Kid}}}
+responses:
+  - status: 422
+    headers: {Content-Type: application/problem+json}
+    body: {type: about:blank, title: Unprocessable Content, status: 422, code: idempotency_key_reused}
+expect:
+  attempts: 1
+  error: {kind: Validation, code: idempotency_key_reused, status: 422}

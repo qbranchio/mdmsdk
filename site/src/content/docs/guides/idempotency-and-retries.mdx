@@ -1,0 +1,66 @@
+---
+title: Idempotency and retries
+description: What the SDKs retry, what they never retry, and how an Idempotency-Key makes a repeated write safe.
+---
+
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+
+The SDKs retry for you. Do not wrap a call in a retry loop of your own.
+
+## What is retried
+
+| Request | Retried on |
+|---|---|
+| GET, PUT, DELETE | transport errors, 429, 502, 503, 504 |
+| POST with a declared `Idempotency-Key` | the same, plus 409 with code `idempotency_in_flight` |
+| POST without one, PATCH | never, except `createToken` on transport errors and 429 |
+
+- 503 with code `admin_app_unavailable` is configuration, not a transient fault. It is not retried.
+- Never retried: any other 409 (`conflict`, `tenant_deleting`, `licence_exceeded`, `licence_expired`), any 422, 400, 401, 403, 404.
+- A retried DELETE that answers 404 is success.
+
+## How long
+
+| Limit | Value |
+|---|---|
+| Attempts | At most 6 |
+| Backoff | Exponential from 500 ms, with full jitter |
+| One wait | At most 15 s |
+| All attempts | At most 90 s |
+| `Retry-After` | Honored up to 60 s |
+
+## Idempotency keys
+
+An operation that declares the `Idempotency-Key` header stores its first response. A retry with the same key gets that response again instead of running twice.
+
+- The SDK generates one key per call and sends it on every attempt of that call.
+- A key you supply replaces the generated one.
+- A key is 1 to 255 printable ASCII characters.
+- The server keeps a response for 24 hours per caller, keyed on the method, the path, and the byte-identical body.
+- Stored 4xx responses replay. 5xx responses are not stored, so a retry runs again.
+- A replayed response carries `Idempotent-Replayed: true`.
+- The same key with another method, path, or body answers 422 with code `idempotency_key_reused`.
+- A retry while the first request still runs answers 409 with code `idempotency_in_flight`. The SDK waits and retries.
+
+## Supply your own key
+
+The generated key covers retries inside one call. To make a write safe across processes, such as a job that may run twice, derive a key from your own record:
+
+<Tabs syncKey="lang">
+  <TabItem label="Go">
+    ```go
+    ctx = mdmsdk.WithIdempotencyKey(ctx, "order-42-device")
+    created, err := client.Devices.Create(ctx, "ext:crm-42", api.CreateDeviceRequest{
+    	Name: "Ella's iPhone",
+    })
+    ```
+  </TabItem>
+  <TabItem label="Python">
+    ```python
+    with mdmsdk.idempotency_key("order-42-device"):
+        created = client.devices.create("ext:crm-42", CreateDeviceRequest(name="Ella's iPhone"))
+    ```
+  </TabItem>
+</Tabs>
+
+Send the same body with the same key. A changed body is another request and answers 422.

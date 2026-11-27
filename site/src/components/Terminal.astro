@@ -1,0 +1,130 @@
+---
+/*
+ * The rite terminal: an `mdm` command set over a mock of the API, in the
+ * visitor's browser (src/terminal). rite loads from the CDN; until it does,
+ * the fallback text stays.
+ */
+interface Props {
+  quickstart: string;
+}
+
+const { quickstart } = Astro.props;
+// The riteshjs version the docs load from the CDN.
+const RITESH = "0.1.0";
+---
+
+<!-- rite-terminal:start -->
+<section class="terminal not-content" id="terminal" aria-labelledby="terminal-label" data-terminal="rite">
+  <header>
+    <span id="terminal-label">Try it: a demo tenant, in your browser</span>
+    <span class="state">rite</span>
+  </header>
+  <div class="screen">
+    <div id="rite-term" class="rite-host" hidden></div>
+    <div class="fallback">
+      <p class="line"><span class="prompt" aria-hidden="true">$</span> mdm devices ls</p>
+      <p class="note">
+        The terminal loads <a href="https://github.com/jarrodb/ritesh">rite</a> from a CDN. Until it does, the
+        <a href={quickstart}>quickstart</a> makes the same calls against the real API.
+      </p>
+    </div>
+  </div>
+  <p class="hint">Type <code>help</code>, <code>mdm devices ls</code>, or <code>ls /tenants/demo</code>. Add <code>--show go</code> to see the SDK call. Esc then Tab leaves the terminal.</p>
+</section>
+<link rel="stylesheet" href={`https://cdn.jsdelivr.net/npm/riteshjs@${RITESH}/dist/rite.css`} crossorigin="anonymous" />
+<script is:inline defer src={`https://cdn.jsdelivr.net/npm/riteshjs@${RITESH}/dist/rite.bundle.min.js`} crossorigin="anonymous"></script>
+<script>
+  import type { RiteGlobal } from "../terminal/rite"
+  import { createMock, mdmCommand, memdsk, tenantsMount } from "../terminal/mdm"
+
+  const start = (): void => {
+    const rite = (window as unknown as { Rite?: RiteGlobal }).Rite
+    const host = document.getElementById("rite-term")
+    if (!rite || !host) return
+    const fallback = host.parentElement?.querySelector(".fallback")
+    host.hidden = false
+    fallback?.remove()
+    const mock = createMock()
+    // Follow the site's theme: Starlight sets data-theme on <html>.
+    const dark = document.documentElement.dataset["theme"] === "dark"
+    const theme = dark
+      ? { background: "#1d1c1a", foreground: "#e9e6df", cursor: "#7aa2ff", selectionBackground: "#3a3833",
+          green: "#7fc98a", blue: "#8fb0ff", red: "#ff8a7a", yellow: "#e3c16f", cyan: "#7fd0d8", magenta: "#d79be6" }
+      : { background: "#f3f1ec", foreground: "#2b2a28", cursor: "#1f4fe0", cursorAccent: "#f3f1ec", selectionBackground: "#d9dff0",
+          black: "#2b2a28", green: "#2f6b3a", blue: "#1f4fe0", red: "#b3301c", yellow: "#8a5a00", cyan: "#1f6670", magenta: "#8a3a6e", white: "#6b675f" }
+    const term = rite.createRite({
+      theme,
+      element: host,
+      hostname: "mdmsdk",
+      user: "dev",
+      motd: "a demo tenant lives at /tenants/demo. type help, or mdm devices ls.\n",
+      commands: [mdmCommand(mock)],
+      mounts: [{ path: "/tenants", provider: tenantsMount(mock, rite) }],
+      eggs: [memdsk],
+      history: "memory",
+    })
+    window.addEventListener("resize", () => { term.fit() })
+  }
+  if (document.readyState === "complete") start()
+  else window.addEventListener("load", start, { once: true })
+</script>
+<!-- rite-terminal:end -->
+
+<style>
+  .terminal {
+    margin-block: 2rem;
+    border: 1px solid var(--sl-color-hairline-light);
+    border-radius: 6px;
+    background: var(--sl-color-gray-6);
+    overflow: hidden;
+  }
+  header {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 1rem;
+    border-bottom: 1px solid var(--sl-color-hairline-light);
+    font-size: var(--sl-text-xs);
+    font-weight: 500;
+    color: var(--sl-color-gray-3);
+  }
+  .screen {
+    min-height: 14rem;
+    padding: 1rem;
+    font-family: var(--__sl-font-mono);
+    font-size: var(--sl-text-sm);
+    line-height: 1.6;
+  }
+  .line {
+    margin: 0;
+    color: var(--sl-color-white);
+  }
+  .prompt {
+    color: var(--sl-color-gray-3);
+    user-select: none;
+  }
+  .note {
+    margin: 1rem 0 0;
+    max-width: 60ch;
+    font-family: var(--__sl-font);
+    color: var(--sl-color-gray-3);
+  }
+  .note a {
+    color: var(--sl-color-text-accent);
+  }
+  .rite-host {
+    height: 22rem;
+  }
+  .screen:has(.rite-host:not([hidden])) {
+    background: var(--rite-bg, #f3f1ec);
+  }
+  :global([data-theme="dark"]) .screen:has(.rite-host:not([hidden])) {
+    --rite-bg: #1d1c1a;
+  }
+  .hint {
+    margin: 0;
+    padding: 0.5rem 1rem;
+    border-top: 1px solid var(--sl-color-hairline-light);
+    font-size: var(--sl-text-xs);
+    color: var(--sl-color-gray-3);
+  }
+</style>

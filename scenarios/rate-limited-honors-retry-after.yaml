@@ -1,0 +1,13 @@
+name: 429 waits Retry-After and retries
+call: {operation: getCatalog, args: {level: supervised}}
+responses:
+  - status: 429
+    headers: {Retry-After: "1", Content-Type: application/problem+json}
+    body: {type: about:blank, title: Too Many Requests, status: 429, code: rate_limited}
+  - status: 200
+    headers: {Content-Type: application/json}
+    body: {entries: []}
+expect:
+  attempts: 2
+  waited_at_least_seconds: 1
+  result: {entries: []}

@@ -1,0 +1,12 @@
+name: a DELETE retried after a 503 that then answers 404 succeeded on the first attempt
+call: {operation: deleteDevice, args: {tenant: t1, id: 00000000-0000-4000-8000-0000000000d1}}
+responses:
+  - status: 503
+    headers: {Content-Type: application/problem+json}
+    body: {type: about:blank, title: Service Unavailable, status: 503, code: auth0_unavailable}
+  - status: 404
+    headers: {Content-Type: application/problem+json}
+    body: {type: about:blank, title: Not Found, status: 404, code: not_found}
+expect:
+  attempts: 2
+  result: null

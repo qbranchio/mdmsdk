@@ -1,0 +1,42 @@
+---
+title: mdmsdk
+description: Go and Python SDKs for the mdm API. Manage tenants, members, groups, devices, profiles, and commands for Apple devices.
+template: splash
+hero:
+  tagline: Go and Python SDKs for the mdm API. Your backend creates tenants, enrolls iPhones and iPads, assigns profiles, sends commands, and receives webhooks. Your users call the API directly with short-lived tokens your backend issues.
+  actions:
+    - text: Quickstart
+      link: /mdmsdk/quickstart/
+      icon: right-arrow
+    - text: API reference
+      link: /mdmsdk/reference/
+      variant: minimal
+---
+
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+import Terminal from '../../components/Terminal.astro';
+
+```mermaid
+flowchart LR
+  account[Account] --> tenant[Tenant]
+  tenant --> member[Member]
+  tenant --> profile[Profile]
+  member --> device[Device]
+  profile -- assigned, merged per device --> declaration[Declarations]
+  declaration -- delivered to --> device
+```
+
+<Tabs syncKey="lang">
+  <TabItem label="Go">
+    ```sh
+    go get github.com/qbranchio/mdmsdk
+    ```
+  </TabItem>
+  <TabItem label="Python">
+    ```sh
+    pip install mdmsdk
+    ```
+  </TabItem>
+</Tabs>
+
+<Terminal quickstart="/mdmsdk/quickstart/" />

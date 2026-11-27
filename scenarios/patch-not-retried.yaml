@@ -1,0 +1,9 @@
+name: a PATCH is never retried
+call: {operation: updateTenant, args: {tenant: t1, body: {name: Acme Two}}}
+responses:
+  - status: 503
+    headers: {Content-Type: application/problem+json}
+    body: {type: about:blank, title: Service Unavailable, status: 503, code: auth0_unavailable}
+expect:
+  attempts: 1
+  error: {kind: Unavailable, code: auth0_unavailable, status: 503}

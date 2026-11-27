@@ -1,0 +1,148 @@
+---
+title: Quickstart
+description: Configure a client, check the credential, list the settings a device can take, and handle an error by its code.
+---
+
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+
+You need an account client: a client id and secret the operator issues for your account. Go needs one of the two supported Go releases, Python needs 3.11 or later.
+
+## Install
+
+<Tabs syncKey="lang">
+  <TabItem label="Go">
+    ```sh
+    go get github.com/qbranchio/mdmsdk
+    ```
+  </TabItem>
+  <TabItem label="Python">
+    ```sh
+    pip install mdmsdk
+    ```
+  </TabItem>
+</Tabs>
+
+## Configure a client
+
+<Tabs syncKey="lang">
+  <TabItem label="Go">
+    ```go
+    client, err := mdmsdk.New(mdmsdk.WithClientCredentials(
+    	os.Getenv("MDM_CLIENT_ID"),
+    	os.Getenv("MDM_CLIENT_SECRET"),
+    ))
+    if err != nil {
+    	log.Fatal(err)
+    }
+    ```
+  </TabItem>
+  <TabItem label="Python">
+    ```python
+    import os
+
+    import mdmsdk
+
+    client = mdmsdk.Client(
+        client_id=os.environ["MDM_CLIENT_ID"],
+        client_secret=os.environ["MDM_CLIENT_SECRET"],
+    )
+    ```
+  </TabItem>
+</Tabs>
+
+The client fetches a token on the first call, caches it, and refreshes it 60 seconds before it expires. The defaults point at production:
+
+| Setting | Default | Go option | Python argument |
+|---|---|---|---|
+| Base URL | `https://enroll.dev` | `WithBaseURL` | `base_url` |
+| Token URL | `https://id.enroll.dev/oauth/token` | `WithTokenURL` | `token_url` |
+| Audience | `https://enroll.dev/api` | `WithAudience` | `audience` |
+
+## Call me
+
+`me` says what kind of caller the credential is. Call it first to check the credential.
+
+<Tabs syncKey="lang">
+  <TabItem label="Go">
+    ```go
+    me, err := client.Me.Get(ctx)
+    if err != nil {
+    	log.Fatal(err)
+    }
+    fmt.Println(me.Kind) // account_client
+    ```
+  </TabItem>
+  <TabItem label="Python">
+    ```python
+    me = client.me.get()
+    print(me.kind)  # account_client
+    ```
+  </TabItem>
+</Tabs>
+
+## List the catalog for a level
+
+The catalog is every setting a device can take. A [level](/mdmsdk/concepts/devices/#level) narrows it to the settings a supervised or an unsupervised device accepts.
+
+<Tabs syncKey="lang">
+  <TabItem label="Go">
+    ```go
+    level := api.GetCatalogParamsLevelSupervised
+    catalog, err := client.Catalog.Get(ctx, &api.GetCatalogParams{Level: &level})
+    if err != nil {
+    	log.Fatal(err)
+    }
+    for _, entry := range catalog.Entries {
+    	fmt.Println(entry.Id, entry.Title)
+    }
+    ```
+
+    Model types are in `github.com/qbranchio/mdmsdk/api`.
+  </TabItem>
+  <TabItem label="Python">
+    ```python
+    from mdmsdk.models import GetCatalogLevel
+
+    catalog = client.catalog.get(level=GetCatalogLevel.SUPERVISED)
+    for entry in catalog.entries:
+        print(entry.id, entry.title)
+    ```
+
+    Model types are in `mdmsdk.models`. Every method has an async twin: `client.catalog.get_async`.
+  </TabItem>
+</Tabs>
+
+## Handle an error by code
+
+Every failed call returns one error type. Branch on its `code`, and include `instance` when you report a problem.
+
+<Tabs syncKey="lang">
+  <TabItem label="Go">
+    ```go
+    me, err := client.Me.Get(ctx)
+    var apiErr *mdmsdk.Error
+    switch {
+    case errors.As(err, &apiErr) && apiErr.Code == "insufficient_scope":
+    	log.Fatalf("missing scope: %s (%s)", apiErr.Detail, apiErr.Instance)
+    case err != nil:
+    	log.Fatal(err)
+    }
+    ```
+  </TabItem>
+  <TabItem label="Python">
+    ```python
+    try:
+        me = client.me.get()
+    except mdmsdk.errors.Forbidden as err:
+        if err.code == "insufficient_scope":
+            raise SystemExit(f"missing scope: {err.detail} ({err.instance})") from err
+        raise
+    ```
+  </TabItem>
+</Tabs>
+
+## Next
+
+- Each operation in the [API reference](/mdmsdk/reference/) is one method: `getMe` is `client.Me.Get` in Go and `client.me.get` in Python.
+- [Errors](/mdmsdk/guides/errors/) lists every kind and code.
+- [Authentication](/mdmsdk/guides/authentication/) covers scopes and tokens for your users.

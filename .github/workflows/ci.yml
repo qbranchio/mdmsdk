@@ -1,0 +1,62 @@
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  go:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-go@v6
+        with:
+          go-version-file: go.mod
+      - run: test -z "$(gofmt -l .)"
+      - run: go vet ./...
+      - uses: golangci/golangci-lint-action@v8
+      - run: go test -race -count=1 ./...
+      - name: Generated Go is current
+        run: go generate ./api && go run ./internal/cmd/gen && git diff --exit-code
+
+  python:
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: python
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+      - run: pip install -e . ruff==0.17.6 pyright==1.1.414 pytest==9.2.0 pyyaml==6.0.4 openapi-python-client==0.30.0
+      - name: Generated Python is current
+        run: |
+          python contract.py
+          openapi-python-client generate --path .contract.yaml --config openapi-python-client.yaml --meta none --output-path src/mdmsdk/_gen --overwrite
+          python gen.py
+          git diff --exit-code
+      - run: ruff check .
+      - run: pyright
+      - run: pytest -q
+
+  site:
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: site
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v7
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: site/package-lock.json
+      - run: npm ci
+      # Type-checks, builds, validates internal links, and runs the denylist
+      # over every built file.
+      - run: npm run build

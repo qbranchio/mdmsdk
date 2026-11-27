@@ -1,0 +1,42 @@
+[project]
+name = "mdmsdk"
+version = "0.1.0"
+description = "Python client for the mdm API: tenants, devices, profiles, and commands for Apple devices."
+readme = "README.md"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{ name = "Q Branch" }]
+requires-python = ">=3.11"
+dependencies = [
+  "httpx2==2.16.2",
+  "attrs==26.1.0",
+  "python-dateutil==2.9.0.post0",
+  "tenacity==9.2.1",
+  "standardwebhooks==1.3.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/qbranchio/mdmsdk"
+Source = "https://github.com/qbranchio/mdmsdk"
+
+[build-system]
+requires = ["hatchling==1.33.0"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/mdmsdk"]
+
+[tool.ruff]
+line-length = 140
+target-version = "py311"
+extend-exclude = ["src/mdmsdk/_gen"]
+
+[tool.pyright]
+typeCheckingMode = "strict"
+include = ["src"]
+exclude = ["src/mdmsdk/_gen"]
+reportPrivateUsage = false
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]

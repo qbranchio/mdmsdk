@@ -1,0 +1,79 @@
+# The SDK surface: each public operationId and the service and method it
+# becomes (Go exports the method name; Python uses it in snake_case). Both
+# SDKs generate their services from this file; CI fails when a public
+# operation has no entry or an entry names no operation.
+getMe: {service: me, method: get}
+getCatalog: {service: catalog, method: get}
+
+listTenants: {service: tenants, method: list}
+createTenant: {service: tenants, method: create}
+getTenant: {service: tenants, method: get}
+updateTenant: {service: tenants, method: update}
+deleteTenant: {service: tenants, method: delete}
+
+listMembers: {service: members, method: list}
+createMember: {service: members, method: create}
+getMember: {service: members, method: get}
+updateMember: {service: members, method: update}
+deleteMember: {service: members, method: delete}
+
+listGroups: {service: groups, method: list}
+createGroup: {service: groups, method: create}
+getGroup: {service: groups, method: get}
+updateGroup: {service: groups, method: update}
+deleteGroup: {service: groups, method: delete}
+listGroupMembers: {service: groups, method: listMembers}
+addGroupMember: {service: groups, method: addMember}
+removeGroupMember: {service: groups, method: removeMember}
+
+listDevices: {service: devices, method: list}
+createDevice: {service: devices, method: create}
+getDevice: {service: devices, method: get}
+deleteDevice: {service: devices, method: delete}
+setDeviceMember: {service: devices, method: setMember}
+clearDeviceMember: {service: devices, method: clearMember}
+reissueEnrollmentProfile: {service: devices, method: reissueEnrollmentProfile}
+createEnrollmentLink: {service: devices, method: createEnrollmentLink}
+getDeviceDDM: {service: devices, method: getDDM}
+getEffectivePolicy: {service: devices, method: effectivePolicy}
+
+getDeviceSettings: {service: settings, method: get}
+putDeviceSettings: {service: settings, method: put}
+deleteDeviceSettings: {service: settings, method: delete}
+
+listProfiles: {service: profiles, method: list}
+createProfile: {service: profiles, method: create}
+getProfile: {service: profiles, method: get}
+updateProfile: {service: profiles, method: update}
+deleteProfile: {service: profiles, method: delete}
+
+listAssignments: {service: assignments, method: list}
+createAssignment: {service: assignments, method: create}
+deleteAssignment: {service: assignments, method: delete}
+
+createCommand: {service: commands, method: send}
+listCommands: {service: commands, method: list}
+getCommand: {service: commands, method: get}
+
+createToken: {service: tokens, method: create}
+
+getAccount: {service: account, method: get}
+
+listWebhooks: {service: webhooks, method: list}
+createWebhook: {service: webhooks, method: create}
+getWebhook: {service: webhooks, method: get}
+updateWebhook: {service: webhooks, method: update}
+deleteWebhook: {service: webhooks, method: delete}
+rotateWebhookSecret: {service: webhooks, method: rotateSecret}
+listWebhookDeliveries: {service: webhooks, method: listDeliveries}
+
+listHolders: {service: holders, method: list}
+createHolder: {service: holders, method: create}
+getHolder: {service: holders, method: get}
+updateHolder: {service: holders, method: update}
+deleteHolder: {service: holders, method: delete}
+requestPushCertificate: {service: holders, method: requestPushCertificate}
+uploadPushCertificate: {service: holders, method: uploadPushCertificate}
+getADEPublicKey: {service: holders, method: getADEPublicKey}
+uploadADEToken: {service: holders, method: uploadADEToken}
+uploadVPPToken: {service: holders, method: uploadVPPToken}

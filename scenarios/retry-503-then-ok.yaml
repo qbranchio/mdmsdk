@@ -1,0 +1,12 @@
+name: a transient 503 is retried and the second answer is the result
+call: {operation: getMe, args: {}}
+responses:
+  - status: 503
+    headers: {Retry-After: "0", Content-Type: application/problem+json}
+    body: {type: about:blank, title: Service Unavailable, status: 503, code: auth0_unavailable, instance: "urn:request:1"}
+  - status: 200
+    headers: {Content-Type: application/json}
+    body: {kind: account_client, account: {id: 00000000-0000-4000-8000-000000000001, name: Acme}}
+expect:
+  attempts: 2
+  result: {kind: account_client, account: {id: 00000000-0000-4000-8000-000000000001, name: Acme}}
