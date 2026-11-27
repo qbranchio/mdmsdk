@@ -5,7 +5,7 @@ description: Use when writing code that calls the mdm API (Apple device manageme
 
 # mdmsdk
 
-Go: `go get github.com/qbranchio/mdmsdk`. Python: `pip install mdmsdk` (3.11+).
+Go: `go get github.com/qbranchio/mdmsdk`. Python (3.11+): `pip install "mdmsdk @ git+https://github.com/qbranchio/mdmsdk@v0.1.0#subdirectory=python"`.
 
 ## Choose the credential
 
