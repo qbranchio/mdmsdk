@@ -1,0 +1,73 @@
+name: release
+
+# On a signed tag vX.Y.Z pushed by the owner: verify the signature, check
+# the versions agree, run every gate, build and check the Python
+# distribution, and publish it to PyPI by trusted publishing with
+# attestations. The Go module is the tag itself.
+
+on:
+  push:
+    tags: ["v[0-9]+.[0-9]+.[0-9]+"]
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - name: Verify the tag is signed by the owner
+        env:
+          SIGNING_KEY: ${{ vars.RELEASE_SIGNING_KEY }}
+        run: |
+          test -n "$SIGNING_KEY" || { echo "set the RELEASE_SIGNING_KEY variable (the owner's public key)"; exit 1; }
+          git fetch -f origin "refs/tags/${GITHUB_REF_NAME}:refs/tags/${GITHUB_REF_NAME}"
+          if printf '%s' "$SIGNING_KEY" | grep -q "BEGIN PGP"; then
+            printf '%s\n' "$SIGNING_KEY" | gpg --import
+            git tag -v "$GITHUB_REF_NAME"
+          else
+            printf 'owner %s\n' "$SIGNING_KEY" > allowed_signers
+            git -c gpg.format=ssh -c gpg.ssh.allowedSignersFile=allowed_signers tag -v "$GITHUB_REF_NAME"
+          fi
+      - name: Versions agree
+        run: |
+          want="${GITHUB_REF_NAME#v}"
+          grep -q "const Version = \"$want\"" version.go || { echo "version.go is not $want"; exit 1; }
+          grep -q "^version = \"$want\"" python/pyproject.toml || { echo "pyproject.toml is not $want"; exit 1; }
+          grep -q "^__version__ = \"$want\"" python/src/mdmsdk/__init__.py || { echo "__init__.py is not $want"; exit 1; }
+      - uses: actions/setup-go@v6
+        with:
+          go-version-file: go.mod
+      - run: go vet ./... && go test -race -count=1 ./...
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+      - name: Build and check the distribution
+        working-directory: python
+        run: |
+          pip install build==1.6.1 twine==7.0.0 -e . pytest==9.2.0 pyyaml==6.0.4
+          pytest -q
+          python -m build
+          twine check dist/*
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: python/dist/
+
+  pypi:
+    needs: verify
+    runs-on: ubuntu-24.04
+    environment: pypi
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist/
+      - uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          attestations: true
