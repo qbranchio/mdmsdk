@@ -6625,7 +6625,7 @@ webhooks:
               $ref: '#/components/schemas/CommandCompletedEvent'
         required: true
       responses:
-        "204":
+        2XX:
           description: 'Received: any 2xx status. Any other status, or no answer in 10 seconds, is retried on the endpoint''s schedule; a Retry-After on 429, 502, or 504 is honoured, up to 24 hours.'
         "410":
           description: 'The endpoint is gone: it is disabled and gets nothing more.'
@@ -6664,7 +6664,7 @@ webhooks:
               $ref: '#/components/schemas/DeviceEnrolledEvent'
         required: true
       responses:
-        "204":
+        2XX:
           description: 'Received: any 2xx status. Any other status, or no answer in 10 seconds, is retried on the endpoint''s schedule; a Retry-After on 429, 502, or 504 is honoured, up to 24 hours.'
         "410":
           description: 'The endpoint is gone: it is disabled and gets nothing more.'
@@ -6703,7 +6703,7 @@ webhooks:
               $ref: '#/components/schemas/DeviceOSBehindEvent'
         required: true
       responses:
-        "204":
+        2XX:
           description: 'Received: any 2xx status. Any other status, or no answer in 10 seconds, is retried on the endpoint''s schedule; a Retry-After on 429, 502, or 504 is honoured, up to 24 hours.'
         "410":
           description: 'The endpoint is gone: it is disabled and gets nothing more.'
@@ -6742,7 +6742,7 @@ webhooks:
               $ref: '#/components/schemas/DevicePolicyStatusEvent'
         required: true
       responses:
-        "204":
+        2XX:
           description: 'Received: any 2xx status. Any other status, or no answer in 10 seconds, is retried on the endpoint''s schedule; a Retry-After on 429, 502, or 504 is honoured, up to 24 hours.'
         "410":
           description: 'The endpoint is gone: it is disabled and gets nothing more.'
@@ -6781,7 +6781,7 @@ webhooks:
               $ref: '#/components/schemas/DeviceUnenrolledEvent'
         required: true
       responses:
-        "204":
+        2XX:
           description: 'Received: any 2xx status. Any other status, or no answer in 10 seconds, is retried on the endpoint''s schedule; a Retry-After on 429, 502, or 504 is honoured, up to 24 hours.'
         "410":
           description: 'The endpoint is gone: it is disabled and gets nothing more.'
@@ -6820,7 +6820,7 @@ webhooks:
               $ref: '#/components/schemas/PushCertificateExpiringEvent'
         required: true
       responses:
-        "204":
+        2XX:
           description: 'Received: any 2xx status. Any other status, or no answer in 10 seconds, is retried on the endpoint''s schedule; a Retry-After on 429, 502, or 504 is honoured, up to 24 hours.'
         "410":
           description: 'The endpoint is gone: it is disabled and gets nothing more.'
@@ -6859,7 +6859,7 @@ webhooks:
               $ref: '#/components/schemas/TenantDeletedEvent'
         required: true
       responses:
-        "204":
+        2XX:
           description: 'Received: any 2xx status. Any other status, or no answer in 10 seconds, is retried on the endpoint''s schedule; a Retry-After on 429, 502, or 504 is honoured, up to 24 hours.'
         "410":
           description: 'The endpoint is gone: it is disabled and gets nothing more.'
@@ -6898,7 +6898,7 @@ webhooks:
               $ref: '#/components/schemas/TenantDeletingEvent'
         required: true
       responses:
-        "204":
+        2XX:
           description: 'Received: any 2xx status. Any other status, or no answer in 10 seconds, is retried on the endpoint''s schedule; a Retry-After on 429, 502, or 504 is honoured, up to 24 hours.'
         "410":
           description: 'The endpoint is gone: it is disabled and gets nothing more.'
