@@ -11,7 +11,7 @@ Go: `go get github.com/qbranchio/mdmsdk`. Python (3.11+): `pip install "mdmsdk @
 
 | Caller | Use | Reaches |
 |---|---|---|
-| Your backend | account client: `client_id` + `client_secret` | every tenant of your account, limited by the client's scopes |
+| Your backend | account client: `client_id` + `client_secret` (an account owner makes one at enroll.dev/developers: `mdm keys create`) | every tenant of your account, limited by the client's scopes |
 | One of your users, from your backend or a browser | delegated token from `tokens.create` | one tenant, its listed members or groups or all of it, the listed permissions, at most 900 s |
 
 Admin app, console, and platform sign-ins are not SDK callers.
